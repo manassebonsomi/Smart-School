@@ -1,0 +1,181 @@
+import User from '#models/user'
+import type { HttpContext } from '@adonisjs/core/http'
+import { DateTime } from 'luxon'
+import vine from '@vinejs/vine'
+import mail from '@adonisjs/mail/services/main'
+import VerifyEmailNotification from '#mails/verify_email_notification'
+
+type ValidationErrorItem = {
+  field: string
+  message: string
+}
+
+function normalizeErrors(error: unknown): ValidationErrorItem[] {
+  const maybeMessages = (error as { messages?: unknown })?.messages
+  if (Array.isArray(maybeMessages)) {
+    return maybeMessages as ValidationErrorItem[]
+  }
+  const nested = (maybeMessages as { errors?: unknown })?.errors
+  if (Array.isArray(nested)) {
+    return nested as ValidationErrorItem[]
+  }
+  return []
+}
+
+function mapErrors(errors: ValidationErrorItem[]) {
+  return errors.reduce<Record<string, string>>((acc, item) => {
+    acc[item.field] = item.message
+    return acc
+  }, {})
+}
+
+export default class NewAccountController {
+
+  async showStep1({ view }: HttpContext) {
+    return view.render('pages/auth/signup/signup_step_1')
+  }
+
+  async processStep1({ request, session, response, view }: HttpContext) {
+    const step1Schema = vine.compile(
+      vine.object({
+        fullname: vine.string().trim().minLength(3).maxLength(100),
+        email: vine.string().email().normalizeEmail().unique({
+          table: 'users',
+          column: 'email',
+          filter: (db) => {
+            db.where('is_verified', true)
+          }
+        }),
+      })
+    )
+
+    let payload: { fullname: string; email: string; }
+    try {
+      payload = await request.validateUsing(step1Schema)
+    } catch (error) {
+      const errors = normalizeErrors(error)
+      return response.status(422).send(
+        await view.render('pages/auth/signup/signup_step_1', {
+          errors,
+          errorMap: mapErrors(errors),
+          values: request.only(['fullname', 'email']),
+        })
+      )
+     }
+
+    // Génération d'un code OTP numérique à 6 chiffres
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
+
+    const utilisateur = await User.updateOrCreate(
+      { email: payload.email },
+      {
+        name: payload.fullname,
+        token_verification: otpCode,
+        tokenVerificationExpiresAt: DateTime.now().plus({ minutes: 30 }),
+      }
+    )
+
+    // Stockage en session
+    session.put('register_email', utilisateur.email)
+
+   const info = { email: payload.email, name: payload.fullname, code: otpCode }
+   await mail.send(new VerifyEmailNotification(info))
+
+
+    return response.redirect('/signup/s2')
+  }
+
+  async showStep2({ view, session, response }: HttpContext) {
+    if (!session.has('register_email')) {
+      return response.redirect('/signup/s1')
+    }
+    const email = session.get('register_email')
+    return view.render('pages/auth/signup/signup_step_2', { email })
+  }
+
+  async processStep2({ request, session, response }: HttpContext) {
+    const step2Schema = vine.compile(
+      vine.object({
+        code: vine.string().fixedLength(6)
+      })
+    )
+
+    let payload: { code: string; }
+    try {
+      payload = await request.validateUsing(step2Schema)
+    } catch (error) {
+      session.flash('errors.code', 'Le code de vérification est incorrect.')
+      return response.redirect().back()
+    }
+
+    const email = session.get('register_email')
+    // Récupération de l'utilisateur en BDD
+    const utilisateur = await User.findBy('email', email)
+
+    if (
+      !utilisateur ||
+      utilisateur.token_verification !== payload.code ||
+      !utilisateur.tokenVerificationExpiresAt ||
+      utilisateur.tokenVerificationExpiresAt < DateTime.now()
+    ) {
+      session.flash('errors.code', 'Le code de vérification est incorrect.')
+      return response.redirect().back()
+    }
+
+    utilisateur.token_verification = null
+    utilisateur.is_verified = true
+    await utilisateur.save()
+    return response.redirect('/signup/s3')
+  }
+
+  async showStep3({ view, session, response }: HttpContext) {
+    // On s'assure que l'utilisateur a bien validé son email
+    if (!session.get('register_email')) {
+      return response.redirect('/signup/s1')
+    }
+    return view.render('pages/auth/signup/signup_step_3')
+  }
+
+  async processStep3({ request, session, response, auth }: HttpContext) {
+    const email = session.get('register_email')
+
+    const step3Schema = vine.compile(
+      vine.object({
+        pseudo: vine.string().trim().minLength(3).maxLength(50).unique({
+          table: 'users',
+          column: 'pseudo'
+        }),
+        password: vine.string().minLength(8)
+      })
+    )
+
+    let payload: { password: string; pseudo: string }
+
+    try {
+      payload = await request.validateUsing(step3Schema)
+    } catch (error) {
+      session.flash('error', 'Une erreur est survenue. Essayer un pseudo correcte et un mot de passe de plus de 8 caractères')
+      return response.redirect().back()
+      }
+
+    try {
+      const utilisateur = await User.findByOrFail('email', email)
+
+      // Mise à jour finale en base de données
+      utilisateur.pseudo = payload.pseudo
+      utilisateur.password = payload.password
+      await utilisateur.save()
+
+      // Nettoyage
+      session.forget('register_email')
+      // Connexion automatique
+      await auth.use('web').login(utilisateur)
+      return response.redirect('/home')
+
+    } catch (error) {
+      session.flash('error.compte', 'Erreur lors de la création du compte.')
+      return response.redirect().back()
+    }
+  }
+
+}

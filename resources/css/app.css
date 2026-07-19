@@ -1,0 +1,564 @@
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+body{
+  background-color: #000;
+  z-index: 1;
+}
+
+
+/* ---------- classe utilitaire -----------------*/
+
+.flex-col{
+  display: flex;
+  flex-direction: column;
+}
+.flex-row{
+  display: flex;
+  flex-direction: row;
+}
+.ul-li, .listStyleNone{
+  list-style: none;
+}
+/* les textes en couleur*/
+.txtwhite{
+  color: #fff;
+}
+.txtbleu{
+  color: dodgerblue;
+}
+.txtgray{
+ color: #aeadad;
+}
+.txtblack{
+  color: black;
+}
+/* les textes decoration */
+.text-dec-none a, .none{
+  text-decoration: none;
+}
+/* Header réutilisabble dans toutes les pages */
+
+.header{
+  padding-top: 1em;
+}
+.header1{
+  width: 45%;
+  padding-left: 1em;
+}
+.header2{
+  width: 55%;
+}
+
+
+/* -------------------Index page----------- */
+
+.conteneurPrincipal{
+  position: relative;
+  z-index: 2;
+}
+
+/* header welcome */
+
+.index_header{
+  visibility: hidden;
+}
+
+/* main welcome */
+
+.index_main{
+  height: 100vh;
+}
+/*  Insertion icone X partie gauche */
+.ConteneurIcone{
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+}
+/* conteneur d'inscription */
+.conteneurInscription{
+  gap: 5%;
+  width: 50%;
+  justify-content: center;
+}
+.sectionInscriptionHeader{
+  text-align: justify;
+  width: 55%;
+}
+.sectionInscriptionHeader h1{
+  font-size: 60px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.sectionInscriptionMain{
+  gap: 30px;
+  width: 40%;
+}
+.conteneurBoutonInscription{
+  gap: 15px;
+}
+.conteneurBoutonInscription p{
+  text-align: justify;
+}
+.lienExterne{
+  font-size: 15px;
+  padding: 0.3em;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+  background-color: #fff;
+  border: 7px solid transparent;
+  border-radius: 30px;
+  width: 100%;
+}
+.lien_créer_compte{
+  font-weight: bolder;
+  font-size: 15px;
+  align-items: center;
+  background-color: dodgerblue;
+  padding: 0.5em ;
+  border: 7px solid transparent;
+  border-radius: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.OU{
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.OU hr{
+  flex: 1;
+  border: none;
+  border-top: 2px solid #aeadad;
+}
+/* conteneur d'un compte déjà inscript */
+
+.sectionInscriptionFooter{
+  gap: 15px;
+  width: 40%;
+}
+.lien-connexion, .lien-connexionMDP {
+  font-weight: bolder;
+  font-size: 15px;
+  background-color: transparent;
+  border: 2px solid rgb(174, 211, 248);
+  padding: 0.8em ;
+  border-radius: 30px;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* Footer Welcome  */
+
+
+
+.index_footer_ul{
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  color:#aeadad ;
+  padding-bottom: 3em;
+}
+.index_footer_ul li a{
+  color:#aeadad ;
+}
+
+/* Chargement */
+
+.active{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  z-index: 1000;
+}
+
+.chargement{
+  display: none;
+}
+
+.load{
+  width: 40px;
+  height: 40px;
+  border: 4px solid  dodgerblue;
+  border-top: 4px solid #878383;
+  border-radius: 50%;
+  margin: 20px auto;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+/* -- ---------------Création compte----- -- */
+
+/* page flouter */
+.blur{
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* classe répétitive dans créercompte, inserercode,motdepasseoubli,*/
+/* profil, reception, searchX, seconnecter1, seconnecter2 */
+
+.conteneurSecondaire{
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+.conteneurSecondaire.actif{
+  display: flex;
+}
+
+.SignUp{
+  background-color: rgb(38, 37, 36);
+  width: 40%;
+  height: 90%;
+  border-radius: 20px;
+  z-index: 1000;
+}
+/* signUp-main  */
+
+.signUp_main{
+  gap: 60px;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2em;
+}
+.conteneurSignUp{
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+}
+
+/* formulaire création compte */
+
+/* section identification nom et num  */
+.identité{
+  gap: 30px;
+}
+.save{
+  gap: 20px;
+}
+.save input, .mdp input{
+  color: #fff;
+  border-radius: 5px;
+  border: 2px solid #aeadad;
+  padding: 1em;
+  font-size: 19px;
+  background-color: #000;
+}
+#email{
+  display: none;
+}
+.conteneur-email-num{
+  justify-content: end;
+}
+.conteneur-email-num a{
+  text-decoration: none;
+  font-size: 17px;
+  color: dodgerblue;
+}
+.user-tel{
+  display: none;
+}
+/* section identification naissance  */
+.born{
+  gap: 20px;
+}
+.born div p{
+  color: #aeadad;
+  text-align: justify;
+}
+label{
+  display: none;
+}
+.date_born{
+  gap: 20px;
+}
+select{
+  color: #aeadad;
+  border: 2px solid #aeadad;
+  border-radius: 5px;
+  padding-bottom: 2em;
+  padding-left: 1em;
+}
+#Mois{
+  background-color: #000;
+  width: 60%;
+  height: 65px;
+}
+#Jour{
+  background-color: #000;
+  width: 20%;
+}
+#Année{
+  background-color: #000;
+  width: 35%;
+}
+.btn{
+  font-weight: bolder;
+  font-size: 20px;
+  margin-bottom: 1em;
+  align-items: center;
+  background-color:#aeadad;
+  padding: 0.5em ;
+  border: 7px solid transparent;
+  border-radius: 30px;
+  width: 100%;
+}
+
+
+/* --Choix de où envoyer le code (par email ou N°Tel) -- */
+
+.sectionlogin{
+  width: 100%;
+  gap: 10px;
+}
+.connexionlogin{
+  gap: 15px;
+  width: 100%;
+}
+.gap{
+  gap: 10px;
+}
+.changementMDP1{
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  gap: 50px;
+  margin-bottom: 1em;
+}
+.txtchangeMDP{
+  display: none;
+}
+
+/* --------Se connecter 1 */
+
+
+/* -- Se connecter-main -- */
+
+.connecter_main{
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  gap: 250px;
+  margin-bottom: 1em;
+}
+.sectionMDP{
+  width: 100%;
+  gap: 50px;
+}
+.conteneur-oublie-mdp{
+  justify-content: start;
+}
+.mdp{
+  width: 100%;
+  gap: 10px;
+}
+.connexionMDP{
+  gap: 30px;
+  width: 100%;
+}
+.btnConnectedMDP{
+  font-size: 15px;
+  font-weight: bolder;
+  padding: 0.7em;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+  background-color: #fff;
+  border: 7px solid transparent;
+  border-radius: 30px;
+  width: 100%;
+}
+
+/* !-- Se connecter 2 -- */
+
+.conteneurConnexion{
+  gap: 70px;
+}
+.sectionConnexion{
+  text-align: center;
+  gap: 40px;
+}
+/* Profil */
+
+.imaPhotoProfil{
+  align-items: center;
+  justify-content: center;
+}
+.sectionloginPhoto{
+  width: 100%;
+  gap: 60px;
+}
+.connecter_main_photo{
+justify-content: center;
+align-items: center;
+width: 70%;
+gap: 100px;
+margin-bottom: 1em;
+}
+/* Connexion avec MDP */
+/* Mot de passe oublié */
+/* Envois email */
+/* Reception code envoyé par email */
+
+.radio-container{
+  justify-content: space-between;
+  height: 60px;
+  align-items: center;
+}
+.text{
+  width: 50%;
+}
+
+/* Petit écran */
+
+@media screen and (max-width:767px){
+  .header{
+      padding-top: 0em;
+  }
+
+  /* page index */
+  /* header welcome */
+
+  .index_header{
+      display: none;
+  }
+  /*  Main Welcome  */
+  .index_main{
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+  }
+  /* Insertion icone X partie gauche  */
+  .ConteneurIcone{
+      padding-top: 1em;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+  .ConteneurIcone svg{
+      width: 50px;
+      height: 50px;
+  }
+  /* conteneur d'inscription  */
+  .conteneurInscription{
+      gap: 30px;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+
+  }
+  .conteneurInscription section{
+      width: 70%;
+  }
+  .sectionInscriptionHeader h1{
+      font-size: 30px;
+  }
+  .sectionInscriptionMain{
+      gap: 20px;
+  }
+  .conteneurBoutonInscription{
+      gap: 15px;
+  }
+  .conteneurBoutonInscription p{
+      text-align: justify;
+  }
+  .lienExterne{
+      padding: 0em;
+      gap: 5px;
+  }
+  .lien_créer_compte{
+      padding: 0.3em ;
+  }
+
+  /* conteneur d'un compte déjà inscript */
+
+  .sectionInscriptionFooter{
+      gap: 15px;
+      width: 40%;
+  }
+
+
+  footer{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 50vh;
+
+  }
+  .index_footer_ul{
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      color:#aeadad ;
+      padding-bottom: 0em;
+  }
+  /* -- ----------------seconde partie------ -- */
+  .conteneurSecondaire{
+      background-color: aqua;
+      justify-content: start;
+      align-items: start;
+      height: 100vh;
+  }
+  .SignUp{
+      background-color: black;
+      padding-top: 1em;
+      width: 100%;
+      border-radius: 0;
+      height: 100vh;
+  }
+  .conteneurSignUp{
+      width: 80%;
+  }
+  #Mois{
+      height: auto;
+  }
+}
+
+/* Tablette */
+
+@media screen  and (min-width:768px ) and (max-width:1024px){
+  /* -----------------Main Welcome------------------------ */
+
+  /* conteneur d'inscription  */
+  .sectionInscriptionHeader{
+      width: 80%;
+  }
+  .sectionInscriptionHeader h1{
+      font-size: 45px;
+  }
+  .sectionInscriptionMain{
+      gap: 30px;
+      width: 70%;
+  }
+
+  .sectionInscriptionFooter{
+      width: 70%;
+  }
+  /* -- ----------------seconde partie------ --  */
+  .SignUp{
+      background-color: rgb(38, 37, 36);
+      width: 80%;
+      border-radius: 20px;
+      height: auto;
+  }
+}

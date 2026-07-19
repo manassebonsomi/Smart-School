@@ -1,0 +1,55 @@
+
+<!-- <aside class="hidden sm:flex sm:w-20 lg:w-64 flex-col sticky top-0 h-screen border-r border-gray-800 p-2"> -->
+  <div class="mb-8 px-4">
+     <svg viewBox="0 0 24 24" class="h-8 w-8 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.964H5.078z"></path></svg>
+  </div>
+  <nav class="space-y-2">
+    <a href="/home" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl font-bold">
+      <span>🏠 Accueil</span>
+    </a>
+    <a href="{{ route('search.show') }}" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl">
+      <span>🔍 Explorer</span>
+    </a>
+    <a href="{{ route('profile.show', [auth.user.id]) }}" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl">
+      <span>👤 Profil</span>
+    </a>
+    <a href="/settings/blocks" class="flex items-center justify-between p-4 bg-gray-900 hover:bg-gray-800 rounded-xl transition">
+      <span class="font-bold text-white">🚫 Comptes bloqués</span>
+    </a>
+    <a href="{{ route('follow_requests.index') }}" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl">
+      <span>🔔 Démande</span>
+    </a>
+    <a href="/messages" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl">
+      <span>✉️ Messages</span>
+    </a>
+    <div class="mb-4">
+      <div class="flex items-center justify-between p-3 hover:bg-gray-900 rounded-full cursor-pointer transition">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white">
+            <!-- {{ auth.user.name.charAt(0).toUpperCase() }} -->
+            @if(auth.user.avatarUrl)
+              <img src="/uploads/avatars/{{ auth.user.avatarUrl }}"
+                  alt="Avatar de {{ auth.user.name }}"
+                  class="w-10 h-10 rounded-full object-cover">
+              @else
+                {{-- Fallback sur l initiale si pas d avatar --}}
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white">
+                  {{ auth.user.name.charAt(0).toUpperCase() }}
+                </div>
+              @end
+          </div>
+          <div class="hidden lg:block">
+            <p class="font-bold text-sm text-white">{{ auth.user.name }}</p>
+            <p class="text-gray-500 text-sm">@ {{ auth.user.pseudo }}</p>
+          </div>
+        </div>
+      </div>
+      <form action="/logout" method="POST" class="mt-2">
+        {{ csrfField() }}
+        <button type="submit" class="flex items-center space-x-4 p-3 hover:bg-gray-900 rounded-full text-xl hover:text-red-500 px-4">
+          🚪  Se déconnecter
+        </button>
+      </form>
+    </div>
+  </nav>
+<!-- </aside> -->
