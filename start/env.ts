@@ -69,13 +69,21 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring ally package
   |----------------------------------------------------------
   */
- /*
-  FACEBOOK_CLIENT_ID: Env.schema.string(),
-  FACEBOOK_CLIENT_SECRET: Env.schema.string(),
-  GITHUB_CLIENT_ID: Env.schema.string(),
-  GITHUB_CLIENT_SECRET: Env.schema.string(),
-  */
+  /*
+   FACEBOOK_CLIENT_ID: Env.schema.string(),
+   FACEBOOK_CLIENT_SECRET: Env.schema.string(),
+   GITHUB_CLIENT_ID: Env.schema.string(),
+   GITHUB_CLIENT_SECRET: Env.schema.string(),
+   */
   GOOGLE_CLIENT_ID: Env.schema.string(),
   GOOGLE_CLIENT_SECRET: Env.schema.string(),
   GOOGLE_CALLBACK_URL: Env.schema.string(),
+  AWS_ACCESS_KEY_ID: Env.schema.string(),
+  AWS_SECRET_ACCESS_KEY: Env.schema.string(),
+  AWS_REGION: Env.schema.string(),
+  MAILGUN_API_KEY: Env.schema.string(),
+  MAILGUN_DOMAIN: Env.schema.string(),
+  SPARKPOST_API_KEY: Env.schema.string(),
+  BREVO_API_KEY: Env.schema.string(),
+  POSTMARK_API_KEY: Env.schema.string()
 })

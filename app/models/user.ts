@@ -9,6 +9,9 @@ import Exercice from './exercice.ts'
 import Devoir from './devoir.ts'
 import Ecole from './ecole.ts'
 import Eleve from './eleve.ts'
+import UserContext from './user_context.ts'
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import { AccessToken } from '@adonisjs/auth/access_tokens'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -17,21 +20,33 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 
 export default class User extends compose(BaseModel, AuthFinder) {
   // public static table = 'users'
+  public static accessTokens = DbAccessTokensProvider.forModel(User)
+
+  declare currentAccessToken?: AccessToken
 
   @column({ isPrimary: true })
   declare id: number
 
-  @column({ columnName: 'full_name' })
-  declare name: string
+  @column()
+  declare nom: string
 
   @column()
-  declare pseudo: string
+  declare postnom: string
+
+  @column()
+  declare prenom: string
+
+  @column()
+  declare pseudo: string | null
 
   @column()
   declare email: string
 
   @column()
-  declare phone: string | null
+  declare telephone: string | null
+
+  @column()
+  declare sexe: string | null
 
   @column()
   declare bio: string | null
@@ -49,7 +64,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare statut: string
 
   @column()
-  declare is_verified: boolean
+  declare isVerified: boolean
 
   @column()
   declare token_verification: string | null
@@ -64,7 +79,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare twoFactorExpiresAt: DateTime | null
 
   @column()
-  declare isPrivate: boolean
+  declare resetPasswordToken: string | null
+
+  @column.dateTime()
+  declare resetPasswordExpiresAt: DateTime | null
 
   @column()
   declare googleId: string
@@ -110,5 +128,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotColumns: ['relation']
   })
   declare enfants: ManyToMany<typeof Eleve>
+
+  @hasOne(() => UserContext)
+  declare contexte: HasOne<typeof UserContext>
   
 }

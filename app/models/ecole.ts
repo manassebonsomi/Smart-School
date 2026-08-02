@@ -9,6 +9,7 @@ import Devoir from './devoir.ts'
 import Exercice from './exercice.ts'
 import Communique from './communique.ts'
 import User from './user.ts'    
+import UserContext from './user_context.ts'
 
 
 export default class Ecole extends BaseModel {
@@ -84,4 +85,6 @@ export default class Ecole extends BaseModel {
   })
   declare utilisateurs: ManyToMany<typeof User>
 
+  @hasMany(() => UserContext)
+  declare contextes: HasMany<typeof UserContext>
 }

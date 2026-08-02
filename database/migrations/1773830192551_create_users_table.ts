@@ -23,6 +23,8 @@ export default class extends BaseSchema {
       table.timestamp('token_verification_expires_at').nullable()
       table.string('two_factor_code').nullable()
       table.dateTime('two_factor_expires_at').nullable()
+      table.string('reset_password_token').nullable()
+      table.timestamp('reset_password_expires_at').nullable()
       table.string('google_id').nullable().unique()
       table.timestamp('last_login_at').nullable()
       table.timestamp('created_at').notNullable().defaultTo(this.now())
