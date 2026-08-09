@@ -2,7 +2,7 @@ import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
 
-  protected tableName = 'user_contexts'
+  protected tableName = 'access_tokens'
 
   async up() {
 

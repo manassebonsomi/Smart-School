@@ -2,6 +2,7 @@ import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
 import GoogleAuthController from '#controllers/google_auths_controller'
+const SuperAdminController = () => import('#controllers/super_admin/super_admin_controller')
 const EcoleController = () => import('#controllers/super_admin/ecoles_controller')
 const AdministrateurController = () => import('#controllers/super_admin/administrateurs_controller')
 const DashboardController = () => import('#controllers/super_admin/dashboard_controller')
@@ -183,4 +184,18 @@ router
     router.patch('/administrateurs/:id/active-school', [AdministrateurController, 'switchSchool'])
     router.get('/administrateurs/:id/ecoles/:ecoleId', [AdministrateurController, 'belongsToSchool'])
 
-  }).prefix('/api/super-admin').use(middleware.auth())
+  }).prefix('/api/super-admin').use([middleware.auth(), middleware.superAdmin()])
+
+  router
+    .group(() => {
+
+    /**
+     * Profil Super Admin
+     */
+    router.get('/profile', [SuperAdminController, 'profile',])
+    /**
+     * Vérification des permissions
+     */
+    router.get('/check-access', [SuperAdminController, 'checkAccess',])
+    // autres routes Super Admin...
+  }).prefix('/api/super-admin').use([middleware.auth(),middleware.superAdmin()])

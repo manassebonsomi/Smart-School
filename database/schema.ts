@@ -7,6 +7,23 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class AccessTokenSchema extends BaseModel {
+  static $columns = ['createdAt', 'ecoleId', 'id', 'role', 'updatedAt', 'userId'] as const
+  $columns = AccessTokenSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare ecoleId: bigint | number
+  @column({ isPrimary: true })
+  declare id: bigint | number
+  @column()
+  declare role: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare userId: bigint | number
+}
+
 export class ClassSchema extends BaseModel {
   static $columns = ['anneeScolaire', 'createdAt', 'ecoleId', 'id', 'niveauId', 'nom', 'statut', 'updatedAt'] as const
   $columns = ClassSchema.$columns
@@ -282,7 +299,7 @@ export class UserContextSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['address', 'avatarUrl', 'bio', 'createdAt', 'deletedAt', 'email', 'googleId', 'id', 'isVerified', 'lastLoginAt', 'nom', 'password', 'postnom', 'prenom', 'pseudo', 'sexe', 'statut', 'telephone', 'tokenVerification', 'tokenVerificationExpiresAt', 'twoFactorCode', 'twoFactorExpiresAt', 'updatedAt'] as const
+  static $columns = ['address', 'avatarUrl', 'bio', 'createdAt', 'deletedAt', 'email', 'googleId', 'id', 'isVerified', 'lastLoginAt', 'nom', 'password', 'postnom', 'prenom', 'pseudo', 'resetPasswordExpiresAt', 'resetPasswordToken', 'sexe', 'statut', 'systemRole', 'telephone', 'tokenVerification', 'tokenVerificationExpiresAt', 'twoFactorCode', 'twoFactorExpiresAt', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column()
   declare address: string | null
@@ -314,10 +331,16 @@ export class UserSchema extends BaseModel {
   declare prenom: string
   @column()
   declare pseudo: string | null
+  @column.dateTime()
+  declare resetPasswordExpiresAt: DateTime | null
+  @column()
+  declare resetPasswordToken: string | null
   @column()
   declare sexe: string | null
   @column()
   declare statut: string | null
+  @column()
+  declare systemRole: string | null
   @column()
   declare telephone: string | null
   @column()

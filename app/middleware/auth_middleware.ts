@@ -10,7 +10,8 @@ export default class AuthMiddleware {
   /**
    * The URL to redirect to, when authentication fails
    */
-  redirectTo = '/'
+  
+  // redirectTo = '/'
 
   async handle(
     ctx: HttpContext,
@@ -19,7 +20,7 @@ export default class AuthMiddleware {
       guards?: (keyof Authenticators)[]
     } = {}
   ) {
-    await ctx.auth.authenticateUsing(options.guards, { loginRoute: this.redirectTo })
+    await ctx.auth.authenticateUsing(options.guards /*, { loginRoute: this.redirectTo } */)
     return next()
   }
 }

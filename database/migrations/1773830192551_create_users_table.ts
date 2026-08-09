@@ -18,6 +18,7 @@ export default class extends BaseSchema {
       table.text('password').nullable()
       table.enum('sexe', ['HOMME', 'FEMME']).nullable()
       table.enum('statut', ['ACTIF', 'INACTIF', 'BLOQUE', 'EN ATTENTE', 'SUPPRIME']).defaultTo('ACTIF')
+      table.enum('system_role', ['SUPER_ADMIN', 'USER']).defaultTo('USER')
       table.boolean('is_verified').defaultTo(false)
       table.string('token_verification').nullable()
       table.timestamp('token_verification_expires_at').nullable()
@@ -33,6 +34,7 @@ export default class extends BaseSchema {
       table.index(['email'])
       table.index(['telephone'])
       table.index(['statut'])
+      table.index(['system_role'])
     })
   }
 

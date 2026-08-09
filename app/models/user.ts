@@ -12,6 +12,8 @@ import Eleve from './eleve.ts'
 import UserContext from './user_context.ts'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { AccessToken } from '@adonisjs/auth/access_tokens'
+import { SystemRole } from '../enums/system_role.ts'
+
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -62,6 +64,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column()
   declare statut: string
+
+  @column({ columnName: 'system_role' })
+  declare systemRole: SystemRole
 
   @column()
   declare isVerified: boolean
