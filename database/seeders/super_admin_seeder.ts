@@ -1,52 +1,73 @@
-// import hash from '@adonisjs/core/services/hash'
 import User from '#models/user'
 import { SystemRole } from '../../app/enums/system_role.ts'
-
 export default class SuperAdminSeeder {
 
   async run() {
 
-    const email = 'bmm.superadmin@smart-school.com'
+    const email = 'prod@gmail.com'
+
+    const password = '34383438'
+
     const existingUser = await User.findBy('email', email)
+
 
     if (existingUser) {
 
-      if (existingUser.systemRole !== SystemRole.SUPER_ADMIN) {
+      existingUser.systemRole = SystemRole.SUPER_ADMIN
 
-        existingUser.systemRole = SystemRole.SUPER_ADMIN
+      existingUser.statut = 'ACTIF'
 
-        await existingUser.save()
-      }
+      existingUser.isVerified = true
+
+      existingUser.password = password
+
+      await existingUser.save()
+
 
       console.log(
         `Super Admin déjà existant : ${email}`
       )
 
+      console.log(
+        `Mot de passe : ${password}`
+      )
+
       return
+
     }
 
-    const password = "343877" //await hash.make('343877')
 
     const user = await User.create({
 
       nom: 'Super',
+
       postnom: 'Administrateur',
+
       prenom: 'Système',
+
       email,
+
       password,
+
       systemRole: SystemRole.SUPER_ADMIN,
+
       statut: 'ACTIF',
+
       isVerified: true,
-      pseudo: 'bmm-superadmin',
+
+      pseudo: 'bmm-admin-1',
 
     })
+
 
     console.log(
       `Super Admin créé avec succès : ${user.email}`
     )
 
     console.log(
-      'Mot de passe initial : 343877'
+      `Mot de passe initial : ${password}`
     )
+
   }
+
 }

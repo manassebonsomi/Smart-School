@@ -1,75 +1,1619 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
-    <title>Preclinic - Medical & Hospital</title>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
 
-    <!--[if lt IE 9]>
-		<script src="assets/js/html5shiv.min.js"></script>
-		<script src="assets/js/respond.min.js"></script>
-	<![endif]-->
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Smart School - Système intelligent de gestion scolaire"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0284c7"
+    >
+
+    <title>Connexion | Smart School</title>
+
+
+    <!-- =========================================================
+         TAILWIND CSS
+    ========================================================== -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <!-- =========================================================
+         TAILWIND CONFIGURATION
+    ========================================================== -->
+
+    <script>
+
+        tailwind.config = {
+
+            theme: {
+
+                extend: {
+
+                    colors: {
+
+                        primary: {
+
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+
+                        }
+
+                    },
+
+                    fontFamily: {
+
+                        sans: [
+                            'Inter',
+                            'ui-sans-serif',
+                            'system-ui',
+                            'sans-serif'
+                        ]
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+
+    <!-- =========================================================
+         GOOGLE FONT
+    ========================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         LUCIDE ICONS
+    ========================================================== -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <!-- =========================================================
+         APPLICATION CSS
+    ========================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
+
+
+    <!-- =========================================================
+         PAGE STYLES
+    ========================================================== -->
+
+    <style>
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                sans-serif;
+        }
+
+        .login-shell {
+            box-shadow:
+                0 30px 80px rgba(15, 23, 42, 0.10);
+        }
+
+        .input-wrapper {
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .input-wrapper:focus-within {
+            transform: translateY(-1px);
+        }
+
+        .login-button {
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background-color .2s ease;
+        }
+
+        .login-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .login-button:active:not(:disabled) {
+            transform: scale(.99);
+        }
+
+        .feature-card {
+            transition:
+                background-color .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, .12);
+            border-color: rgba(255, 255, 255, .18);
+        }
+
+        .status-dot {
+            box-shadow:
+                0 0 0 4px rgba(52, 211, 153, .10);
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+        .fade-in {
+            animation:
+                fadeIn .5s ease both;
+        }
+
+        @keyframes fadeIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        .caps-indicator {
+            display: none;
+        }
+
+        .caps-indicator.show {
+            display: flex;
+        }
+
+        @media (max-width: 1023px) {
+
+            .login-shell {
+                box-shadow: none;
+            }
+
+        }
+
+    </style>
+
 </head>
 
-<body>
-    <div class="main-wrapper account-wrapper">
-        <div class="account-page">
-			<div class="account-center">
-				<div class="account-box">
-                    <form action="/login" method="POST" class="form-signin">
-                        {{ csrfField() }}
-						<div class="account-logo">
-                            <a href="index-2.html"><img src="/images/logo-dark.png" alt=""></a>
-                            @if(errors && errors.length)
-                            <div class="" style="color: red;">
-                              <p class="">Merci de corriger les erreurs suivantes :</p>
-                              <ul class="">
-                                @each(error in errors)
-                                  <li>{{ error.message }}</li>
-                                @end
-                              </ul>
-                            </div>
-                          @end
 
-                          @if(flashMessages.has('erreur'))
-                            <p style="color: red;">{{ flashMessages.get('erreur') }}</p>
-                          @endif
-                        </div>
-                        <div class="form-group">
-                            <label>Adresse Email</label>
-                            <input type="email" name="email" value="{{ old('email') || '' }}" autofocus="" class="form-control">
-                        </div>
-                        @if(errorMap?.email)
-                            <p class="" style="color: red;">{{ errorMap.email }}</p>
-                        @end
-                        <div class="form-group">
-                            <label>Mot de passe</label>
-                            <input type="password" name="password" value="{{ old('password') || '' }}" class="form-control">
-                        </div>
-                        @if(errorMap?.password)
-                            <p class="" style="color: red;">{{ errorMap.password }}</p>
-                        @end
-                        <div class="form-group text-right">
-                            <a href="forgot-password.html">Vous avez oublié votre mot de passe?</a>
-                        </div>
-                        <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary account-btn">Se connecter</button>
-                        </div>
-                        <div class="text-center register-link">
-                            Je n'ai pas de compte ?<a href="/signup"> Enregistrer maintenant</a>
-                        </div>
-                    </form>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-900">
+
+<main class="min-h-screen">
+
+    <div
+        class="
+            grid
+            min-h-screen
+            lg:grid-cols-2
+        "
+    >
+
+
+        <!-- =====================================================
+             LEFT — BRANDING
+        ====================================================== -->
+
+        <section
+            class="
+                relative
+                hidden
+                overflow-hidden
+                bg-gradient-to-br
+                from-primary-700
+                via-primary-600
+                to-cyan-400
+                lg:flex
+                lg:flex-col
+                lg:justify-between
+                p-10
+                xl:p-14
+            "
+        >
+
+
+            <!-- DECORATIVE ELEMENTS -->
+
+            <div
+                class="
+                    absolute
+                    -right-32
+                    -top-32
+                    h-96
+                    w-96
+                    rounded-full
+                    bg-white/10
+                "
+            ></div>
+
+            <div
+                class="
+                    absolute
+                    -left-40
+                    bottom-[-180px]
+                    h-[520px]
+                    w-[520px]
+                    rounded-full
+                    bg-white/10
+                "
+            ></div>
+
+            <div
+                class="
+                    absolute
+                    right-[14%]
+                    top-[30%]
+                    h-28
+                    w-28
+                    rounded-full
+                    bg-white/5
+                    blur-sm
+                "
+            ></div>
+
+            <div
+                class="
+                    absolute
+                    left-[12%]
+                    bottom-[25%]
+                    h-20
+                    w-20
+                    rounded-full
+                    bg-white/5
+                "
+            ></div>
+
+
+            <!-- BRAND -->
+
+            <div class="relative z-10">
+
+                <div class="flex items-center gap-3">
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-white
+                            shadow-xl
+                        "
+                    >
+
+                        <i
+                            data-lucide="graduation-cap"
+                            class="
+                                h-7
+                                w-7
+                                text-primary-600
+                            "
+                        ></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h1
+                            class="
+                                text-xl
+                                font-extrabold
+                                tracking-tight
+                                text-white
+                            "
+                        >
+                            SMART SCHOOL
+                        </h1>
+
+                        <p class="text-xs text-white/70">
+                            Intelligent School Management
+                        </p>
+
+                    </div>
+
                 </div>
-			</div>
-        </div>
+
+            </div>
+
+
+            <!-- MAIN CONTENT -->
+
+            <div
+                class="
+                    relative
+                    z-10
+                    max-w-2xl
+                    fade-in
+                "
+            >
+
+                <span
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        rounded-full
+                        border
+                        border-white/15
+                        bg-white/10
+                        px-4
+                        py-2
+                        text-xs
+                        font-semibold
+                        text-white
+                        backdrop-blur-sm
+                    "
+                >
+
+                    <span
+                        class="
+                            status-dot
+                            h-2
+                            w-2
+                            rounded-full
+                            bg-emerald-300
+                        "
+                    ></span>
+
+                    Plateforme de gestion scolaire
+
+                </span>
+
+
+                <h2
+                    class="
+                        mt-6
+                        text-4xl
+                        font-extrabold
+                        leading-[1.08]
+                        tracking-tight
+                        text-white
+                        xl:text-6xl
+                    "
+                >
+
+                    Toute votre école,
+
+                    <span class="text-sky-100">
+                        au même endroit.
+                    </span>
+
+                </h2>
+
+
+                <p
+                    class="
+                        mt-6
+                        max-w-xl
+                        text-base
+                        leading-7
+                        text-white/80
+                        xl:text-lg
+                    "
+                >
+                    Centralisez les élèves, enseignants, classes,
+                    notes, présences, communications, évaluations
+                    et activités de votre établissement dans une
+                    seule plateforme moderne.
+                </p>
+
+
+                <!-- FEATURES -->
+
+                <div
+                    class="
+                        mt-9
+                        grid
+                        grid-cols-1
+                        gap-3
+                        sm:grid-cols-3
+                    "
+                >
+
+
+                    <!-- UTILISATEURS -->
+
+                    <div
+                        class="
+                            feature-card
+                            rounded-2xl
+                            border
+                            border-white/10
+                            bg-white/5
+                            p-4
+                            backdrop-blur-sm
+                        "
+                    >
+
+                        <div
+                            class="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-white/10
+                                text-white
+                            "
+                        >
+
+                            <i
+                                data-lucide="users"
+                                class="h-5 w-5"
+                            ></i>
+
+                        </div>
+
+                        <p
+                            class="
+                                mt-4
+                                text-sm
+                                font-bold
+                                text-white
+                            "
+                        >
+                            Utilisateurs
+                        </p>
+
+                        <p
+                            class="
+                                mt-1
+                                text-[11px]
+                                leading-5
+                                text-white/65
+                            "
+                        >
+                            Élèves, enseignants et parents.
+                        </p>
+
+                    </div>
+
+
+                    <!-- PILOTAGE -->
+
+                    <div
+                        class="
+                            feature-card
+                            rounded-2xl
+                            border
+                            border-white/10
+                            bg-white/5
+                            p-4
+                            backdrop-blur-sm
+                        "
+                    >
+
+                        <div
+                            class="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-white/10
+                                text-white
+                            "
+                        >
+
+                            <i
+                                data-lucide="chart-no-axes-combined"
+                                class="h-5 w-5"
+                            ></i>
+
+                        </div>
+
+                        <p
+                            class="
+                                mt-4
+                                text-sm
+                                font-bold
+                                text-white
+                            "
+                        >
+                            Pilotage
+                        </p>
+
+                        <p
+                            class="
+                                mt-1
+                                text-[11px]
+                                leading-5
+                                text-white/65
+                            "
+                        >
+                            Statistiques et tableaux de bord.
+                        </p>
+
+                    </div>
+
+
+                    <!-- SECURITE -->
+
+                    <div
+                        class="
+                            feature-card
+                            rounded-2xl
+                            border
+                            border-white/10
+                            bg-white/5
+                            p-4
+                            backdrop-blur-sm
+                        "
+                    >
+
+                        <div
+                            class="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-white/10
+                                text-white
+                            "
+                        >
+
+                            <i
+                                data-lucide="shield-check"
+                                class="h-5 w-5"
+                            ></i>
+
+                        </div>
+
+                        <p
+                            class="
+                                mt-4
+                                text-sm
+                                font-bold
+                                text-white
+                            "
+                        >
+                            Sécurité
+                        </p>
+
+                        <p
+                            class="
+                                mt-1
+                                text-[11px]
+                                leading-5
+                                text-white/65
+                            "
+                        >
+                            Accès protégés et contrôlés.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TRUST -->
+
+                <div
+                    class="
+                        mt-8
+                        flex
+                        flex-wrap
+                        items-center
+                        gap-x-6
+                        gap-y-3
+                        text-xs
+                        text-white/65
+                    "
+                >
+
+                    <span class="flex items-center gap-2">
+
+                        <i
+                            data-lucide="lock-keyhole"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Connexion sécurisée
+
+                    </span>
+
+
+                    <span class="flex items-center gap-2">
+
+                        <i
+                            data-lucide="cloud"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Données centralisées
+
+                    </span>
+
+
+                    <span class="flex items-center gap-2">
+
+                        <i
+                            data-lucide="smartphone"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Accessible partout
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div
+                class="
+                    relative
+                    z-10
+                    flex
+                    flex-col
+                    gap-2
+                    text-xs
+                    text-white/55
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                "
+            >
+
+                <span>
+                    © 2026 Smart School
+                </span>
+
+                <span>
+                    Tous droits réservés
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RIGHT — LOGIN
+        ====================================================== -->
+
+        <section
+            class="
+                flex
+                min-h-screen
+                items-center
+                justify-center
+                bg-white
+                px-5
+                py-8
+                sm:px-8
+                lg:px-10
+                xl:px-16
+                2xl:px-24
+            "
+        >
+
+            <div
+                class="
+                    w-full
+                    max-w-md
+                    fade-in
+                "
+            >
+
+
+                <!-- MOBILE BRAND -->
+
+                <div
+                    class="
+                        mb-10
+                        flex
+                        items-center
+                        gap-3
+                        lg:hidden
+                    "
+                >
+
+                    <div
+                        class="
+                            flex
+                            h-11
+                            w-11
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-primary-50
+                        "
+                    >
+
+                        <i
+                            data-lucide="graduation-cap"
+                            class="
+                                h-6
+                                w-6
+                                text-primary-600
+                            "
+                        ></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h1
+                            class="
+                                text-lg
+                                font-extrabold
+                                text-slate-900
+                            "
+                        >
+                            SMART SCHOOL
+                        </h1>
+
+                        <p
+                            class="
+                                text-xs
+                                text-slate-500
+                            "
+                        >
+                            School Management System
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HEADER -->
+
+                <div class="mb-8">
+
+                    <div
+                        class="
+                            mb-5
+                            inline-flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-primary-50
+                            text-primary-600
+                        "
+                    >
+
+                        <i
+                            data-lucide="log-in"
+                            class="h-6 w-6"
+                        ></i>
+
+                    </div>
+
+
+                    <p
+                        class="
+                            text-xs
+                            font-bold
+                            uppercase
+                            tracking-[0.16em]
+                            text-primary-600
+                        "
+                    >
+                        Espace sécurisé
+                    </p>
+
+
+                    <h2
+                        class="
+                            mt-2
+                            text-3xl
+                            font-extrabold
+                            tracking-tight
+                            text-slate-900
+                            sm:text-4xl
+                        "
+                    >
+                        Bienvenue ! 👋
+                    </h2>
+
+
+                    <p
+                        class="
+                            mt-3
+                            text-sm
+                            leading-6
+                            text-slate-500
+                        "
+                    >
+                        Connectez-vous à votre espace Smart School
+                        pour accéder à vos fonctionnalités.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     GLOBAL ERROR
+                ================================================== -->
+
+                <div
+                    id="loginError"
+                    role="alert"
+                    aria-live="assertive"
+                    aria-atomic="true"
+                    class="
+                        mb-5
+                        hidden
+                        rounded-2xl
+                        border
+                        border-red-200
+                        bg-red-50
+                        px-4
+                        py-3
+                    "
+                >
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="
+                                flex
+                                h-8
+                                w-8
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-lg
+                                bg-red-100
+                                text-red-600
+                            "
+                        >
+
+                            <i
+                                data-lucide="circle-alert"
+                                class="h-4 w-4"
+                            ></i>
+
+                        </div>
+
+
+                        <div class="min-w-0">
+
+                            <p
+                                class="
+                                    text-xs
+                                    font-bold
+                                    text-red-800
+                                "
+                            >
+                                Connexion impossible
+                            </p>
+
+
+                            <p
+                                id="loginErrorText"
+                                class="
+                                    mt-1
+                                    text-xs
+                                    leading-5
+                                    text-red-700
+                                "
+                            >
+                                Une erreur est survenue.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SUCCESS
+                ================================================== -->
+
+                <div
+                    id="loginSuccess"
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    class="
+                        mb-5
+                        hidden
+                        rounded-2xl
+                        border
+                        border-emerald-200
+                        bg-emerald-50
+                        px-4
+                        py-3
+                    "
+                >
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="
+                                flex
+                                h-8
+                                w-8
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-lg
+                                bg-emerald-100
+                                text-emerald-600
+                            "
+                        >
+
+                            <i
+                                data-lucide="circle-check"
+                                class="h-4 w-4"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <p
+                                class="
+                                    text-xs
+                                    font-bold
+                                    text-emerald-800
+                                "
+                            >
+                                Connexion réussie
+                            </p>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-xs
+                                    text-emerald-700
+                                "
+                            >
+                                Redirection vers votre espace...
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     FORM
+                ================================================== -->
+
+                <form
+                    id="loginForm"
+                    class="space-y-5"
+                    action="/api/auth/login"
+                    method="POST"
+                    novalidate
+                >
+
+
+                    <!-- =============================================
+                         EMAIL
+                    ============================================== -->
+
+                    <div>
+
+                        <label
+                            for="email"
+                            class="
+                                mb-2
+                                block
+                                text-sm
+                                font-semibold
+                                text-slate-700
+                            "
+                        >
+                            Adresse e-mail
+                        </label>
+
+
+                        <div
+                            id="emailWrapper"
+                            class="
+                                input-wrapper
+                                relative
+                                rounded-xl
+                            "
+                        >
+
+                            <div
+                                class="
+                                    pointer-events-none
+                                    absolute
+                                    inset-y-0
+                                    left-0
+                                    flex
+                                    items-center
+                                    pl-4
+                                "
+                            >
+
+                                <i
+                                    data-lucide="mail"
+                                    class="
+                                        h-5
+                                        w-5
+                                        text-slate-400
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autocomplete="username"
+                                inputmode="email"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                placeholder="exemple@ecole.com"
+                                aria-describedby="emailError"
+                                class="
+                                    h-12
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    pl-12
+                                    pr-4
+                                    text-sm
+                                    text-slate-900
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-primary-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-primary-100
+                                "
+                            >
+
+                        </div>
+
+
+                        <p
+                            id="emailError"
+                            role="alert"
+                            class="
+                                mt-1.5
+                                hidden
+                                text-xs
+                                font-medium
+                                text-red-600
+                            "
+                        ></p>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         PASSWORD
+                    ============================================== -->
+
+                    <div>
+
+                        <div
+                            class="
+                                mb-2
+                                flex
+                                items-center
+                                justify-between
+                            "
+                        >
+
+                            <label
+                                for="password"
+                                class="
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Mot de passe
+                            </label>
+
+
+                            <a
+                                href="/password/reset"
+                                class="
+                                    text-xs
+                                    font-bold
+                                    text-primary-600
+                                    transition
+                                    hover:text-primary-700
+                                "
+                            >
+                                Mot de passe oublié ?
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            id="passwordWrapper"
+                            class="
+                                input-wrapper
+                                relative
+                                rounded-xl
+                            "
+                        >
+
+                            <div
+                                class="
+                                    pointer-events-none
+                                    absolute
+                                    inset-y-0
+                                    left-0
+                                    flex
+                                    items-center
+                                    pl-4
+                                "
+                            >
+
+                                <i
+                                    data-lucide="lock-keyhole"
+                                    class="
+                                        h-5
+                                        w-5
+                                        text-slate-400
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autocomplete="current-password"
+                                placeholder="Votre mot de passe"
+                                aria-describedby="passwordError capsIndicator"
+                                class="
+                                    h-12
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    pl-12
+                                    pr-12
+                                    text-sm
+                                    text-slate-900
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-primary-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-primary-100
+                                "
+                            >
+
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                aria-label="Afficher le mot de passe"
+                                class="
+                                    absolute
+                                    inset-y-0
+                                    right-0
+                                    flex
+                                    items-center
+                                    pr-4
+                                    text-slate-400
+                                    transition
+                                    hover:text-slate-600
+                                "
+                            >
+
+                                <i
+                                    id="passwordIcon"
+                                    data-lucide="eye"
+                                    class="h-5 w-5"
+                                ></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- CAPS LOCK -->
+
+                        <div
+                            id="capsIndicator"
+                            class="
+                                caps-indicator
+                                mt-2
+                                items-center
+                                gap-2
+                                text-[11px]
+                                font-medium
+                                text-amber-600
+                            "
+                        >
+
+                            <i
+                                data-lucide="alert-triangle"
+                                class="h-3.5 w-3.5"
+                            ></i>
+
+                            La touche Caps Lock est activée.
+
+                        </div>
+
+
+                        <p
+                            id="passwordError"
+                            role="alert"
+                            class="
+                                mt-1.5
+                                hidden
+                                text-xs
+                                font-medium
+                                text-red-600
+                            "
+                        ></p>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         OPTIONS
+                    ============================================== -->
+
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                        "
+                    >
+
+                        <label
+                            class="
+                                flex
+                                cursor-pointer
+                                items-center
+                                gap-3
+                            "
+                        >
+
+                            <input
+                                id="remember"
+                                name="remember"
+                                type="checkbox"
+                                class="
+                                    h-4
+                                    w-4
+                                    rounded
+                                    border-slate-300
+                                    text-primary-600
+                                    focus:ring-primary-500
+                                "
+                            >
+
+                            <span
+                                class="
+                                    text-sm
+                                    text-slate-600
+                                "
+                            >
+                                Se souvenir de moi
+                            </span>
+
+                        </label>
+
+
+                        <span
+                            class="
+                                hidden
+                                text-xs
+                                text-slate-400
+                                sm:block
+                            "
+                        >
+                            Session sécurisée
+                        </span>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         LOGIN BUTTON
+                    ============================================== -->
+
+                    <button
+                        id="loginButton"
+                        type="submit"
+                        class="
+                            login-button
+                            flex
+                            h-12
+                            w-full
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-xl
+                            bg-primary-600
+                            px-5
+                            text-sm
+                            font-bold
+                            text-white
+                            shadow-lg
+                            shadow-primary-600/20
+                            transition
+                            hover:bg-primary-700
+                            hover:shadow-xl
+                            hover:shadow-primary-600/25
+                            focus:outline-none
+                            focus:ring-4
+                            focus:ring-primary-200
+                            disabled:cursor-not-allowed
+                            disabled:opacity-70
+                        "
+                    >
+
+                        <span id="loginButtonText">
+                            Se connecter
+                        </span>
+
+
+                        <i
+                            id="loginButtonIcon"
+                            data-lucide="arrow-right"
+                            class="h-5 w-5"
+                        ></i>
+
+
+                        <span
+                            id="loginSpinner"
+                            class="spinner hidden"
+                            aria-hidden="true"
+                        ></span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- =================================================
+                     HELP
+                ================================================== -->
+
+                <div
+                    class="
+                        mt-6
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-slate-50
+                        p-4
+                    "
+                >
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="
+                                flex
+                                h-9
+                                w-9
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-lg
+                                bg-white
+                                text-primary-600
+                                shadow-sm
+                            "
+                        >
+
+                            <i
+                                data-lucide="help-circle"
+                                class="h-4 w-4"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <p
+                                class="
+                                    text-xs
+                                    font-bold
+                                    text-slate-700
+                                "
+                            >
+                                Besoin d'aide ?
+                            </p>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-[11px]
+                                    leading-5
+                                    text-slate-500
+                                "
+                            >
+                                Utilisez « Mot de passe oublié ? »
+                                pour récupérer votre compte.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SECURITY
+                ================================================== -->
+
+                <div
+                    class="
+                        mt-7
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        text-xs
+                        text-slate-400
+                    "
+                >
+
+                    <i
+                        data-lucide="shield-check"
+                        class="h-4 w-4 text-emerald-500"
+                    ></i>
+
+                    <span>
+                        Vos données sont protégées
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     FOOTER
+                ================================================== -->
+
+                <p
+                    class="
+                        mt-7
+                        text-center
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    © 2026 Smart School.
+                    Tous droits réservés.
+                </p>
+
+            </div>
+
+        </section>
+
     </div>
-    <script src="/js/jquery-3.2.1.min.js"></script>
-	<script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/app.js"></script>
+
+</main>
+
+
+<!-- =============================================================
+     LUCIDE INITIALIZATION
+============================================================== -->
+
+<script>
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+
+            if (window.lucide) {
+                lucide.createIcons()
+            }
+
+        }
+    )
+
+</script>
+
+
+<!-- =============================================================
+     LOGIN SCRIPT
+============================================================== -->
+
+<script src="/assets/js/login.js"></script>
+
 </body>
+
 </html>

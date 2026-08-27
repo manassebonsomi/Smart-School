@@ -7,21 +7,29 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
-export class AccessTokenSchema extends BaseModel {
-  static $columns = ['createdAt', 'ecoleId', 'id', 'role', 'updatedAt', 'userId'] as const
-  $columns = AccessTokenSchema.$columns
+export class AuthAccessTokenSchema extends BaseModel {
+  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
+  $columns = AuthAccessTokenSchema.$columns
+  @column()
+  declare abilities: string
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
+  @column.dateTime()
+  declare expiresAt: DateTime | null
   @column()
-  declare ecoleId: bigint | number
+  declare hash: string
   @column({ isPrimary: true })
   declare id: bigint | number
+  @column.dateTime()
+  declare lastUsedAt: DateTime | null
   @column()
-  declare role: string
+  declare name: string | null
+  @column()
+  declare tokenableId: bigint | number
+  @column()
+  declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
-  @column()
-  declare userId: bigint | number
 }
 
 export class ClassSchema extends BaseModel {
@@ -142,12 +150,16 @@ export class EcoleUserSchema extends BaseModel {
 }
 
 export class EcoleSchema extends BaseModel {
-  static $columns = ['adresse', 'code', 'createdAt', 'description', 'email', 'id', 'logo', 'nom', 'pays', 'statut', 'telephone', 'updatedAt', 'ville'] as const
+  static $columns = ['adresse', 'anneeCreation', 'code', 'commune', 'createdAt', 'description', 'email', 'id', 'logo', 'nom', 'pays', 'province', 'quartier', 'siteWeb', 'statut', 'telephone', 'type', 'updatedAt', 'ville'] as const
   $columns = EcoleSchema.$columns
   @column()
   declare adresse: string | null
   @column()
+  declare anneeCreation: number | null
+  @column()
   declare code: string
+  @column()
+  declare commune: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()
@@ -163,9 +175,17 @@ export class EcoleSchema extends BaseModel {
   @column()
   declare pays: string | null
   @column()
-  declare statut: string | null
+  declare province: string | null
+  @column()
+  declare quartier: string | null
+  @column()
+  declare siteWeb: string | null
+  @column()
+  declare statut: string
   @column()
   declare telephone: string | null
+  @column()
+  declare type: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
   @column()

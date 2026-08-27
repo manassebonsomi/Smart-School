@@ -1,12 +1,2 @@
 import vine from '@vinejs/vine'
-
-export const updateEcoleValidator = vine.compile(
-  vine.object({
-    nom: vine.string().trim().minLength(3).maxLength(150).optional(),
-    code: vine.string().trim().minLength(2).maxLength(20).optional(),
-    adresse: vine.string().trim().maxLength(255).optional(),
-    telephone: vine.string().trim().maxLength(20).optional(),
-    email: vine.string().trim().email().optional(),
-    statut: vine.enum(['ACTIF', 'SUSPENDU', 'ARCHIVE']).optional(),
-  })
-)
+export const updateEcoleValidator = vine.compile(vine.object({nom: vine.string().trim().minLength(3).maxLength(150).optional(),code: vine.string().trim().minLength(2).maxLength(20).optional(),description: vine.string().trim().maxLength(5000).optional(),adresse: vine.string().trim().maxLength(255).optional(),telephone: vine.string().trim().maxLength(30).optional(),email: vine.string().trim().email().optional(),ville: vine.string().trim().maxLength(100).optional(),pays: vine.string().trim().maxLength(100).optional(),province: vine.string().trim().maxLength(100).optional(),commune: vine.string().trim().maxLength(100).optional(),quartier: vine.string().trim().maxLength(100).optional(),siteWeb: vine.string().trim().url().maxLength(255).optional(),type: vine.string().trim().maxLength(100).optional(),anneeCreation: vine.number().min(1800).max(2100).optional(),logo: vine.string().trim().maxLength(500).optional(),statut: vine.enum(['ACTIF','SUSPENDU','ARCHIVE']).optional()}))

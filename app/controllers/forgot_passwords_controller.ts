@@ -44,20 +44,20 @@ export default class ForgotPasswordController {
     await mail.send((message) => {
       message
         .to(utilisateur.email)
-        .subject('Réinitialisation de votre mot de passe X Clone')
+        .subject('Réinitialisation de votre mot de passe Smart School')
         .html(`
-          <h1>Bonjour ${utilisateur.name}</h1>,
+          <h1>Bonjour ${utilisateur.prenom} ${utilisateur.nom}</h1>,
           <p> Code de reunitialisation !</p>
           <p>Voici votre code pour la reunitialisation de votre compte : ${otpCode}</p>
           `)
     })
 
-    return response.redirect().toRoute('password.reset.step2')
+    return response.redirect('/password/reset/verify')
   }
 
   async showStep2({ view, session, response }: HttpContext) {
     if (!session.has('reset_email')) {
-      return response.redirect().toRoute('password.reset.step1')
+      return response.redirect('/password/reset')
     }
     const email = session.get('reset_email')
     return view.render('pages/auth/forgotmdp/forgot_password_step_2', { email })
@@ -87,19 +87,19 @@ export default class ForgotPasswordController {
 
     // Code valide : on autorise la modification du mot de passe
     session.put('reset_verified', true)
-    return response.redirect().toRoute('password.reset.step3')
+    return response.redirect('/password/reset/new')
   }
 
   async showStep3({ view, session, response }: HttpContext) {
     if (!session.get('reset_verified')) {
-      return response.redirect().toRoute('password.reset.step1')
+      return response.redirect('/password/reset')
     }
     return view.render('pages/auth/forgotmdp/forgot_password_step_3')
   }
 
   async processStep3({ request, session, response }: HttpContext) {
     if (!session.get('reset_verified') || !session.has('reset_email')) {
-      return response.redirect().toRoute('password.reset.step1')
+      return response.redirect('/password/reset')
     }
 
     const step3Schema = vine.compile(
@@ -132,11 +132,16 @@ export default class ForgotPasswordController {
       session.forget('reset_verified')
 
       session.flash('success', 'Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.')
-      return response.redirect('/login/s1')
+      return response.redirect('/password/reset/success')
 
     } catch (error) {
       session.flash('error', 'Une erreur est survenue lors de la mise à jour.')
       return response.redirect().back()
     }
   }
+
+  async showSuccess({ view }: HttpContext) {
+    return view.render('pages/auth/forgotmdp/password_reset_success')
+  }
+
 }

@@ -90,7 +90,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare resetPasswordExpiresAt: DateTime | null
 
   @column()
-  declare googleId: string
+  declare googleId: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -101,7 +101,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime()
   declare lastLoginAt: DateTime | null
 
-  @column.dateTime()
+  @column.dateTime({ columnName: 'deleted_at' })
   declare deletedAt: DateTime | null
 
   @manyToMany(() => Ecole, {

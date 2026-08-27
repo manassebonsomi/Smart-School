@@ -1,513 +1,116 @@
 import db from '@adonisjs/lucid/services/db'
+import hash from '@adonisjs/core/services/hash'
 import Ecole from '#models/ecole'
-
+import User from '#models/user'
+import EcoleUser from '#models/ecole_user'
+import UserContext from '#models/user_context'
+import { DateTime } from 'luxon'
+import VerifyEmailMail from '#mails/verify_email'
+import { SystemRole } from '../../enums/system_role.ts'
 export default class EcoleService {
-
-  /**
-   * ============================================================================
-   * Créer une école
-   * ============================================================================
-   */
+  private verifyEmailMail = new VerifyEmailMail()
   async create(payload: any) {
-
     const trx = await db.transaction()
-
     try {
-
-      await this.validateUniqueCode(payload.code)
-
-      if (payload.email) {
-        await this.validateUniqueEmail(payload.email)
-      }
-
-      if (payload.telephone) {
-        await this.validateUniqueTelephone(payload.telephone)
-      }
-
-      const ecole = await Ecole.create({
-        nom: payload.nom,
-        code: payload.code,
-        adresse: payload.adresse,
-        telephone: payload.telephone,
-        email: payload.email,
-        statut: 'ACTIF',
-
-      }, { client: trx })
-
-      await trx.commit()
-
-      return {
-        success: true,
-        message: 'École créée avec succès.',
-        data: ecole
-      }
-
-    } catch (error) {
-      await trx.rollback()
-      throw error
-    }
-  }
-
-  /**
-   * ============================================================================
-   * Rechercher une école par ID
-   * ============================================================================
-   */
-  async findById(id: number) {
-
-    const ecole = await Ecole.find(id)
-
-    if (!ecole) {
-      throw new Error("Cette école n'existe pas.")
-    }
-    return ecole
-
-  }
-
-    /**
-   * ============================================================================
-   * Modifier une école
-   * ============================================================================
-   */
-  async update(id: number, payload: any) {
-
-    const trx = await db.transaction()
-
-    try {
-
-      const ecole = await Ecole.query({ client: trx }).where('id', id).first()
-
-      if (!ecole) {
-        throw new Error("Cette école n'existe pas.")
-      }
-
-
-      if (payload.code && payload.code !== ecole.code) {
-        await this.validateUniqueCode(payload.code)
-      }
-
-
-      if (payload.email && payload.email !== ecole.email) {
-        await this.validateUniqueEmail(payload.email)
-      }
-
-
-      if (payload.telephone && payload.telephone !== ecole.telephone) {
-        await this.validateUniqueTelephone(payload.telephone)
-      }
-
-
-      ecole.merge({
-        nom: payload.nom ?? ecole.nom,
-        code: payload.code ?? ecole.code,
-        adresse: payload.adresse ?? ecole.adresse,
-        telephone: payload.telephone ?? ecole.telephone,
-        email: payload.email ?? ecole.email,
-      })
-
+      const code = payload.code?.trim() || await this.generateCode()
+      await this.assertUniqueSchool({ ...payload, code })
+      const ecole = new Ecole()
+      ecole.useTransaction(trx)
+      ecole.merge({ nom: payload.nom, code, description: payload.description ?? null, email: payload.email ?? null, telephone: payload.telephone ?? null, adresse: payload.adresse ?? null, ville: payload.ville ?? null, pays: payload.pays ?? 'République démocratique du Congo', province: payload.province ?? null, commune: payload.commune ?? null, quartier: payload.quartier ?? null, siteWeb: payload.siteWeb ?? null, type: payload.type ?? null, anneeCreation: payload.anneeCreation ?? null, logo: payload.logo ?? null, statut: payload.statut ?? 'ACTIF' })
       await ecole.save()
-      await trx.commit()
-
-
-      return {
-        success: true,
-        message: "École modifiée avec succès.",
-        data: ecole
-
+      let administrator: any = null
+      if (payload.admin) {
+        const admin = payload.admin
+        const email = admin.email.trim().toLowerCase()
+        if (await User.query({ client: trx }).where('email', email).first()) throw new Error('L’adresse email de l’administrateur existe déjà.')
+        if (admin.telephone && await User.query({ client: trx }).where('telephone', admin.telephone).first()) throw new Error('Le téléphone de l’administrateur existe déjà.')
+        const user = new User()
+        user.useTransaction(trx)
+        user.merge({ nom: admin.nom, prenom: admin.prenom, postnom: admin.postnom ?? null, pseudo: admin.pseudo ?? null, email, telephone: admin.telephone ?? null, sexe: admin.sexe ?? null, password: await hash.make(admin.password), statut: 'ACTIF', systemRole: SystemRole.USER, isVerified: false, token_verification: crypto.randomUUID(), tokenVerificationExpiresAt: DateTime.now().plus({ hours: 24 }) })
+        await user.save()
+        const membership = new EcoleUser()
+        membership.useTransaction(trx)
+        membership.merge({ userId: user.id, ecoleId: ecole.id, role: 'ADMIN_ECOLE', statut: 'ACTIF' })
+        await membership.save()
+        const context = new UserContext()
+        context.useTransaction(trx)
+        context.merge({ userId: user.id, ecoleId: ecole.id, role: 'ADMIN_ECOLE', active: true })
+        await context.save()
+        administrator = user
       }
-
-
+      await trx.commit()
+      if (administrator) await this.verifyEmailMail.send(administrator, administrator.token_verification!)
+      return { success: true, message: 'École créée avec succès.', data: await this.formatSchool(ecole) }
     } catch (error) {
       await trx.rollback()
       throw error
     }
-
   }
-
-
-  /**
-   * ============================================================================
-   * Suspendre une école
-   * ============================================================================
-   */
-  async suspend(id: number) {
-
+  async findById(id: number) {
+    const ecole = await Ecole.find(id)
+    if (!ecole) throw new Error("Cette école n'existe pas.")
+    return ecole
+  }
+  async update(id: number, payload: any) {
     const ecole = await this.findById(id)
-
-    if (ecole.statut === 'SUSPENDU') {
-      throw new Error("Cette école est déjà suspendue.")
-    }
-
-    ecole.statut = 'SUSPENDU'
-
+    if (payload.code && payload.code !== ecole.code) await this.validateUniqueCode(payload.code, id)
+    if (payload.email && payload.email !== ecole.email) await this.validateUniqueEmail(payload.email, id)
+    ecole.merge({ nom: payload.nom ?? ecole.nom, code: payload.code ?? ecole.code, description: payload.description ?? ecole.description, adresse: payload.adresse ?? ecole.adresse, telephone: payload.telephone ?? ecole.telephone, email: payload.email ?? ecole.email, ville: payload.ville ?? ecole.ville, pays: payload.pays ?? ecole.pays, province: payload.province ?? ecole.province, commune: payload.commune ?? ecole.commune, quartier: payload.quartier ?? ecole.quartier, siteWeb: payload.siteWeb ?? ecole.siteWeb, type: payload.type ?? ecole.type, anneeCreation: payload.anneeCreation ?? ecole.anneeCreation, logo: payload.logo ?? ecole.logo, statut: payload.statut ?? ecole.statut })
     await ecole.save()
-
-
-    return {
-      success: true,
-      message: "École suspendue avec succès.",
-      data: ecole
-
-    }
-
+    return { success: true, message: 'École modifiée avec succès.', data: await this.formatSchool(ecole) }
   }
-
-
-  /**
-   * ============================================================================
-   * Réactiver une école
-   * ============================================================================
-   */
-  async activate(id: number) {
-
-    const ecole = await this.findById(id)
-
-
-    if (ecole.statut === 'ACTIF') {
-      throw new Error("Cette école est déjà active.")
-    }
-
-
-    ecole.statut = 'ACTIF'
-
-    await ecole.save()
-
-
-    return {
-      success: true,
-      message: "École réactivée avec succès.",
-      data: ecole
-    }
-
-  }
-
-
-  /**
-   * ============================================================================
-   * Archiver une école
-   * ============================================================================
-   */
-  async archive(id: number) {
-
-    const ecole = await this.findById(id)
-    ecole.statut = 'ARCHIVE'
-
-    await ecole.save()
-
-    return {
-      success: true,
-      message: "École archivée avec succès.",
-      data: ecole
-    }
-
-  }
-
-
-  /**
-   * ============================================================================
-   * Suppression logique
-   * ============================================================================
-   *
-   * On ne supprime pas réellement l'école.
-   * On l'archive afin de conserver l'historique.
-   *
-   */
-  async delete(id: number) {
-
-    const ecole = await this.findById(id)
-    ecole.statut = 'ARCHIVE'
-    await ecole.save()
-
-
-    return {
-      success: true,
-      message: "École supprimée avec succès."
-    }
-
-  }
-
-    /**
-   * ============================================================================
-   * Liste des écoles avec pagination
-   * ============================================================================
-   */
-  async findAll(page: number = 1, limit: number = 10, filters: any = {}) {
-
-    const query = Ecole.query().orderBy('created_at', 'desc')
-
-    /**
-     * Recherche générale
-     */
-    if (filters.search) {
-
-      query.where((builder) => {
-        builder
-          .whereILike('nom', `%${filters.search}%`)
-          .orWhereILike('code', `%${filters.search}%`)
-          .orWhereILike('email', `%${filters.search}%`)
-      })
-
-    }
-
-    /**
-     * Filtrer par statut
-     */
-    if (filters.statut) {
-      query.where('statut', filters.statut)
-    }
-
-
-    /**
-     * Pagination
-     */
+  async suspend(id: number) { return this.setStatus(id, 'SUSPENDU', 'École suspendue avec succès.') }
+  async activate(id: number) { return this.setStatus(id, 'ACTIF', 'École réactivée avec succès.') }
+  async archive(id: number) { return this.setStatus(id, 'ARCHIVE', 'École archivée avec succès.') }
+  async delete(id: number) { return this.setStatus(id, 'ARCHIVE', 'École supprimée avec succès.') }
+  async findAll(page = 1, limit = 10, filters: any = {}) {
+    const query = Ecole.query()
+    if (filters.search) query.where(builder => builder.whereILike('nom', `%${filters.search}%`).orWhereILike('code', `%${filters.search}%`).orWhereILike('email', `%${filters.search}%`).orWhereILike('ville', `%${filters.search}%`).orWhereILike('province', `%${filters.search}%`))
+    if (filters.statut) query.where('statut', filters.statut)
+    const sortBy = ['nom', 'code', 'created_at'].includes(filters.sortBy) ? filters.sortBy : 'created_at'
+    query.orderBy(sortBy, filters.order === 'asc' ? 'asc' : 'desc')
     const result = await query.paginate(page, limit)
-
-    return {
-      success: true,
-      data: result
-    }
-
+    const data = await Promise.all(result.all().map(ecole => this.formatSchool(ecole)))
+    return { success: true, data: { meta: result.getMeta(), data } }
   }
-
-
-
-  /**
-   * ============================================================================
-   * Recherche avancée d'une école
-   * ============================================================================
-   */
-  async search(keyword: string) {
-
-    const ecoles = await Ecole.query().where((builder) => {
-        builder
-          .whereILike('nom', `%${keyword}%`)
-          .orWhereILike('code', `%${keyword}%`)
-          .orWhereILike('email', `%${keyword}%`)
-      })
-      .orderBy('nom', 'asc')
-
-    return {
-      success: true,
-      data: ecoles
-    }
-
-  }
-
-  /**
-   * ============================================================================
-   * Obtenir les détails complets d'une école
-   * ============================================================================
-   */
+  async search(keyword = '') { const rows = await Ecole.query().where(builder => builder.whereILike('nom', `%${keyword}%`).orWhereILike('code', `%${keyword}%`).orWhereILike('email', `%${keyword}%`)).orderBy('nom', 'asc'); return { success: true, data: await Promise.all(rows.map(row => this.formatSchool(row))) } }
   async details(id: number) {
-
-    const ecole = await Ecole.query().where('id', id).preload('utilisateurs', (query) => {
-        query
-          .pivotColumns([
-            'role',
-            'statut'
-          ])
-      })
-      .preload('eleves')
-      .preload('classes')
-      .preload('niveaux')
-      .preload('matieres')
-      .first()
-
-
-    if (!ecole) {
-      throw new Error("Cette école n'existe pas.")
-    }
-
-    return {
-      success: true,
-      data: ecole
-    }
-
+    const ecole = await Ecole.query().where('id', id).preload('utilisateurs', query => query.pivotColumns(['role', 'statut'])).preload('eleves').preload('classes').preload('niveaux').preload('matieres').first()
+    if (!ecole) throw new Error("Cette école n'existe pas.")
+    return { success: true, data: await this.formatSchool(ecole, true) }
   }
-
-
-
-  /**
-   * ============================================================================
-   * Compter les écoles selon leur statut
-   * ============================================================================
-   */
   async countByStatus() {
-    const total = await Ecole.query().count('* as total')
-    const actives = await Ecole.query().where('statut', 'ACTIF').count('* as total')
-    const suspendues = await Ecole.query().where('statut', 'SUSPENDU').count('* as total')
-    const archivees = await Ecole.query().where('statut', 'ARCHIVE').count('* as total')
-
-
-    return {
-      total: Number(total[0].$extras.total),
-      actives: Number(actives[0].$extras.total),
-      suspendues: Number(suspendues[0].$extras.total),
-      archivees: Number(archivees[0].$extras.total)
-    }
+    const count = async (statut?: string) => Number((statut ? await Ecole.query().where('statut', statut).count('* as total') : await Ecole.query().count('* as total'))[0].$extras.total)
+    return { total: await count(), actives: await count('ACTIF'), suspendues: await count('SUSPENDU'), archivees: await count('ARCHIVE') }
   }
-
-    /**
-   * ============================================================================
-   * Vérifier si une école peut être supprimée
-   * ============================================================================
-   */
   async canDelete(id: number) {
     const ecole = await this.findById(id)
-    const utilisateurs = await ecole.related('utilisateurs').query().count('* as total')
-    const eleves = await ecole.related('eleves').query().count('* as total')
-    const classes = await ecole.related('classes').query().count('* as total')
-
-    return {
-
-      canDelete:
-        Number(utilisateurs[0].$extras.total) === 0 &&
-        Number(eleves[0].$extras.total) === 0 &&
-        Number(classes[0].$extras.total) === 0,
-
-      informations: {
-        utilisateurs:Number(utilisateurs[0].$extras.total),
-        eleves:Number(eleves[0].$extras.total),
-        classes:Number(classes[0].$extras.total)
-      }
-    }
+    const [utilisateurs, eleves, classes] = await Promise.all([ecole.related('utilisateurs').query().count('* as total'), ecole.related('eleves').query().count('* as total'), ecole.related('classes').query().count('* as total')])
+    const counts = { utilisateurs: Number(utilisateurs[0].$extras.total), eleves: Number(eleves[0].$extras.total), classes: Number(classes[0].$extras.total) }
+    return { canDelete: counts.utilisateurs === 0 && counts.eleves === 0 && counts.classes === 0, informations: counts }
   }
-
-  /**
-   * ============================================================================
-   * Récupérer les administrateurs d'une école
-   * ============================================================================
-   */
-  async getAdministrateurs(id: number) {
-
-    const ecole = await this.findById(id)
-    const administrateurs = await ecole.related('utilisateurs').query().wherePivot('role', 'ADMIN_ECOLE').wherePivot('statut', 'ACTIF')
-    return {
-      success: true,
-      data: administrateurs
-    }
-
-  }
-
-
-
-  /**
-   * ============================================================================
-   * Statistiques complètes d'une école
-   * ============================================================================
-   */
   async statistics(id: number) {
-
     const ecole = await this.findById(id)
-    const utilisateurs = await ecole.related('utilisateurs').query().count('* as total')
-    const enseignants = await ecole.related('utilisateurs').query().wherePivot('role', 'ENSEIGNANT').count('* as total')
-    const parents = await ecole.related('utilisateurs').query().wherePivot('role', 'PARENT').count('* as total')
-    const eleves = await ecole.related('eleves').query().count('* as total')
-    const classes = await ecole.related('classes').query().count('* as total')
-    const matieres = await ecole.related('matieres').query().count('* as total')
-
-    return {
-
-      ecole: {
-        id: ecole.id,
-        nom: ecole.nom,
-        statut: ecole.statut
-      },
-
-
-      statistiques: {
-
-        utilisateurs:Number(utilisateurs[0].$extras.total),
-        enseignants:Number(enseignants[0].$extras.total),
-        parents:Number(parents[0].$extras.total),
-        eleves:Number(eleves[0].$extras.total),
-        classes:Number(classes[0].$extras.total),
-        matieres:Number(matieres[0].$extras.total)
-
-      }
-
+    const [eleves, classes, utilisateurs, niveaux, matieres] = await Promise.all([ecole.related('eleves').query().count('* as total'), ecole.related('classes').query().count('* as total'), ecole.related('utilisateurs').query().count('* as total'), ecole.related('niveaux').query().count('* as total'), ecole.related('matieres').query().count('* as total')])
+    return { success: true, data: { ecole: await this.formatSchool(ecole), eleves: Number(eleves[0].$extras.total), classes: Number(classes[0].$extras.total), utilisateurs: Number(utilisateurs[0].$extras.total), niveaux: Number(niveaux[0].$extras.total), matieres: Number(matieres[0].$extras.total) } }
+  }
+  async exists(id: number) { return !!(await Ecole.find(id)) }
+  private async setStatus(id: number, statut: string, message: string) { const ecole = await this.findById(id); ecole.statut = statut; await ecole.save(); return { success: true, message, data: await this.formatSchool(ecole) } }
+  private async generateCode() {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const code = `SCH-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 90 + 10)}`
+      if (!(await Ecole.query().where('code', code).first())) return code
     }
-
+    throw new Error('Impossible de générer un code école unique.')
   }
-
-
-
-  /**
-   * ============================================================================
-   * Vérifier existence école
-   * ============================================================================
-   */
-  async exists(id: number) {
-
-    const ecole = await Ecole.query().where('id', id).first()
-    return !!ecole
-
+  private async assertUniqueSchool(payload: any) { await this.validateUniqueCode(payload.code); if (payload.email) await this.validateUniqueEmail(payload.email); if (payload.telephone) await this.validateUniqueTelephone(payload.telephone) }
+  private async validateUniqueCode(code: string, exceptId?: number) { const query = Ecole.query().where('code', code); if (exceptId) query.whereNot('id', exceptId); if (await query.first()) throw new Error('Ce code école existe déjà.') }
+  private async validateUniqueEmail(email: string, exceptId?: number) { const query = Ecole.query().where('email', email); if (exceptId) query.whereNot('id', exceptId); if (await query.first()) throw new Error('Cette adresse email existe déjà pour une école.') }
+  private async validateUniqueTelephone(telephone: string) { if (await Ecole.query().where('telephone', telephone).first()) throw new Error('Ce numéro de téléphone existe déjà pour une école.') }
+  private async formatSchool(ecole: Ecole, details = false) {
+    const [eleves, admins] = await Promise.all([ecole.related('eleves').query().count('* as total'), ecole.related('utilisateurs').query().wherePivot('role', 'ADMIN_ECOLE').wherePivot('statut', 'ACTIF').count('* as total')])
+    const item: any = { id: ecole.id, nom: ecole.nom, code: ecole.code, description: ecole.description, email: ecole.email, telephone: ecole.telephone, adresse: ecole.adresse, ville: ecole.ville, pays: ecole.pays, province: ecole.province, commune: ecole.commune, quartier: ecole.quartier, siteWeb: ecole.siteWeb, type: ecole.type, anneeCreation: ecole.anneeCreation, logo: ecole.logo, statut: ecole.statut, createdAt: ecole.createdAt, updatedAt: ecole.updatedAt, nombreEleves: Number(eleves[0].$extras.total), nombreAdministrateurs: Number(admins[0].$extras.total) }
+    if (details) { item.utilisateurs = ecole.utilisateurs; item.eleves = ecole.eleves; item.classes = ecole.classes; item.niveaux = ecole.niveaux; item.matieres = ecole.matieres }
+    return item
   }
-
-  /**
-   * ============================================================================
-   * Vérification avant modification
-   * ============================================================================
-   */
-  private validateStatus(status: string) {
-
-    const statuses = [
-      'ACTIF',
-      'SUSPENDU',
-      'ARCHIVE'
-    ]
-
-
-    if (!statuses.includes(status)) {
-      throw new Error(
-        "Statut d'école invalide."
-      )
-
-    }
-
-  }
-
-  /**
-   * ============================================================================
-   * Validation Code unique
-   * ============================================================================
-   */
-  private async validateUniqueCode(code: string) {
-    const exists = await Ecole.findBy('code', code)
-    if (exists) {
-      throw new Error("Ce code d'école existe déjà.")
-    }
-
-  }
-
-  /**
-   * ============================================================================
-   * Validation Email unique
-   * ============================================================================
-   */
-  private async validateUniqueEmail(email: string) {
-
-    const exists = await Ecole.findBy('email', email)
-
-    if (exists) {
-      throw new Error("Cette adresse email est déjà utilisée.")
-    }
-  }
-
-
-  /**
-   * ============================================================================
-   * Validation Téléphone unique
-   * ============================================================================
-   */
-  private async validateUniqueTelephone(telephone: string) {
-
-    const exists = await Ecole.findBy('telephone', telephone)
-
-    if (exists) {
-      throw new Error("Ce numéro de téléphone est déjà utilisé.")
-    }
-
-  }
-
 }

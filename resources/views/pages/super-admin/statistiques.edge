@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Statistiques | Smart School</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE',
+                        darkBlue: '#0F172A'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                         BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .overlay-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<!-- ========================================================= -->
+<!-- MOBILE OVERLAY -->
+<!-- ========================================================= -->
+
+<div
+    id="sidebarOverlay"
+    class="fixed inset-0 bg-slate-900/50 z-40 hidden opacity-0 overlay-transition lg:hidden"
+></div>
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<aside
+    id="sidebar"
+    class="fixed top-0 left-0 z-50 h-screen w-72 bg-white border-r border-slate-200
+           sidebar-transition -translate-x-full lg:translate-x-0"
+>
+
+    <!-- Logo -->
+    <div class="h-20 flex items-center px-6 border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-11 h-11 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-sm"
+            >
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+                <h1 class="text-lg font-bold text-slate-800">
+                    Smart School
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Administration
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Close mobile -->
+        <button
+            id="closeSidebar"
+            class="ml-auto lg:hidden text-slate-400 hover:text-slate-700"
+        >
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+
+    </div>
+
+    <!-- Navigation -->
+    <nav class="px-4 py-6 space-y-2">
+
+        <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Administration
+        </p>
+
+        <!-- Dashboard -->
+        <a
+            href="/super-admin/dashboard"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600
+                   hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- Ecoles -->
+        <a
+            href="/super-admin/ecoles"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600
+                   hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-school w-5"></i>
+            <span>Écoles</span>
+        </a>
+
+        <!-- Utilisateurs -->
+        <a
+            href="/super-admin/utilisateurs"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600
+                   hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-users w-5"></i>
+            <span>Utilisateurs</span>
+        </a>
+
+        <!-- Statistiques ACTIVE -->
+        <a
+            href="/super-admin/statistiques"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   bg-sky-50 text-sky-600 font-semibold"
+        >
+            <i class="fa-solid fa-chart-line w-5"></i>
+            <span>Statistiques</span>
+        </a>
+
+        <!-- Rapports -->
+        <a
+            href="/super-admin/rapports"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600
+                   hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-file-lines w-5"></i>
+            <span>Rapports</span>
+        </a>
+
+    </nav>
+
+    <!-- Bottom -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100">
+
+        <button
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-500 hover:bg-slate-50 transition"
+        >
+            <i class="fa-solid fa-gear w-5"></i>
+            <span>Paramètres</span>
+        </button>
+
+        <button
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-red-500 hover:bg-red-50 transition"
+        >
+            <i class="fa-solid fa-right-from-bracket w-5"></i>
+            <span>Déconnexion</span>
+        </button>
+
+    </div>
+
+</aside>
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+
+<div class="lg:ml-72 min-h-screen">
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <header
+        class="h-20 bg-white border-b border-slate-200 sticky top-0 z-30"
+    >
+
+        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <!-- Left -->
+            <div class="flex items-center gap-4">
+
+                <!-- Mobile menu -->
+                <button
+                    id="openSidebar"
+                    class="lg:hidden w-10 h-10 rounded-lg hover:bg-slate-100
+                           flex items-center justify-center text-slate-600"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">
+                        Statistiques
+                    </h2>
+
+                    <p class="text-xs sm:text-sm text-slate-400 hidden sm:block">
+                        Analyse globale de la plateforme
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Right -->
+            <div class="flex items-center gap-3">
+
+                <!-- Notifications -->
+                <button
+                    class="relative w-10 h-10 rounded-xl hover:bg-slate-100
+                           flex items-center justify-center text-slate-500"
+                >
+                    <i class="fa-regular fa-bell text-lg"></i>
+
+                    <span
+                        class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
+                    ></span>
+                </button>
+
+                <!-- Profile -->
+                <div class="hidden sm:flex items-center gap-3 pl-3 border-l border-slate-200">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-sky-100 text-sky-600
+                               flex items-center justify-center font-bold"
+                    >
+                        BM
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p class="text-sm font-semibold text-slate-700">
+                            Super Admin
+                        </p>
+
+                        <p class="text-xs text-slate-400">
+                            Administrateur système
+                        </p>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ===================================================== -->
+    <!-- CONTENT -->
+    <!-- ===================================================== -->
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <!-- Page introduction -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+
+            <div>
+
+                <h1 class="text-2xl font-bold text-slate-800">
+                    Vue d'ensemble
+                </h1>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Analysez les performances et l'activité globale de Smart School.
+                </p>
+
+            </div>
+
+            <!-- Filters -->
+
+            <div class="flex flex-col sm:flex-row gap-3">
+
+                <select
+                    id="periodFilter"
+                    class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl
+                           text-sm text-slate-600 outline-none focus:ring-2
+                           focus:ring-sky-200 focus:border-sky-400"
+                >
+                    <option value="12">12 derniers mois</option>
+                    <option value="6">6 derniers mois</option>
+                    <option value="3">3 derniers mois</option>
+                    <option value="1">Ce mois</option>
+                </select>
+
+                <button
+                    onclick="exportStatistics()"
+                    class="inline-flex items-center justify-center gap-2
+                           px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600
+                           text-white text-sm font-semibold transition shadow-sm"
+                >
+                    <i class="fa-solid fa-download"></i>
+                    Exporter
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- ================================================= -->
+        <!-- KPI CARDS -->
+        <!-- ================================================= -->
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+            <!-- Schools -->
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Écoles inscrites
+                        </p>
+
+                        <h3
+                            id="schoolsCount"
+                            class="mt-2 text-3xl font-bold text-slate-800"
+                        >
+                            128
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-sky-50 text-sky-500
+                               flex items-center justify-center"
+                    >
+                        <i class="fa-solid fa-school text-xl"></i>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 flex items-center gap-2 text-xs">
+
+                    <span class="text-emerald-500 font-semibold">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        12.5%
+                    </span>
+
+                    <span class="text-slate-400">
+                        vs mois dernier
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Students -->
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Élèves
+                        </p>
+
+                        <h3
+                            class="mt-2 text-3xl font-bold text-slate-800"
+                        >
+                            18,642
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500
+                               flex items-center justify-center"
+                    >
+                        <i class="fa-solid fa-user-graduate text-xl"></i>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 flex items-center gap-2 text-xs">
+
+                    <span class="text-emerald-500 font-semibold">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        8.4%
+                    </span>
+
+                    <span class="text-slate-400">
+                        vs mois dernier
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Teachers -->
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Enseignants
+                        </p>
+
+                        <h3
+                            class="mt-2 text-3xl font-bold text-slate-800"
+                        >
+                            1,284
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-violet-50 text-violet-500
+                               flex items-center justify-center"
+                    >
+                        <i class="fa-solid fa-chalkboard-user text-xl"></i>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 flex items-center gap-2 text-xs">
+
+                    <span class="text-emerald-500 font-semibold">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        5.7%
+                    </span>
+
+                    <span class="text-slate-400">
+                        vs mois dernier
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Parents -->
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Parents
+                        </p>
+
+                        <h3
+                            class="mt-2 text-3xl font-bold text-slate-800"
+                        >
+                            9,847
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500
+                               flex items-center justify-center"
+                    >
+                        <i class="fa-solid fa-users text-xl"></i>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 flex items-center gap-2 text-xs">
+
+                    <span class="text-emerald-500 font-semibold">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        6.2%
+                    </span>
+
+                    <span class="text-slate-400">
+                        vs mois dernier
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- MAIN CHARTS -->
+        <!-- ================================================= -->
+
+        <section class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+
+            <!-- Student evolution -->
+
+            <div
+                class="xl:col-span-2 bg-white rounded-2xl border border-slate-200
+                       p-5 sm:p-6 shadow-sm"
+            >
+
+                <div class="flex flex-col sm:flex-row sm:items-center
+                            sm:justify-between gap-3 mb-6">
+
+                    <div>
+
+                        <h3 class="font-bold text-slate-800">
+                            Évolution des inscriptions
+                        </h3>
+
+                        <p class="text-sm text-slate-400 mt-1">
+                            Évolution des élèves inscrits au cours des derniers mois
+                        </p>
+
+                    </div>
+
+                    <div class="flex items-center gap-4 text-xs">
+
+                        <span class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                            Élèves
+                        </span>
+
+                        <span class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+                            Enseignants
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="relative h-72">
+                    <canvas id="registrationChart"></canvas>
+                </div>
+
+            </div>
+
+            <!-- School distribution -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200
+                       p-5 sm:p-6 shadow-sm"
+            >
+
+                <div class="mb-6">
+
+                    <h3 class="font-bold text-slate-800">
+                        État des écoles
+                    </h3>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        Répartition actuelle
+                    </p>
+
+                </div>
+
+                <div class="relative h-52">
+                    <canvas id="schoolStatusChart"></canvas>
+                </div>
+
+                <div class="mt-6 space-y-3">
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="w-3 h-3 rounded-full bg-sky-500"></span>
+
+                            <span class="text-sm text-slate-600">
+                                Actives
+                            </span>
+
+                        </div>
+
+                        <span class="font-semibold text-slate-700">
+                            112
+                        </span>
+
+                    </div>
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+
+                            <span class="text-sm text-slate-600">
+                                En attente
+                            </span>
+
+                        </div>
+
+                        <span class="font-semibold text-slate-700">
+                            9
+                        </span>
+
+                    </div>
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="w-3 h-3 rounded-full bg-red-400"></span>
+
+                            <span class="text-sm text-slate-600">
+                                Suspendues
+                            </span>
+
+                        </div>
+
+                        <span class="font-semibold text-slate-700">
+                            7
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- SECOND ROW -->
+        <!-- ================================================= -->
+
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+
+            <!-- User distribution -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200
+                       p-5 sm:p-6 shadow-sm"
+            >
+
+                <div class="mb-6">
+
+                    <h3 class="font-bold text-slate-800">
+                        Répartition des utilisateurs
+                    </h3>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        Utilisateurs enregistrés par rôle
+                    </p>
+
+                </div>
+
+                <div class="relative h-72">
+                    <canvas id="usersChart"></canvas>
+                </div>
+
+            </div>
+
+            <!-- Performance -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200
+                       p-5 sm:p-6 shadow-sm"
+            >
+
+                <div class="mb-6">
+
+                    <h3 class="font-bold text-slate-800">
+                        Indicateurs pédagogiques
+                    </h3>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        Quelques indicateurs clés de la plateforme
+                    </p>
+
+                </div>
+
+                <div class="space-y-6">
+
+                    <!-- Attendance -->
+
+                    <div>
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <span class="text-sm font-medium text-slate-600">
+                                Taux moyen de présence
+                            </span>
+
+                            <span class="text-sm font-bold text-slate-800">
+                                87%
+                            </span>
+
+                        </div>
+
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+
+                            <div
+                                class="h-full bg-sky-500 rounded-full"
+                                style="width: 87%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Success -->
+
+                    <div>
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <span class="text-sm font-medium text-slate-600">
+                                Taux moyen de réussite
+                            </span>
+
+                            <span class="text-sm font-bold text-slate-800">
+                                78%
+                            </span>
+
+                        </div>
+
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+
+                            <div
+                                class="h-full bg-indigo-500 rounded-full"
+                                style="width: 78%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Active accounts -->
+
+                    <div>
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <span class="text-sm font-medium text-slate-600">
+                                Comptes actifs
+                            </span>
+
+                            <span class="text-sm font-bold text-slate-800">
+                                94%
+                            </span>
+
+                        </div>
+
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+
+                            <div
+                                class="h-full bg-emerald-500 rounded-full"
+                                style="width: 94%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Platform activity -->
+
+                    <div>
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <span class="text-sm font-medium text-slate-600">
+                                Activité de la plateforme
+                            </span>
+
+                            <span class="text-sm font-bold text-slate-800">
+                                82%
+                            </span>
+
+                        </div>
+
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+
+                            <div
+                                class="h-full bg-violet-500 rounded-full"
+                                style="width: 82%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- RECENT ACTIVITY -->
+        <!-- ================================================= -->
+
+        <section
+            class="bg-white rounded-2xl border border-slate-200
+                   shadow-sm overflow-hidden"
+        >
+
+            <div
+                class="p-5 sm:p-6 border-b border-slate-100
+                       flex flex-col sm:flex-row sm:items-center
+                       sm:justify-between gap-3"
+            >
+
+                <div>
+
+                    <h3 class="font-bold text-slate-800">
+                        Activité récente
+                    </h3>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        Dernières activités enregistrées sur la plateforme
+                    </p>
+
+                </div>
+
+                <button
+                    class="text-sm text-sky-500 hover:text-sky-600 font-semibold"
+                >
+                    Voir tout
+                    <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+
+            </div>
+
+            <!-- Activity list -->
+
+            <div class="divide-y divide-slate-100">
+
+                <!-- Activity -->
+
+                <div class="p-5 flex items-center gap-4">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-sky-50
+                               text-sky-500 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-sm font-medium text-slate-700">
+                            Nouvelle école enregistrée
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            École Saint-Augustin
+                        </p>
+
+                    </div>
+
+                    <span class="text-xs text-slate-400">
+                        Il y a 15 min
+                    </span>
+
+                </div>
+
+                <!-- Activity -->
+
+                <div class="p-5 flex items-center gap-4">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-indigo-50
+                               text-indigo-500 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-sm font-medium text-slate-700">
+                            25 nouveaux élèves inscrits
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Complexe Scolaire La Référence
+                        </p>
+
+                    </div>
+
+                    <span class="text-xs text-slate-400">
+                        Il y a 42 min
+                    </span>
+
+                </div>
+
+                <!-- Activity -->
+
+                <div class="p-5 flex items-center gap-4">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-emerald-50
+                               text-emerald-500 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-sm font-medium text-slate-700">
+                            Administrateur ajouté
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Groupe Scolaire Horizon
+                        </p>
+
+                    </div>
+
+                    <span class="text-xs text-slate-400">
+                        Il y a 1 h
+                    </span>
+
+                </div>
+
+                <!-- Activity -->
+
+                <div class="p-5 flex items-center gap-4">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-amber-50
+                               text-amber-500 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-sm font-medium text-slate-700">
+                            Rapport mensuel généré
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Rapport de juillet 2026
+                        </p>
+
+                    </div>
+
+                    <span class="text-xs text-slate-400">
+                        Il y a 2 h
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+
+        <footer class="mt-8 text-center">
+
+            <p class="text-xs text-slate-400">
+                © 2026 Smart School. Tous droits réservés.
+            </p>
+
+        </footer>
+
+    </main>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+    /* =========================================================
+       SIDEBAR MOBILE
+    ========================================================= */
+
+    const sidebar = document.getElementById("sidebar");
+    const sidebarOverlay = document.getElementById("sidebarOverlay");
+    const openSidebar = document.getElementById("openSidebar");
+    const closeSidebar = document.getElementById("closeSidebar");
+
+    function showSidebar() {
+
+        sidebar.classList.remove("-translate-x-full");
+
+        sidebarOverlay.classList.remove("hidden");
+
+        setTimeout(() => {
+            sidebarOverlay.classList.remove("opacity-0");
+        }, 10);
+    }
+
+    function hideSidebar() {
+
+        sidebar.classList.add("-translate-x-full");
+
+        sidebarOverlay.classList.add("opacity-0");
+
+        setTimeout(() => {
+            sidebarOverlay.classList.add("hidden");
+        }, 300);
+    }
+
+    openSidebar?.addEventListener("click", showSidebar);
+
+    closeSidebar?.addEventListener("click", hideSidebar);
+
+    sidebarOverlay?.addEventListener("click", hideSidebar);
+
+    /* =========================================================
+       CHART DEFAULT CONFIGURATION
+    ========================================================= */
+
+    Chart.defaults.font.family =
+        'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+    Chart.defaults.color = "#64748B";
+
+    /* =========================================================
+       REGISTRATION CHART
+    ========================================================= */
+
+    const registrationCtx =
+        document.getElementById("registrationChart");
+
+    const registrationChart =
+        new Chart(registrationCtx, {
+
+            type: "line",
+
+            data: {
+
+                labels: [
+                    "Jan",
+                    "Fév",
+                    "Mar",
+                    "Avr",
+                    "Mai",
+                    "Juin",
+                    "Juil",
+                    "Août"
+                ],
+
+                datasets: [
+
+                    {
+                        label: "Élèves",
+
+                        data: [
+                            11200,
+                            12400,
+                            13100,
+                            13900,
+                            14800,
+                            15700,
+                            17200,
+                            18642
+                        ],
+
+                        borderColor: "#38BDF8",
+
+                        backgroundColor: "rgba(56,189,248,0.10)",
+
+                        borderWidth: 3,
+
+                        fill: true,
+
+                        tension: 0.4,
+
+                        pointRadius: 3,
+
+                        pointHoverRadius: 6
+                    },
+
+                    {
+                        label: "Enseignants",
+
+                        data: [
+                            850,
+                            890,
+                            925,
+                            970,
+                            1040,
+                            1110,
+                            1190,
+                            1284
+                        ],
+
+                        borderColor: "#818CF8",
+
+                        backgroundColor: "rgba(129,140,248,0.05)",
+
+                        borderWidth: 2,
+
+                        fill: false,
+
+                        tension: 0.4,
+
+                        pointRadius: 3,
+
+                        pointHoverRadius: 6
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                interaction: {
+                    intersect: false,
+                    mode: "index"
+                },
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+                        backgroundColor: "#0F172A",
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+                        beginAtZero: false,
+
+                        grid: {
+                            color: "#F1F5F9"
+                        },
+
+                        border: {
+                            display: false
+                        }
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        },
+
+                        border: {
+                            display: false
+                        }
+                    }
+
+                }
+
+            }
+
+        });
+
+    /* =========================================================
+       SCHOOL STATUS CHART
+    ========================================================= */
+
+    const schoolStatusCtx =
+        document.getElementById("schoolStatusChart");
+
+    new Chart(schoolStatusCtx, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+                "Actives",
+                "En attente",
+                "Suspendues"
+            ],
+
+            datasets: [
+
+                {
+                    data: [
+                        112,
+                        9,
+                        7
+                    ],
+
+                    backgroundColor: [
+                        "#38BDF8",
+                        "#FBBF24",
+                        "#F87171"
+                    ],
+
+                    borderWidth: 0,
+
+                    hoverOffset: 5
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "72%",
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    });
+
+    /* =========================================================
+       USERS CHART
+    ========================================================= */
+
+    const usersCtx =
+        document.getElementById("usersChart");
+
+    new Chart(usersCtx, {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Élèves",
+                "Enseignants",
+                "Parents",
+                "Admins"
+            ],
+
+            datasets: [
+
+                {
+                    label: "Utilisateurs",
+
+                    data: [
+                        18642,
+                        1284,
+                        9847,
+                        128
+                    ],
+
+                    backgroundColor: [
+                        "#38BDF8",
+                        "#818CF8",
+                        "#FBBF24",
+                        "#34D399"
+                    ],
+
+                    borderRadius: 8,
+
+                    borderSkipped: false
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "#F1F5F9"
+                    },
+
+                    border: {
+                        display: false
+                    }
+
+                },
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    border: {
+                        display: false
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+    /* =========================================================
+       PERIOD FILTER
+    ========================================================= */
+
+    document
+        .getElementById("periodFilter")
+        .addEventListener("change", function () {
+
+            const period = this.value;
+
+            /*
+             * Pour le moment les données sont statiques.
+             *
+             * Dans AdonisJS, cette valeur sera envoyée
+             * au backend afin de récupérer les statistiques
+             * correspondant à la période sélectionnée.
+             */
+
+            console.log(
+                "Période sélectionnée :",
+                period
+            );
+
+        });
+
+    /* =========================================================
+       EXPORT
+    ========================================================= */
+
+    function exportStatistics() {
+
+        alert(
+            "La fonctionnalité d'export sera connectée au backend AdonisJS."
+        );
+
+    }
+
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+<script>window.addEventListener("smart-school-statistics-loaded",event=>{const data=event.detail||{};const el=document.getElementById("schoolsCount");if(el&&data.totalSchools!==undefined)el.textContent=Number(data.totalSchools).toLocaleString("fr-FR")});</script>
+</body>
+</html>

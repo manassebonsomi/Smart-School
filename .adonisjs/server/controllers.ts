@@ -7,12 +7,11 @@ export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   ForgotPasswords: () => import('#controllers/forgot_passwords_controller'),
   GoogleAuths: () => import('#controllers/google_auths_controller'),
-  NewAccount: () => import('#controllers/new_account_controller'),
-  Session: () => import('#controllers/session_controller'),
   superAdmin: {
     Administrateurs: () => import('#controllers/super_admin/administrateurs_controller'),
     Dashboard: () => import('#controllers/super_admin/dashboard_controller'),
     Ecoles: () => import('#controllers/super_admin/ecoles_controller'),
+    Reports: () => import('#controllers/super_admin/reports_controller'),
     SuperAdmin: () => import('#controllers/super_admin/super_admin_controller'),
   },
 }

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Détails administrateur | Smart School</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform .3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<div id="overlay"
+     class="fixed inset-0 z-40 hidden bg-slate-900/50 lg:hidden"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200
+              -translate-x-full sidebar-transition lg:translate-x-0">
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+                <h1 class="text-lg font-bold">Smart School</h1>
+                <p class="text-xs text-slate-400">Administration</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <nav class="p-4 space-y-1">
+
+        <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Administration
+        </p>
+
+        <a href="/super-admin/dashboard"
+           class="nav-link">
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            Dashboard
+        </a>
+
+        <a href="/super-admin/ecoles"
+           class="nav-link">
+            <i class="fa-solid fa-school w-5"></i>
+            Écoles
+        </a>
+
+        <a href="/super-admin/utilisateurs"
+           class="nav-link active">
+            <i class="fa-solid fa-users w-5"></i>
+            Utilisateurs
+        </a>
+
+        <a href="/super-admin/statistiques"
+           class="nav-link">
+            <i class="fa-solid fa-chart-line w-5"></i>
+            Statistiques
+        </a>
+
+        <a href="/super-admin/rapports"
+           class="nav-link">
+            <i class="fa-solid fa-file-lines w-5"></i>
+            Rapports
+        </a>
+
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="lg:ml-72 min-h-screen">
+
+    <header class="h-20 sticky top-0 z-30 bg-white border-b border-slate-200">
+
+        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+
+                <button id="openSidebar"
+                        class="lg:hidden w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-sm">
+
+                    <a href="/super-admin/utilisateurs"
+                       class="text-slate-400 hover:text-sky-500">
+                        Utilisateurs
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <span class="font-semibold text-slate-700">
+                        Détails
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button class="relative w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-regular fa-bell text-slate-500"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+
+                <div class="hidden sm:flex w-10 h-10 rounded-full bg-sky-100 text-sky-600 items-center justify-center font-bold">
+                    SA
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <div class="max-w-6xl mx-auto">
+
+            <!-- PROFILE HERO -->
+
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+                <div class="h-32 bg-gradient-to-r from-sky-600 via-sky-500 to-cyan-400"></div>
+
+                <div class="px-5 sm:px-8 pb-7">
+
+                    <div class="-mt-12 flex flex-col md:flex-row
+                                md:items-end md:justify-between gap-5">
+
+                        <div class="flex items-end gap-4">
+
+                            <div
+                                class="w-24 h-24 rounded-2xl bg-white
+                                       border-4 border-white shadow-lg
+                                       flex items-center justify-center
+                                       bg-sky-50 text-sky-600 text-2xl font-bold"
+                            >
+                                JK
+                            </div>
+
+                            <div class="pb-1">
+
+                                <div class="flex flex-wrap items-center gap-3">
+
+                                    <h1 class="text-2xl font-bold">
+                                        Jean Kabasele
+                                    </h1>
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5
+                                               px-3 py-1 rounded-full
+                                               bg-emerald-50 text-emerald-600
+                                               text-xs font-semibold"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Actif
+                                    </span>
+
+                                </div>
+
+                                <p class="text-sm text-slate-400 mt-2">
+                                    ADM-000128 • School Administrator
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-2">
+
+                            <a
+                                href="/super-admin/utilisateurs/128/edit"
+                                class="px-4 py-2.5 rounded-xl bg-sky-500
+                                       hover:bg-sky-600 text-white
+                                       text-sm font-semibold"
+                            >
+                                <i class="fa-solid fa-pen mr-2"></i>
+                                Modifier
+                            </a>
+
+                            <button
+                                onclick="suspendUser()"
+                                class="px-4 py-2.5 rounded-xl
+                                       border border-amber-200
+                                       text-amber-600 hover:bg-amber-50
+                                       text-sm font-semibold"
+                            >
+                                <i class="fa-solid fa-ban mr-2"></i>
+                                Suspendre
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- QUICK STATS -->
+
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                    <p class="text-xs text-slate-400">
+                        École
+                    </p>
+
+                    <p class="text-base font-bold mt-2">
+                        La Réussite
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        Kinshasa
+                    </p>
+
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                    <p class="text-xs text-slate-400">
+                        Dernière connexion
+                    </p>
+
+                    <p class="text-base font-bold mt-2">
+                        Aujourd'hui
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        10:42
+                    </p>
+
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                    <p class="text-xs text-slate-400">
+                        Connexions
+                    </p>
+
+                    <p class="text-2xl font-bold mt-2">
+                        148
+                    </p>
+
+                    <p class="text-xs text-emerald-500 mt-1">
+                        Ce mois
+                    </p>
+
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+
+                    <p class="text-xs text-slate-400">
+                        Compte créé
+                    </p>
+
+                    <p class="text-base font-bold mt-2">
+                        12 Jan. 2026
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        Il y a 7 mois
+                    </p>
+
+                </div>
+
+            </section>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+
+                <!-- PERSONAL -->
+
+                <section class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100">
+
+                        <h2 class="font-bold">
+                            Informations personnelles
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Informations du compte utilisateur.
+                        </p>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2">
+
+                        <div class="p-6 border-b border-slate-100 sm:border-r">
+                            <p class="text-xs text-slate-400">Nom complet</p>
+                            <p class="text-sm font-semibold mt-1">
+                                Jean Kabasele
+                            </p>
+                        </div>
+
+                        <div class="p-6 border-b border-slate-100">
+                            <p class="text-xs text-slate-400">Fonction</p>
+                            <p class="text-sm font-semibold mt-1">
+                                Administrateur scolaire
+                            </p>
+                        </div>
+
+                        <div class="p-6 border-b border-slate-100 sm:border-r">
+                            <p class="text-xs text-slate-400">Email</p>
+                            <p class="text-sm font-semibold mt-1">
+                                admin@lareussite.cd
+                            </p>
+                        </div>
+
+                        <div class="p-6 border-b border-slate-100">
+                            <p class="text-xs text-slate-400">Téléphone</p>
+                            <p class="text-sm font-semibold mt-1">
+                                +243 81 000 00 00
+                            </p>
+                        </div>
+
+                        <div class="p-6 sm:border-r">
+                            <p class="text-xs text-slate-400">Rôle</p>
+                            <p class="text-sm font-semibold mt-1">
+                                SCHOOL_ADMIN
+                            </p>
+                        </div>
+
+                        <div class="p-6">
+                            <p class="text-xs text-slate-400">Statut</p>
+                            <p class="text-sm font-semibold text-emerald-600 mt-1">
+                                Actif
+                            </p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- SCHOOL -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100">
+
+                        <h2 class="font-bold">
+                            École rattachée
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Établissement géré par ce compte.
+                        </p>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="w-14 h-14 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                            <i class="fa-solid fa-school text-xl"></i>
+                        </div>
+
+                        <h3 class="font-bold mt-4">
+                            Complexe Scolaire La Réussite
+                        </h3>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            SCH-0001
+                        </p>
+
+                        <div class="mt-5 space-y-3">
+
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fa-solid fa-location-dot text-slate-400 w-4"></i>
+                                Kinshasa, Limete
+                            </div>
+
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fa-solid fa-user-graduate text-slate-400 w-4"></i>
+                                1,248 élèves
+                            </div>
+
+                            <div class="flex items-center gap-3 text-sm">
+                                <i class="fa-solid fa-chalkboard-user text-slate-400 w-4"></i>
+                                84 enseignants
+                            </div>
+
+                        </div>
+
+                        <a
+                            href="/super-admin/ecoles/1"
+                            class="block mt-6 text-center px-4 py-2.5
+                                   rounded-xl bg-sky-50 text-sky-600
+                                   hover:bg-sky-100 text-sm font-semibold"
+                        >
+                            Voir l'école
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- SECURITY -->
+
+            <section class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                <div class="p-6 border-b border-slate-100">
+
+                    <h2 class="font-bold">
+                        Sécurité du compte
+                    </h2>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        Informations relatives à la sécurité.
+                    </p>
+
+                </div>
+
+                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                    <div class="rounded-xl bg-emerald-50 p-4">
+
+                        <div class="flex items-center gap-3">
+
+                            <i class="fa-solid fa-shield-check text-emerald-500 text-lg"></i>
+
+                            <div>
+
+                                <p class="text-xs text-slate-500">
+                                    Authentification
+                                </p>
+
+                                <p class="text-sm font-bold text-emerald-700 mt-1">
+                                    Active
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="rounded-xl bg-sky-50 p-4">
+
+                        <div class="flex items-center gap-3">
+
+                            <i class="fa-solid fa-key text-sky-500 text-lg"></i>
+
+                            <div>
+
+                                <p class="text-xs text-slate-500">
+                                    Mot de passe
+                                </p>
+
+                                <p class="text-sm font-bold text-sky-700 mt-1">
+                                    Mis à jour récemment
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="rounded-xl bg-violet-50 p-4">
+
+                        <div class="flex items-center gap-3">
+
+                            <i class="fa-solid fa-mobile-screen-button text-violet-500 text-lg"></i>
+
+                            <div>
+
+                                <p class="text-xs text-slate-500">
+                                    Sessions actives
+                                </p>
+
+                                <p class="text-sm font-bold text-violet-700 mt-1">
+                                    2 appareils
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ACTIVITY -->
+
+            <section class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                <div class="p-6 border-b border-slate-100">
+
+                    <h2 class="font-bold">
+                        Activité récente
+                    </h2>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        Historique des dernières actions du compte.
+                    </p>
+
+                </div>
+
+                <div class="divide-y divide-slate-100">
+
+                    <div class="p-5 flex gap-4">
+
+                        <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-semibold">
+                                Connexion réussie
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                Aujourd'hui à 10:42 • Chrome / Windows
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-5 flex gap-4">
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-semibold">
+                                Bulletin publié
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                Hier à 16:20
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-5 flex gap-4">
+
+                        <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-500 flex items-center justify-center">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-semibold">
+                                Mot de passe modifié
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                06 Août 2026
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    document.getElementById("openSidebar")?.addEventListener("click", () => {
+        sidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+    });
+
+    overlay?.addEventListener("click", () => {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+    });
+
+    function suspendUser() {
+
+        if (
+            confirm(
+                "Voulez-vous vraiment suspendre cet administrateur ?"
+            )
+        ) {
+
+            alert(
+                "La suspension sera gérée par AdonisJS."
+            );
+        }
+    }
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+</body>
+</html>

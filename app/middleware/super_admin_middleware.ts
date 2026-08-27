@@ -1,23 +1,27 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import type { NextFn } from '@adonisjs/core/types/http'
+
 import { SystemRole } from '../enums/system_role.ts'
-import { NextFn } from '@adonisjs/core/types/http'
 
 export default class SuperAdminMiddleware {
+
   async handle(
     { auth, response }: HttpContext,
-    // next: () => Promise<void>
     next: NextFn
   ) {
-    const user = await auth.authenticate()
+
+    const user = await auth.authenticateUsing(['api'])
 
     if (user.systemRole !== SystemRole.SUPER_ADMIN) {
+
       return response.forbidden({
         success: false,
-        message: 'Accès réservé au super administrateur.',
+        message: 'Accès réservé au Super Administrateur.',
       })
+
     }
 
-    // await next()
     return next()
   }
+
 }

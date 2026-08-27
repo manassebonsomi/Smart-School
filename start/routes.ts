@@ -1,201 +1,575 @@
 import { middleware } from '#start/kernel'
-import { controllers } from '#generated/controllers'
+
 import router from '@adonisjs/core/services/router'
+
 import GoogleAuthController from '#controllers/google_auths_controller'
-const SuperAdminController = () => import('#controllers/super_admin/super_admin_controller')
-const EcoleController = () => import('#controllers/super_admin/ecoles_controller')
-const AdministrateurController = () => import('#controllers/super_admin/administrateurs_controller')
-const DashboardController = () => import('#controllers/super_admin/dashboard_controller')
-const AuthController = () => import('#controllers/auth_controller')
 
-router
-  .group(() => {
-    router.get('/', [controllers.Session, 'show'])
-    router.post('/login', [controllers.Session, 'login'])
-    router.get('login/s3', [controllers.Session, 'showStep3'])
-    router.post('login/e3', [controllers.Session, 'processStep3'])
+import ForgotPasswordsController from '#controllers/forgot_passwords_controller'
 
-    router.get('signup', [controllers.NewAccount, 'show'])
-    router.post('signup', [controllers.NewAccount, 'register'])
+import AuthController from '#controllers/auth_controller'
+
+import ReportsController from '#controllers/super_admin/reports_controller'
 
 
-    router.get('/google/redirect', [GoogleAuthController, 'redirect']).as('google.redirect')
-    router.get('/google/callback', [GoogleAuthController, 'callback'])
-  }).use(middleware.guest())
+const SuperAdminController = () =>
+  import('#controllers/super_admin/super_admin_controller')
 
-  router.group(() => {
-    router.get('/password/reset', [controllers.ForgotPasswords, 'showStep1']).as('password.reset.step1')
-    router.post('/password/reset', [controllers.ForgotPasswords, 'processStep1'])
-    router.get('/password/reset/verify', [controllers.ForgotPasswords, 'showStep2']).as('password.reset.step2')
-    router.post('/password/reset/verify', [controllers.ForgotPasswords, 'processStep2'])
-    router.get('/password/reset/new', [controllers.ForgotPasswords, 'showStep3']).as('password.reset.step3')
-    router.post('/password/reset/new', [controllers.ForgotPasswords, 'processStep3'])
-  }).use(middleware.guest())
 
-/* router
-  .group(() => {
-    router.get('/profile/edit', [controllers.Profile, 'edit']).as('profile.edit')
-    router.get('/profile/:id?', [controllers.Profile, 'show']).as('profile.show')
-    router.put('/profile/edit', [controllers.Profile, 'update']).as('profile.update')
-    router.post('/profile/privacy', [controllers.Profile, 'togglePrivacy']).as('profile.togglePrivacy')
-    router.post('/logout', [controllers.Session, 'logout'])
-  }).use(middleware.auth()) */
+const EcoleController = () =>
+  import('#controllers/super_admin/ecoles_controller')
+
+
+const AdministrateurController = () =>
+  import('#controllers/super_admin/administrateurs_controller')
+
+
+const DashboardController = () =>
+  import('#controllers/super_admin/dashboard_controller')
 
 
 /*
 |--------------------------------------------------------------------------
-| Routes publiques Authentification
+| Pages publiques
 |--------------------------------------------------------------------------
 */
 
+router.get('/', ({ view }) => {
+  return view.render('pages/auth/login/login')
+}).as('auth.login')
 
-router
-  .group(() => {
+
+router.get('/login', ({ response }) => {
+  return response.redirect('/')
+}).as('login')
 
 
-    /**
-     * Inscription
-     */
-    router.post('/register', [AuthController, 'register'])
+router.get('/google/redirect', [
+  GoogleAuthController,
+  'redirect',
+]).as('google.redirect')
 
-    /**
-     * Connexion
-     */
-    router.post('/login', [AuthController,'login'])
 
-    /**
-     * Vérification email
-     */
-    router.get('/verify-email/:token', [ AuthController, 'verifyEmail'])
+router.get('/google/callback', [
+  GoogleAuthController,
+  'callback',
+]).as('google.callback')
 
-    /**
-     * Demande récupération mot de passe
-     */
-    router.post('/forgot-password', [AuthController, 'forgotPassword'])
-    /**
-     * Réinitialisation mot de passe
-     */
-    router.post('/reset-password', [AuthController, 'resetPassword'])
 
+/*
+|--------------------------------------------------------------------------
+| Pages récupération mot de passe
+|--------------------------------------------------------------------------
+*/
+
+router.group(() => {
+
+  router.get('/password/reset', [
+    ForgotPasswordsController,
+    'showStep1',
+  ]).as('password.reset.step1')
+
+
+  router.post('/password/reset', [
+    ForgotPasswordsController,
+    'processStep1',
+  ]).as('password.reset.step1.submit')
+
+
+  router.get('/password/reset/verify', [
+    ForgotPasswordsController,
+    'showStep2',
+  ]).as('password.reset.step2')
+
+
+  router.post('/password/reset/verify', [
+    ForgotPasswordsController,
+    'processStep2',
+  ]).as('password.reset.step2.submit')
+
+
+  router.get('/password/reset/new', [
+    ForgotPasswordsController,
+    'showStep3',
+  ]).as('password.reset.step3')
+
+
+  router.post('/password/reset/new', [
+    ForgotPasswordsController,
+    'processStep3',
+  ]).as('password.reset.step3.submit')
+
+
+  router.get('/password/reset/success', [
+    ForgotPasswordsController,
+    'showSuccess',
+  ]).as('password.reset.success')
+
+}).use(middleware.guest())
+
+
+/*
+|--------------------------------------------------------------------------
+| API Auth - routes publiques
+|--------------------------------------------------------------------------
+*/
+
+router.group(() => {
+
+  router.post('/register', [
+    AuthController,
+    'register',
+  ]).as('api.auth.register')
+
+
+  router.post('/login', [
+    AuthController,
+    'login',
+  ]).as('api.auth.login')
+
+
+  router.get('/verify-email/:token', [
+    AuthController,
+    'verifyEmail',
+  ]).as('api.auth.verifyEmail')
+
+
+  router.post('/forgot-password', [
+    AuthController,
+    'forgotPassword',
+  ]).as('api.auth.forgotPassword')
+
+
+  router.post('/resend-reset-code', [
+    AuthController,
+    'resendResetCode',
+  ]).as('api.auth.resendResetCode')
+
+
+  router.post('/verify-reset-code', [
+    AuthController,
+    'verifyResetCode',
+  ]).as('api.auth.verifyResetCode')
+
+
+  router.post('/reset-password', [
+    AuthController,
+    'resetPassword',
+  ]).as('api.auth.resetPassword')
+
+}).prefix('/api/auth')
+
+
+/*
+|--------------------------------------------------------------------------
+| API Auth - routes protégées
+|--------------------------------------------------------------------------
+*/
+
+router.group(() => {
+
+  router.get('/me', [
+    AuthController,
+    'me',
+  ]).as('api.auth.me')
+
+
+  router.post('/logout', [
+    AuthController,
+    'logout',
+  ]).as('api.auth.logout')
+
+
+  router.patch('/switch-school', [
+    AuthController,
+    'switchSchool',
+  ]).as('api.auth.switchSchool')
+
+
+  router.patch('/change-password', [
+    AuthController,
+    'changePassword',
+  ]).as('api.auth.changePassword')
+
+})
+.prefix('/api/auth')
+.use(
+  middleware.auth({
+    guards: ['api'],
   })
-  .prefix('/api/auth')
+)
+
 
 /*
 |--------------------------------------------------------------------------
-| Routes protégées Authentification
+| Pages Super Administrateur
 |--------------------------------------------------------------------------
+|
+| Ces routes servent uniquement les vues Edge.
+| Elles ne doivent pas utiliser le guard API, puisque le token est
+| stocké côté navigateur et envoyé aux API par JavaScript.
+|
 */
 
+router.group(() => {
 
-router
-  .group(() => {
-    /**
-     * Informations utilisateur connecté
-     */
-    router.get('/me', [AuthController, 'me'])
-    /**
-     * Déconnexion
-     */
-    router.post('/logout', [AuthController, 'logout'])
-    /**
-     * Changer d'école active
-     */
-    router.patch('/switch-school', [AuthController, 'switchSchool'])
-    /**
-     * Changer mot de passe
-     */
-    router.patch('/change-password', [AuthController, 'changePassword'])
-}).prefix('/api/auth').use(middleware.auth())
+  router.get('/super-admin/dashboard', ({ view }) => {
+    return view.render('pages/super-admin/dashboard')
+  }).as('super-admin.dashboard')
+
+
+  router.get('/super-admin/ecoles', ({ view }) => {
+    return view.render('pages/super-admin/ecoles')
+  }).as('super-admin.ecoles')
+
+
+  router.get('/super-admin/ecoles/create', ({ view }) => {
+    return view.render('pages/super-admin/ecoles/create')
+  }).as('super-admin.ecoles.create')
+
+
+  router.get('/super-admin/ecoles/:id/edit', ({ view }) => {
+    return view.render('pages/super-admin/ecoles/edit')
+  }).as('super-admin.ecoles.edit')
+
+
+  router.get('/super-admin/ecoles/:id', ({ view }) => {
+    return view.render('pages/super-admin/ecoles/show')
+  }).as('super-admin.ecoles.show')
+
+
+  router.get('/super-admin/utilisateurs', ({ view }) => {
+    return view.render('pages/super-admin/utilisateurs')
+  }).as('super-admin.utilisateurs')
+
+
+  router.get('/super-admin/utilisateurs/create', ({ view }) => {
+    return view.render('pages/super-admin/utilisateurs/create')
+  }).as('super-admin.utilisateurs.create')
+
+
+  router.get('/super-admin/utilisateurs/:id/edit', ({ view }) => {
+    return view.render('pages/super-admin/utilisateurs/edit')
+  }).as('super-admin.utilisateurs.edit')
+
+
+  router.get('/super-admin/utilisateurs/:id', ({ view }) => {
+    return view.render('pages/super-admin/utilisateurs/show')
+  }).as('super-admin.utilisateurs.show')
+
+
+  router.get('/super-admin/statistiques', ({ view }) => {
+    return view.render('pages/super-admin/statistiques')
+  }).as('super-admin.statistiques')
+
+
+  router.get('/super-admin/rapports', ({ view }) => {
+    return view.render('pages/super-admin/rapports')
+  }).as('super-admin.rapports')
+
+})
+
 
 /*
 |--------------------------------------------------------------------------
-| Routes Super Administrateur
+| API Super Administrateur
 |--------------------------------------------------------------------------
+|
+| Toutes les opérations sensibles sont protégées par :
+|
+| 1. Access Token
+| 2. SuperAdminMiddleware
+|
 */
 
-router
-  .group(() => {
+router.group(() => {
 
-        /*
-    |--------------------------------------------------------------------------
-    | Dashboard Super Administrateur
-    |--------------------------------------------------------------------------
-    */
+  /*
+  |--------------------------------------------------------------------------
+  | Dashboard
+  |--------------------------------------------------------------------------
+  */
 
-    router.get('/dashboard', [DashboardController, 'index'])
-    router.get('/dashboard/statistics', [DashboardController, 'statistics'])
-    router.get('/dashboard/schools', [DashboardController, 'schools'])
-    router.get('/dashboard/users', [DashboardController, 'users'])
-    router.get('/dashboard/recent-schools', [DashboardController, 'recentSchools'])
-    router.get('/dashboard/recent-administrators', [DashboardController, 'recentAdministrators'])
-    router.get('/dashboard/top-schools', [DashboardController, 'topSchools'])
-    router.get('/dashboard/schools-statistics', [DashboardController, 'schoolsStatistics'])
-    router.get('/dashboard/activities', [DashboardController, 'activities'])
-    router.get('/dashboard/monthly-schools', [DashboardController, 'monthlySchools'])
-    router.get('/dashboard/monthly-users', [DashboardController, 'monthlyUsers'])
-    router.get('/dashboard/system-health', [DashboardController, 'systemHealth'])
+  router.get('/dashboard', [
+    DashboardController,
+    'index',
+  ]).as('dashboard.index')
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gestion des écoles
-    |--------------------------------------------------------------------------
-    */
-    router.get('/ecoles', [EcoleController, 'index'])
-    router.post('/ecoles', [EcoleController, 'store'])
-    router.get('/ecoles/:id', [EcoleController, 'show'])
-    router.put('/ecoles/:id', [EcoleController, 'update'])
-    router.patch('/ecoles/:id/suspend', [EcoleController, 'suspend'])
-    router.patch('/ecoles/:id/activate', [EcoleController, 'activate'])
-    router.patch('/ecoles/:id/archive', [EcoleController, 'archive'])
-    router.delete('/ecoles/:id', [EcoleController, 'destroy'])
 
-    /*
-    |--------------------------------------------------------------------------
-    | Recherche
-    |--------------------------------------------------------------------------
-    */
-    router.get('/ecoles-search', [EcoleController, 'search'])
-    /*
-    |--------------------------------------------------------------------------
-    | Statistiques école
-    |--------------------------------------------------------------------------
-    */
-    router.get('/ecoles/:id/statistics', [EcoleController, 'statistics'])
-    router.get('/ecoles/:id/can-delete', [EcoleController, 'canDelete'])
-    router.get('/ecoles/:id/exists', [EcoleController, 'exists'])
+  router.get('/dashboard/statistics', [
+    DashboardController,
+    'statistics',
+  ]).as('dashboard.statistics')
 
-        /*
-    |--------------------------------------------------------------------------
-    | Gestion des administrateurs
-    |--------------------------------------------------------------------------
-    */
 
-    router.get('/administrateurs', [AdministrateurController, 'index'])
-    router.post('/administrateurs', [AdministrateurController, 'store'])  
-    router.get('/administrateurs/:id', [AdministrateurController, 'show'])
-    router.put('/administrateurs/:id', [AdministrateurController, 'update'])
-    router.patch('/administrateurs/:id/suspend', [AdministrateurController, 'suspend'])
-    router.patch('/administrateurs/:id/activate', [AdministrateurController,'activate'])
-    router.delete('/administrateurs/:id', [AdministrateurController, 'destroy'])
-    router.delete('/administrateurs/:id/force', [AdministrateurController, 'forceDelete'])
-    router.get('/administrateurs/statistics', [AdministrateurController, 'statistics'])
-    router.get('/administrateurs/:id/exists', [AdministrateurController, 'exists'])
-    router.get('/ecoles/:id/administrateurs', [AdministrateurController, 'getBySchool'])
-    router.patch('/administrateurs/:id/active-school', [AdministrateurController, 'switchSchool'])
-    router.get('/administrateurs/:id/ecoles/:ecoleId', [AdministrateurController, 'belongsToSchool'])
+  router.get('/dashboard/schools', [
+    DashboardController,
+    'schools',
+  ]).as('dashboard.schools')
 
-  }).prefix('/api/super-admin').use([middleware.auth(), middleware.superAdmin()])
 
-  router
-    .group(() => {
+  router.get('/dashboard/users', [
+    DashboardController,
+    'users',
+  ]).as('dashboard.users')
 
-    /**
-     * Profil Super Admin
-     */
-    router.get('/profile', [SuperAdminController, 'profile',])
-    /**
-     * Vérification des permissions
-     */
-    router.get('/check-access', [SuperAdminController, 'checkAccess',])
-    // autres routes Super Admin...
-  }).prefix('/api/super-admin').use([middleware.auth(),middleware.superAdmin()])
+
+  router.get('/dashboard/recent-schools', [
+    DashboardController,
+    'recentSchools',
+  ]).as('dashboard.recentSchools')
+
+
+  router.get('/dashboard/recent-administrators', [
+    DashboardController,
+    'recentAdministrators',
+  ]).as('dashboard.recentAdministrators')
+
+
+  router.get('/dashboard/top-schools', [
+    DashboardController,
+    'topSchools',
+  ]).as('dashboard.topSchools')
+
+
+  router.get('/dashboard/schools-statistics', [
+    DashboardController,
+    'schoolsStatistics',
+  ]).as('dashboard.schoolsStatistics')
+
+
+  router.get('/dashboard/activities', [
+    DashboardController,
+    'activities',
+  ]).as('dashboard.activities')
+
+
+  router.get('/dashboard/monthly-schools', [
+    DashboardController,
+    'monthlySchools',
+  ]).as('dashboard.monthlySchools')
+
+
+  router.get('/dashboard/monthly-users', [
+    DashboardController,
+    'monthlyUsers',
+  ]).as('dashboard.monthlyUsers')
+
+
+  router.get('/dashboard/system-health', [
+    DashboardController,
+    'systemHealth',
+  ]).as('dashboard.systemHealth')
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Super Admin
+  |--------------------------------------------------------------------------
+  */
+
+  router.get('/profile', [
+    SuperAdminController,
+    'profile',
+  ]).as('profile')
+
+
+  router.get('/check-access', [
+    SuperAdminController,
+    'checkAccess',
+  ]).as('checkAccess')
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Écoles
+  |--------------------------------------------------------------------------
+  */
+
+  router.get('/ecoles', [
+    EcoleController,
+    'index',
+  ]).as('ecoles.index')
+
+
+  router.post('/ecoles', [
+    EcoleController,
+    'store',
+  ]).as('ecoles.store')
+
+
+  router.get('/ecoles-search', [
+    EcoleController,
+    'search',
+  ]).as('ecoles.search')
+
+
+  router.get('/ecoles/:id/statistics', [
+    EcoleController,
+    'statistics',
+  ]).as('ecoles.statistics')
+
+
+  router.get('/ecoles/:id/can-delete', [
+    EcoleController,
+    'canDelete',
+  ]).as('ecoles.canDelete')
+
+
+  router.get('/ecoles/:id/exists', [
+    EcoleController,
+    'exists',
+  ]).as('ecoles.exists')
+
+
+  router.get('/ecoles/:id', [
+    EcoleController,
+    'show',
+  ]).as('ecoles.show')
+
+
+  router.put('/ecoles/:id', [
+    EcoleController,
+    'update',
+  ]).as('ecoles.update')
+
+
+  router.patch('/ecoles/:id/suspend', [
+    EcoleController,
+    'suspend',
+  ]).as('ecoles.suspend')
+
+
+  router.patch('/ecoles/:id/activate', [
+    EcoleController,
+    'activate',
+  ]).as('ecoles.activate')
+
+
+  router.patch('/ecoles/:id/archive', [
+    EcoleController,
+    'archive',
+  ]).as('ecoles.archive')
+
+
+  router.delete('/ecoles/:id', [
+    EcoleController,
+    'destroy',
+  ]).as('ecoles.destroy')
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Administrateurs
+  |--------------------------------------------------------------------------
+  */
+
+  router.get('/administrateurs/statistics', [
+    AdministrateurController,
+    'statistics',
+  ]).as('administrateurs.statistics')
+
+
+  router.get('/administrateurs', [
+    AdministrateurController,
+    'index',
+  ]).as('administrateurs.index')
+
+
+  router.post('/administrateurs', [
+    AdministrateurController,
+    'store',
+  ]).as('administrateurs.store')
+
+
+  router.get('/administrateurs/:id/exists', [
+    AdministrateurController,
+    'exists',
+  ]).as('administrateurs.exists')
+
+
+  router.get('/administrateurs/:id/ecoles/:ecoleId', [
+    AdministrateurController,
+    'belongsToSchool',
+  ]).as('administrateurs.belongsToSchool')
+
+
+  router.patch('/administrateurs/:id/active-school', [
+    AdministrateurController,
+    'switchSchool',
+  ]).as('administrateurs.switchSchool')
+
+
+  router.patch('/administrateurs/:id/suspend', [
+    AdministrateurController,
+    'suspend',
+  ]).as('administrateurs.suspend')
+
+
+  router.patch('/administrateurs/:id/activate', [
+    AdministrateurController,
+    'activate',
+  ]).as('administrateurs.activate')
+
+
+  router.delete('/administrateurs/:id/force', [
+    AdministrateurController,
+    'forceDelete',
+  ]).as('administrateurs.forceDelete')
+
+
+  router.get('/administrateurs/:id', [
+    AdministrateurController,
+    'show',
+  ]).as('administrateurs.show')
+
+
+  router.put('/administrateurs/:id', [
+    AdministrateurController,
+    'update',
+  ]).as('administrateurs.update')
+
+
+  router.delete('/administrateurs/:id', [
+    AdministrateurController,
+    'destroy',
+  ]).as('administrateurs.destroy')
+
+
+  router.get('/ecoles/:id/administrateurs', [
+    AdministrateurController,
+    'getBySchool',
+  ]).as('ecoles.administrateurs')
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Rapports
+  |--------------------------------------------------------------------------
+  */
+
+  router.get('/reports', [
+    ReportsController,
+    'index',
+  ]).as('reports.index')
+
+
+  router.post('/reports', [
+    ReportsController,
+    'store',
+  ]).as('reports.store')
+
+
+  router.get('/reports/:type/download', [
+    ReportsController,
+    'download',
+  ]).as('reports.download')
+
+})
+.prefix('/api/super-admin')
+.use([
+  middleware.auth({
+    guards: ['api'],
+  }),
+
+  middleware.superAdmin(),
+])

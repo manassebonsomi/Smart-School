@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Modifier l'école | Smart School</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform .3s ease-in-out;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: .875rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .form-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: .5rem;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<div id="overlay"
+     class="fixed inset-0 z-40 hidden bg-slate-900/50 lg:hidden">
+</div>
+
+<!-- SIDEBAR -->
+
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r
+              border-slate-200 -translate-x-full
+              sidebar-transition lg:translate-x-0">
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+                <h1 class="font-bold text-lg">Smart School</h1>
+                <p class="text-xs text-slate-400">Administration</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <nav class="px-4 py-6 space-y-2">
+
+        <p
+            class="px-3 mb-3 text-xs font-semibold uppercase
+                   tracking-wider text-slate-400"
+        >
+            Administration
+        </p>
+
+        <a
+            href="/super-admin/dashboard"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- ACTIVE -->
+
+        <a
+            href="/super-admin/ecoles"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   bg-sky-50 text-sky-600 font-semibold"
+        >
+            <i class="fa-solid fa-school w-5"></i>
+            <span>Écoles</span>
+        </a>
+
+        <a
+            href="/super-admin/utilisateurs"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-users w-5"></i>
+            <span>Utilisateurs</span>
+        </a>
+
+        <a
+            href="/super-admin/statistiques"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-chart-line w-5"></i>
+            <span>Statistiques</span>
+        </a>
+
+        <a
+            href="/super-admin/rapports"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-file-lines w-5"></i>
+            <span>Rapports</span>
+        </a>
+
+    </nav>
+
+    <!-- Bottom -->
+
+    <div
+        class="absolute bottom-0 left-0 right-0 p-4
+               border-t border-slate-100"
+    >
+
+        <button
+            class="w-full flex items-center gap-3 px-4 py-3
+                   rounded-xl text-slate-500 hover:bg-slate-50 transition"
+        >
+            <i class="fa-solid fa-gear w-5"></i>
+            <span>Paramètres</span>
+        </button>
+
+        <button
+            onclick="logout()"
+            class="w-full flex items-center gap-3 px-4 py-3
+                   rounded-xl text-red-500 hover:bg-red-50 transition"
+        >
+            <i class="fa-solid fa-right-from-bracket w-5"></i>
+            <span>Déconnexion</span>
+        </button>
+
+    </div>
+
+</aside>
+
+<!-- MAIN -->
+
+<div class="lg:ml-72 min-h-screen">
+
+    <!-- HEADER -->
+
+    <header class="h-20 sticky top-0 z-30 bg-white border-b border-slate-200">
+
+        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+
+                <button id="openSidebar"
+                        class="lg:hidden w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-sm">
+
+                    <a href="/super-admin/ecoles"
+                       class="text-slate-400 hover:text-sky-500">
+                        Écoles
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <a href="/super-admin/ecoles/1"
+                       class="text-slate-400 hover:text-sky-500">
+                        Complexe Scolaire La Réussite
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <span class="font-semibold text-slate-700">
+                        Modifier
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button class="relative w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-regular fa-bell text-slate-500"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+                </button>
+
+                <div
+                    class="hidden sm:flex w-10 h-10 rounded-full bg-sky-100
+                           text-sky-600 items-center justify-center font-bold"
+                >
+                    SA
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <div class="max-w-5xl mx-auto">
+
+            <!-- INTRO -->
+
+            <div class="flex flex-col md:flex-row md:items-center
+                        md:justify-between gap-4 mb-8">
+
+                <div>
+
+                    <h1 class="text-2xl sm:text-3xl font-bold">
+                        Modifier l'école
+                    </h1>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Mettez à jour les informations de l'établissement.
+                    </p>
+
+                </div>
+
+                <span
+                    class="inline-flex items-center gap-2 w-fit px-3 py-1.5
+                           rounded-full bg-emerald-50 text-emerald-600
+                           text-xs font-semibold"
+                >
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    École active
+                </span>
+
+            </div>
+
+            <form
+                id="editSchoolForm"
+                onsubmit="updateSchool(event)"
+                class="space-y-6"
+            >
+
+                <!-- GENERAL -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                            <i class="fa-solid fa-school"></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="font-bold">
+                                Informations générales
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Modifier les données principales.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div class="md:col-span-2">
+
+                            <label class="form-label">
+                                Nom de l'école *
+                            </label>
+
+                            <input
+                                type="text"
+                                value="Complexe Scolaire La Réussite"
+                                required
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Type
+                            </label>
+
+                            <select class="form-input">
+
+                                <option selected>
+                                    École secondaire
+                                </option>
+
+                                <option>
+                                    École primaire
+                                </option>
+
+                                <option>
+                                    Primaire et secondaire
+                                </option>
+
+                                <option>
+                                    Institut technique
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Année de création
+                            </label>
+
+                            <input
+                                type="number"
+                                value="2008"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Téléphone
+                            </label>
+
+                            <input
+                                type="tel"
+                                value="+243 81 000 00 00"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                value="admin@lareussite.cd"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div class="md:col-span-2">
+
+                            <label class="form-label">
+                                Site web
+                            </label>
+
+                            <input
+                                type="url"
+                                value="https://www.lareussite.cd"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div class="md:col-span-2">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            <textarea
+                                rows="4"
+                                class="form-input resize-none"
+                            >Complexe scolaire privé offrant un enseignement primaire et secondaire.</textarea>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- LOCATION -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="font-bold">
+                                Localisation
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Adresse de l'établissement.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+
+                            <label class="form-label">
+                                Province
+                            </label>
+
+                            <select class="form-input">
+
+                                <option selected>
+                                    Kinshasa
+                                </option>
+
+                                <option>
+                                    Kongo-Central
+                                </option>
+
+                                <option>
+                                    Haut-Katanga
+                                </option>
+
+                                <option>
+                                    Lualaba
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Ville
+                            </label>
+
+                            <input
+                                type="text"
+                                value="Kinshasa"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Commune
+                            </label>
+
+                            <input
+                                type="text"
+                                value="Limete"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Quartier
+                            </label>
+
+                            <input
+                                type="text"
+                                value="Kingabwa"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                        <div class="md:col-span-2">
+
+                            <label class="form-label">
+                                Adresse complète
+                            </label>
+
+                            <textarea
+                                rows="3"
+                                class="form-input resize-none"
+                            >Avenue de la Réussite, Limete, Kinshasa</textarea>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- ADMIN -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="font-bold">
+                                Administrateur
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Informations du School Admin.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label class="form-label">
+                                    Prénom
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value="Jean"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Nom
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value="Kabasele"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    value="admin@lareussite.cd"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Téléphone
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    value="+243 81 000 00 00"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-5 p-4 rounded-xl bg-amber-50 border border-amber-100">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-amber-700">
+                                        Modification du compte administrateur
+                                    </p>
+
+                                    <p class="text-xs text-amber-600 mt-1 leading-5">
+                                        Pour modifier le mot de passe ou les permissions,
+                                        utilisez la gestion des utilisateurs.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- STATUS -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6">
+
+                        <div class="flex flex-col sm:flex-row
+                                    sm:items-center sm:justify-between gap-5">
+
+                            <div>
+
+                                <h2 class="font-bold">
+                                    Statut de l'école
+                                </h2>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Contrôlez l'accès de l'établissement.
+                                </p>
+
+                            </div>
+
+                            <select
+                                class="px-4 py-3 rounded-xl border
+                                       border-slate-200 bg-white
+                                       text-sm font-semibold"
+                            >
+
+                                <option selected value="active">
+                                    Active
+                                </option>
+
+                                <option value="suspended">
+                                    Suspendue
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- ACTIONS -->
+
+                <div
+                    class="flex flex-col-reverse sm:flex-row
+                           sm:justify-between gap-3"
+                >
+
+                    <button
+                        type="button"
+                        onclick="deleteSchool()"
+                        class="px-5 py-3 rounded-xl text-sm
+                               font-semibold text-red-600
+                               border border-red-200
+                               hover:bg-red-50"
+                    >
+                        <i class="fa-regular fa-trash-can mr-2"></i>
+                        Supprimer l'école
+                    </button>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+
+                        <a
+                            href="/super-admin/ecoles/1"
+                            class="px-5 py-3 rounded-xl border
+                                   border-slate-200 text-sm
+                                   font-semibold text-slate-600
+                                   text-center hover:bg-slate-50"
+                        >
+                            Annuler
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="px-6 py-3 rounded-xl
+                                   bg-sky-500 hover:bg-sky-600
+                                   text-white text-sm font-semibold"
+                        >
+                            <i class="fa-solid fa-floppy-disk mr-2"></i>
+                            Enregistrer les modifications
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("overlay");
+
+    document
+        .getElementById("openSidebar")
+        ?.addEventListener("click", () => {
+
+            sidebar.classList.remove("-translate-x-full");
+            overlay.classList.remove("hidden");
+
+        });
+
+    overlay?.addEventListener("click", () => {
+
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+
+    });
+
+    function updateSchool(event) {
+
+        event.preventDefault();
+
+        /*
+         * Plus tard :
+         *
+         * PUT /api/super-admin/schools/:id
+         *
+         */
+
+        alert(
+            "Les modifications seront enregistrées via AdonisJS."
+        );
+
+    }
+
+    function deleteSchool() {
+
+        const confirmed =
+            confirm(
+                "Voulez-vous vraiment supprimer cette école ? " +
+                "Cette action sera définitive."
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        /*
+         * DELETE /api/super-admin/schools/:id
+         */
+
+        alert(
+            "La suppression sera traitée par AdonisJS."
+        );
+
+    }
+
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+</body>
+</html>

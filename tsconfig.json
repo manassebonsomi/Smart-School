@@ -2,12 +2,24 @@
   "extends": "@adonisjs/tsconfig/tsconfig.app.json",
   "compilerOptions": {
     "rootDir": "./",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true,
+    "declaration": false,
     "outDir": "./build",
-    "paths": {
-      "#generated/*": ["./.adonisjs/server/*"],
-      "#start/*": ["./start/*"],
-      "#controllers/*": ["./app/controllers/*"],
-      "#tasks/*": ["./app/tasks/*"]
-    }
-  }
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": [
+    "./**/*.ts",
+    "./.adonisjs/server/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules",
+    "./build"
+  ]
 }

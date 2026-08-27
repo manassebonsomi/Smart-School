@@ -2,26 +2,52 @@ import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
 
-  protected tableName = 'access_tokens'
+  protected tableName = 'auth_access_tokens'
 
   async up() {
 
     this.schema.createTable(this.tableName, (table) => {
 
-      table.bigIncrements('id')      
-      table.bigInteger('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE')
-      table.bigInteger('ecole_id').unsigned().notNullable().references('id').inTable('ecoles').onDelete('CASCADE')
-      table.string('role', 50).notNullable()
+      table.bigIncrements('id')
+
+      table
+        .bigInteger('tokenable_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
+
+      table.string('type').notNullable()
+
+      table.string('name').nullable()
+
+      table.text('hash').notNullable()
+
+      table.text('abilities').notNullable()
+
       table.timestamp('created_at', { useTz: true }).notNullable()
+
       table.timestamp('updated_at', { useTz: true }).notNullable()
-      table.unique(['user_id'])
-      table.index(['ecole_id'])
+
+      table.timestamp('last_used_at', { useTz: true }).nullable()
+
+      table.timestamp('expires_at', { useTz: true }).nullable()
+
+      table.index(['tokenable_id'])
+
+      table.index(['type'])
+
+      table.index(['expires_at'])
+
     })
 
   }
 
   async down() {
+
     this.schema.dropTable(this.tableName)
+
   }
 
 }

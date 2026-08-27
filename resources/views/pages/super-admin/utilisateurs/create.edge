@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nouvel administrateur | Smart School</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform .3s ease-in-out;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: .5rem;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: .875rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .form-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<div id="overlay"
+     class="fixed inset-0 z-40 hidden bg-slate-900/50 lg:hidden"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200
+              -translate-x-full sidebar-transition lg:translate-x-0">
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+                <h1 class="text-lg font-bold">Smart School</h1>
+                <p class="text-xs text-slate-400">Administration</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <nav class="p-4 space-y-1">
+
+        <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Administration
+        </p>
+
+        <a href="/super-admin/dashboard"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-600">
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            Dashboard
+        </a>
+
+        <a href="/super-admin/ecoles"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-600">
+            <i class="fa-solid fa-school w-5"></i>
+            Écoles
+        </a>
+
+        <a href="/super-admin/utilisateurs"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl bg-sky-50 text-sky-600 font-semibold">
+            <i class="fa-solid fa-users w-5"></i>
+            Utilisateurs
+        </a>
+
+        <a href="/super-admin/statistiques"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-600">
+            <i class="fa-solid fa-chart-line w-5"></i>
+            Statistiques
+        </a>
+
+        <a href="/super-admin/rapports"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-600">
+            <i class="fa-solid fa-file-lines w-5"></i>
+            Rapports
+        </a>
+
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="lg:ml-72 min-h-screen">
+
+    <!-- HEADER -->
+    <header class="h-20 sticky top-0 z-30 bg-white border-b border-slate-200">
+
+        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+
+                <button id="openSidebar"
+                        class="lg:hidden w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-sm">
+
+                    <a href="/super-admin/utilisateurs"
+                       class="text-slate-400 hover:text-sky-500">
+                        Utilisateurs
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <span class="font-semibold text-slate-700">
+                        Nouvel administrateur
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button class="relative w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-regular fa-bell text-slate-500"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+
+                <div class="hidden sm:flex items-center gap-3 pl-3 border-l border-slate-200">
+
+                    <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+                        SA
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold">Super Admin</p>
+                        <p class="text-xs text-slate-400">Administrateur système</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <div class="max-w-5xl mx-auto">
+
+            <div class="mb-8">
+
+                <h1 class="text-2xl sm:text-3xl font-bold">
+                    Créer un administrateur scolaire
+                </h1>
+
+                <p class="mt-2 text-sm text-slate-500">
+                    Créez le compte du responsable d'une école.
+                </p>
+
+            </div>
+
+            <form id="adminForm"
+                  onsubmit="createAdmin(event)"
+                  class="space-y-6">
+
+                <!-- PERSONAL INFORMATION -->
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                Informations personnelles
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Identité du futur administrateur.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="form-label">Prénom *</label>
+
+                            <input
+                                type="text"
+                                name="first_name"
+                                required
+                                placeholder="Jean"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Nom *</label>
+
+                            <input
+                                type="text"
+                                name="last_name"
+                                required
+                                placeholder="Mukendi"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Email *</label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                required
+                                placeholder="jean.mukendi@ecole.cd"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Téléphone</label>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                placeholder="+243 ..."
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Fonction</label>
+
+                            <select name="position" class="form-input">
+
+                                <option selected>
+                                    Administrateur scolaire
+                                </option>
+
+                                <option>
+                                    Directeur
+                                </option>
+
+                                <option>
+                                    Directeur adjoint
+                                </option>
+
+                                <option>
+                                    Responsable administratif
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Genre</label>
+
+                            <select name="gender" class="form-input">
+
+                                <option value="">
+                                    Sélectionner
+                                </option>
+
+                                <option>
+                                    Homme
+                                </option>
+
+                                <option>
+                                    Femme
+                                </option>
+
+                            </select>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SCHOOL ASSIGNMENT -->
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <i class="fa-solid fa-school"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                École rattachée
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Définissez l'établissement que cet administrateur gérera.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <label class="form-label">
+                            Établissement *
+                        </label>
+
+                        <select
+                            id="schoolSelect"
+                            name="school_id"
+                            required
+                            class="form-input"
+                        >
+
+                            <option value="">
+                                Sélectionner une école
+                            </option>
+
+                            <option value="SCH-0001">
+                                Complexe Scolaire La Réussite — Kinshasa
+                            </option>
+
+                            <option value="SCH-0002">
+                                Collège Saint Pierre — Kinshasa
+                            </option>
+
+                            <option value="SCH-0003">
+                                Institut Horizon — Lubumbashi
+                            </option>
+
+                            <option value="SCH-0005">
+                                École Internationale de Kinshasa — Kinshasa
+                            </option>
+
+                        </select>
+
+                        <div class="mt-4 p-4 rounded-xl bg-sky-50 border border-sky-100">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class="fa-solid fa-circle-info text-sky-500 mt-0.5"></i>
+
+                                <p class="text-xs leading-5 text-sky-700">
+                                    Un administrateur scolaire ne doit être rattaché
+                                    qu'à l'école qui lui est attribuée. Cette association
+                                    déterminera les données auxquelles il pourra accéder.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SECURITY -->
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                Sécurité du compte
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Paramètres d'accès de l'administrateur.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+
+                            <label class="form-label">
+                                Mot de passe *
+                            </label>
+
+                            <div class="relative">
+
+                                <input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    minlength="8"
+                                    placeholder="Minimum 8 caractères"
+                                    class="form-input pr-12"
+                                >
+
+                                <button
+                                    type="button"
+                                    onclick="togglePassword('password', 'passwordIcon')"
+                                    class="absolute right-0 top-0 h-full px-4 text-slate-400"
+                                >
+                                    <i id="passwordIcon" class="fa-regular fa-eye"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Confirmation *
+                            </label>
+
+                            <input
+                                id="passwordConfirm"
+                                type="password"
+                                required
+                                minlength="8"
+                                placeholder="Confirmer le mot de passe"
+                                class="form-input"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="px-6 pb-6">
+
+                        <label class="flex items-start gap-3 cursor-pointer">
+
+                            <input
+                                id="sendCredentials"
+                                type="checkbox"
+                                checked
+                                class="mt-1 w-4 h-4 rounded border-slate-300 text-sky-500"
+                            >
+
+                            <span>
+
+                                <span class="block text-sm font-semibold text-slate-700">
+                                    Envoyer les instructions de connexion
+                                </span>
+
+                                <span class="block text-xs text-slate-400 mt-1">
+                                    Le système pourra envoyer les informations nécessaires
+                                    à l'administrateur après création du compte.
+                                </span>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+                <!-- STATUS -->
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6">
+
+                        <label class="flex items-start gap-3 cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                checked
+                                class="mt-1 w-4 h-4 rounded border-slate-300 text-sky-500"
+                            >
+
+                            <span>
+
+                                <span class="block text-sm font-semibold text-slate-700">
+                                    Activer le compte immédiatement
+                                </span>
+
+                                <span class="block text-xs text-slate-400 mt-1">
+                                    L'administrateur pourra se connecter dès la création.
+                                </span>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+                <!-- ACTIONS -->
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+
+                    <a
+                        href="/super-admin/utilisateurs"
+                        class="px-5 py-3 rounded-xl border border-slate-200
+                               text-sm font-semibold text-slate-600 text-center
+                               hover:bg-slate-50"
+                    >
+                        Annuler
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="px-6 py-3 rounded-xl bg-sky-500
+                               hover:bg-sky-600 text-white
+                               text-sm font-semibold"
+                    >
+                        <i class="fa-solid fa-user-plus mr-2"></i>
+                        Créer l'administrateur
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    document.getElementById("openSidebar")?.addEventListener("click", () => {
+        sidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+    });
+
+    overlay?.addEventListener("click", () => {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+    });
+
+    function togglePassword(inputId, iconId) {
+
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.className = "fa-regular fa-eye-slash";
+        } else {
+            input.type = "password";
+            icon.className = "fa-regular fa-eye";
+        }
+    }
+
+    function createAdmin(event) {
+
+        event.preventDefault();
+
+        const password =
+            document.getElementById("password").value;
+
+        const confirmation =
+            document.getElementById("passwordConfirm").value;
+
+        if (password !== confirmation) {
+
+            alert(
+                "Les mots de passe ne correspondent pas."
+            );
+
+            return;
+        }
+
+        /*
+         * Plus tard :
+         *
+         * POST /api/super-admin/users
+         *
+         * {
+         *    first_name,
+         *    last_name,
+         *    email,
+         *    phone,
+         *    school_id,
+         *    role: "SCHOOL_ADMIN",
+         *    password
+         * }
+         */
+
+        alert(
+            "Administrateur créé avec succès. " +
+            "Cette opération sera connectée à AdonisJS."
+        );
+
+        window.location.href = "/super-admin/utilisateurs";
+    }
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+</body>
+</html>

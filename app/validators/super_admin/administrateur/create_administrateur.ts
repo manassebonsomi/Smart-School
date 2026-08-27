@@ -1,13 +1,2 @@
 import vine from '@vinejs/vine'
-
-export const createAdministrateurValidator = vine.compile(
-  vine.object({
-    nom: vine.string().trim().minLength(3).maxLength(150),
-    code: vine.string().trim().minLength(2).maxLength(20),
-    adresse: vine.string().trim().maxLength(255).optional(),
-    telephone: vine.string().trim().maxLength(20).optional(),
-    email: vine.string().trim().email().optional(),
-    statut: vine.enum(['ACTIF', 'SUSPENDU', 'ARCHIVE',]).optional(),
-    ecoleId: vine.number().positive(),
-  })
-)
+export const createAdministrateurValidator = vine.compile(vine.object({prenom: vine.string().trim().minLength(2).maxLength(100),nom: vine.string().trim().minLength(2).maxLength(100),postnom: vine.string().trim().maxLength(100).optional(),pseudo: vine.string().trim().minLength(3).maxLength(50).optional(),email: vine.string().trim().email(),telephone: vine.string().trim().maxLength(30).optional(),sexe: vine.enum(['HOMME','FEMME','AUTRE']).optional(),password: vine.string().minLength(8),password_confirmation: vine.string().sameAs('password'),ecoleId: vine.number().positive()}))

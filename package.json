@@ -68,7 +68,6 @@
     "@adonisjs/shield": "^9.0.0",
     "@adonisjs/static": "^2.0.0",
     "@adonisjs/vite": "^5.1.0",
-    "@poppinss/ts-exec": "^1.4.4",
     "@vinejs/vine": "^4.3.0",
     "adonisjs-scheduler": "^2.7.0",
     "axios": "^1.15.2",

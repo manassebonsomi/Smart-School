@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Modifier administrateur | Smart School</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform .3s ease-in-out;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: .5rem;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: .875rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .form-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+        }
+
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<div id="overlay"
+     class="fixed inset-0 z-40 hidden bg-slate-900/50 lg:hidden">
+</div>
+
+<!-- SIDEBAR -->
+
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r
+              border-slate-200 -translate-x-full
+              sidebar-transition lg:translate-x-0">
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+                <h1 class="font-bold text-lg">Smart School</h1>
+                <p class="text-xs text-slate-400">Administration</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <nav class="p-4 space-y-1">
+
+        <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Administration
+        </p>
+
+        <a href="/super-admin/dashboard"
+           class="nav-link">
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            Dashboard
+        </a>
+
+        <a href="/super-admin/ecoles"
+           class="nav-link">
+            <i class="fa-solid fa-school w-5"></i>
+            Écoles
+        </a>
+
+        <a href="/super-admin/utilisateurs"
+           class="nav-link active">
+            <i class="fa-solid fa-users w-5"></i>
+            Utilisateurs
+        </a>
+
+        <a href="/super-admin/statistiques"
+           class="nav-link">
+            <i class="fa-solid fa-chart-line w-5"></i>
+            Statistiques
+        </a>
+
+        <a href="/super-admin/rapports"
+           class="nav-link">
+            <i class="fa-solid fa-file-lines w-5"></i>
+            Rapports
+        </a>
+
+    </nav>
+
+</aside>
+
+<!-- MAIN -->
+
+<div class="lg:ml-72 min-h-screen">
+
+    <header class="h-20 sticky top-0 z-30 bg-white border-b border-slate-200">
+
+        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+
+                <button
+                    id="openSidebar"
+                    class="lg:hidden w-10 h-10 rounded-xl hover:bg-slate-100"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-sm">
+
+                    <a
+                        href="/super-admin/utilisateurs"
+                        class="text-slate-400 hover:text-sky-500"
+                    >
+                        Utilisateurs
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <a
+                        href="/super-admin/utilisateurs/128"
+                        class="text-slate-400 hover:text-sky-500"
+                    >
+                        Jean Kabasele
+                    </a>
+
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+
+                    <span class="font-semibold text-slate-700">
+                        Modifier
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button class="relative w-10 h-10 rounded-xl hover:bg-slate-100">
+                    <i class="fa-regular fa-bell text-slate-500"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+
+                <div class="hidden sm:flex w-10 h-10 rounded-full bg-sky-100 text-sky-600 items-center justify-center font-bold">
+                    SA
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <div class="max-w-5xl mx-auto">
+
+            <div class="flex flex-col md:flex-row md:items-center
+                        md:justify-between gap-4 mb-8">
+
+                <div>
+
+                    <h1 class="text-2xl sm:text-3xl font-bold">
+                        Modifier l'administrateur
+                    </h1>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Modifiez les informations du compte School Admin.
+                    </p>
+
+                </div>
+
+                <span
+                    class="inline-flex items-center gap-2 w-fit
+                           px-3 py-1.5 rounded-full
+                           bg-emerald-50 text-emerald-600
+                           text-xs font-semibold"
+                >
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Compte actif
+                </span>
+
+            </div>
+
+            <form
+                onsubmit="updateAdmin(event)"
+                class="space-y-6"
+            >
+
+                <!-- PROFILE -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div
+                            class="w-11 h-11 rounded-xl bg-sky-50
+                                   text-sky-600 flex items-center justify-center"
+                        >
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                Informations personnelles
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Données principales du compte.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="form-label">Prénom</label>
+
+                            <input
+                                type="text"
+                                value="Jean"
+                                required
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Nom</label>
+
+                            <input
+                                type="text"
+                                value="Kabasele"
+                                required
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Email</label>
+
+                            <input
+                                type="email"
+                                value="admin@lareussite.cd"
+                                required
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Téléphone</label>
+
+                            <input
+                                type="tel"
+                                value="+243 81 000 00 00"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="form-label">Fonction</label>
+
+                            <select class="form-input">
+
+                                <option selected>
+                                    Administrateur scolaire
+                                </option>
+
+                                <option>
+                                    Directeur
+                                </option>
+
+                                <option>
+                                    Directeur adjoint
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Rôle système</label>
+
+                            <input
+                                type="text"
+                                value="SCHOOL_ADMIN"
+                                disabled
+                                class="form-input bg-slate-100 text-slate-500 cursor-not-allowed"
+                            >
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- SCHOOL -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div
+                            class="w-11 h-11 rounded-xl bg-indigo-50
+                                   text-indigo-600 flex items-center justify-center"
+                        >
+                            <i class="fa-solid fa-school"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                École rattachée
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Modifier l'établissement administré.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <label class="form-label">
+                            Établissement
+                        </label>
+
+                        <select class="form-input">
+
+                            <option selected>
+                                Complexe Scolaire La Réussite — SCH-0001
+                            </option>
+
+                            <option>
+                                Collège Saint Pierre — SCH-0002
+                            </option>
+
+                            <option>
+                                Institut Horizon — SCH-0003
+                            </option>
+
+                            <option>
+                                École Internationale de Kinshasa — SCH-0005
+                            </option>
+
+                        </select>
+
+                        <div class="mt-4 rounded-xl bg-amber-50 border border-amber-100 p-4">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-amber-700">
+                                        Changement d'école
+                                    </p>
+
+                                    <p class="text-xs text-amber-600 mt-1 leading-5">
+                                        Changer l'école rattachée modifiera automatiquement
+                                        le périmètre de données auquel cet administrateur a accès.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- PASSWORD -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+
+                        <div
+                            class="w-11 h-11 rounded-xl bg-emerald-50
+                                   text-emerald-600 flex items-center justify-center"
+                        >
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold">
+                                Sécurité
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Gestion du mot de passe du compte.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <label class="flex items-start gap-3 cursor-pointer">
+
+                            <input
+                                id="changePassword"
+                                type="checkbox"
+                                class="mt-1 w-4 h-4 rounded border-slate-300 text-sky-500"
+                            >
+
+                            <span>
+
+                                <span class="block text-sm font-semibold">
+                                    Modifier le mot de passe
+                                </span>
+
+                                <span class="block text-xs text-slate-400 mt-1">
+                                    Activez cette option pour définir un nouveau mot de passe.
+                                </span>
+
+                            </span>
+
+                        </label>
+
+                        <div
+                            id="passwordFields"
+                            class="hidden grid grid-cols-1 md:grid-cols-2 gap-5 mt-6"
+                        >
+
+                            <div>
+
+                                <label class="form-label">
+                                    Nouveau mot de passe
+                                </label>
+
+                                <input
+                                    id="newPassword"
+                                    type="password"
+                                    minlength="8"
+                                    class="form-input"
+                                    placeholder="Minimum 8 caractères"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <label class="form-label">
+                                    Confirmation
+                                </label>
+
+                                <input
+                                    id="newPasswordConfirm"
+                                    type="password"
+                                    minlength="8"
+                                    class="form-input"
+                                    placeholder="Confirmer le nouveau mot de passe"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- STATUS -->
+
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6">
+
+                        <div class="flex flex-col sm:flex-row
+                                    sm:items-center sm:justify-between gap-4">
+
+                            <div>
+
+                                <h2 class="font-bold">
+                                    Statut du compte
+                                </h2>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Contrôlez la possibilité de connexion.
+                                </p>
+
+                            </div>
+
+                            <select
+                                class="px-4 py-3 rounded-xl border border-slate-200
+                                       bg-white text-sm font-semibold"
+                            >
+
+                                <option selected value="active">
+                                    Actif
+                                </option>
+
+                                <option value="suspended">
+                                    Suspendu
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- ACTIONS -->
+
+                <div class="flex flex-col-reverse sm:flex-row
+                            sm:justify-between gap-3">
+
+                    <button
+                        type="button"
+                        onclick="deleteAdmin()"
+                        class="px-5 py-3 rounded-xl
+                               border border-red-200
+                               text-red-600 text-sm font-semibold
+                               hover:bg-red-50"
+                    >
+                        <i class="fa-regular fa-trash-can mr-2"></i>
+                        Supprimer le compte
+                    </button>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+
+                        <a
+                            href="/super-admin/utilisateurs/128"
+                            class="px-5 py-3 rounded-xl border
+                                   border-slate-200 text-sm
+                                   font-semibold text-slate-600
+                                   text-center hover:bg-slate-50"
+                        >
+                            Annuler
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="px-6 py-3 rounded-xl
+                                   bg-sky-500 hover:bg-sky-600
+                                   text-white text-sm font-semibold"
+                        >
+                            <i class="fa-solid fa-floppy-disk mr-2"></i>
+                            Enregistrer
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("overlay");
+
+    document
+        .getElementById("openSidebar")
+        ?.addEventListener("click", () => {
+
+            sidebar.classList.remove("-translate-x-full");
+            overlay.classList.remove("hidden");
+
+        });
+
+    overlay?.addEventListener("click", () => {
+
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+
+    });
+
+    /* PASSWORD */
+
+    const changePassword =
+        document.getElementById("changePassword");
+
+    const passwordFields =
+        document.getElementById("passwordFields");
+
+    changePassword.addEventListener("change", () => {
+
+        if (changePassword.checked) {
+
+            passwordFields.classList.remove("hidden");
+
+        } else {
+
+            passwordFields.classList.add("hidden");
+
+        }
+
+    });
+
+    /* UPDATE */
+
+    function updateAdmin(event) {
+
+        event.preventDefault();
+
+        if (changePassword.checked) {
+
+            const password =
+                document.getElementById("newPassword").value;
+
+            const confirmation =
+                document.getElementById("newPasswordConfirm").value;
+
+            if (!password || password !== confirmation) {
+
+                alert(
+                    "Les mots de passe ne correspondent pas."
+                );
+
+                return;
+
+            }
+
+        }
+
+        /*
+         * Plus tard :
+         *
+         * PUT /api/super-admin/users/:id
+         */
+
+        alert(
+            "Les modifications seront enregistrées via AdonisJS."
+        );
+
+    }
+
+    /* DELETE */
+
+    function deleteAdmin() {
+
+        if (
+            !confirm(
+                "Voulez-vous vraiment supprimer ce compte administrateur ?"
+            )
+        ) {
+            return;
+        }
+
+        /*
+         * DELETE /api/super-admin/users/:id
+         */
+
+        alert(
+            "La suppression sera effectuée par AdonisJS."
+        );
+
+    }
+
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+</body>
+</html>

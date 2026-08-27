@@ -17,14 +17,22 @@ export default class GoogleAuthController {
 
     const userDetails = await googleUser.user()
 
-    // On cherche l'utilisateur par son Google ID ou son Email
+    // On cherche l'utilisateur par son email
+    const nameParts = (userDetails.name || userDetails.email.split('@')[0]).trim().split(/\s+/)
+    const prenom = nameParts.shift() || 'Utilisateur'
+    const nom = nameParts.join(' ') || prenom
     const user = await User.firstOrCreate(
       { email: userDetails.email },
       {
-        name: userDetails.name,
+        nom,
+        postnom: null,
+        prenom,
         pseudo: userDetails.email.split('@')[0],
         googleId: userDetails.id,
-        password: Math.random().toString(36).slice(-10), 
+        password: Math.random().toString(36).slice(-10),
+        statut: 'ACTIF',
+        systemRole: 'USER',
+        isVerified: true,
       }
     )
 

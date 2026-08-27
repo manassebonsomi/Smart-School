@@ -1,0 +1,3328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Écoles | Smart School</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#38BDF8',
+                        primaryDark: '#0284C7',
+                        primaryLight: '#E0F2FE',
+                        darkBlue: '#0F172A'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                         BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: transform .3s ease-in-out;
+        }
+
+        .overlay-transition {
+            transition: opacity .3s ease-in-out;
+        }
+
+        .modal-transition {
+            transition: opacity .2s ease, transform .2s ease;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+<!-- ========================================================= -->
+<!-- MOBILE OVERLAY -->
+<!-- ========================================================= -->
+
+<div
+    id="sidebarOverlay"
+    class="fixed inset-0 z-40 hidden bg-slate-900/50 opacity-0
+           overlay-transition lg:hidden"
+></div>
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<aside
+    id="sidebar"
+    class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r
+           border-slate-200 -translate-x-full sidebar-transition
+           lg:translate-x-0"
+>
+
+    <!-- Logo -->
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-100">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-11 h-11 rounded-xl bg-sky-500 text-white
+                       flex items-center justify-center shadow-sm"
+            >
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+
+            <div>
+
+                <h1 class="font-bold text-lg text-slate-800">
+                    Smart School
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Administration
+                </p>
+
+            </div>
+
+        </div>
+
+        <button
+            id="closeSidebar"
+            class="ml-auto lg:hidden text-slate-400 hover:text-slate-700"
+        >
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+
+    </div>
+
+    <!-- Navigation -->
+
+    <nav class="px-4 py-6 space-y-2">
+
+        <p
+            class="px-3 mb-3 text-xs font-semibold uppercase
+                   tracking-wider text-slate-400"
+        >
+            Administration
+        </p>
+
+        <a
+            href="/super-admin/dashboard"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-chart-pie w-5"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- ACTIVE -->
+
+        <a
+            href="/super-admin/ecoles"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   bg-sky-50 text-sky-600 font-semibold"
+        >
+            <i class="fa-solid fa-school w-5"></i>
+            <span>Écoles</span>
+        </a>
+
+        <a
+            href="/super-admin/utilisateurs"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-users w-5"></i>
+            <span>Utilisateurs</span>
+        </a>
+
+        <a
+            href="/super-admin/statistiques"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-chart-line w-5"></i>
+            <span>Statistiques</span>
+        </a>
+
+        <a
+            href="/super-admin/rapports"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl
+                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
+        >
+            <i class="fa-solid fa-file-lines w-5"></i>
+            <span>Rapports</span>
+        </a>
+
+    </nav>
+
+    <!-- Bottom -->
+
+    <div
+        class="absolute bottom-0 left-0 right-0 p-4
+               border-t border-slate-100"
+    >
+
+        <button
+            class="w-full flex items-center gap-3 px-4 py-3
+                   rounded-xl text-slate-500 hover:bg-slate-50 transition"
+        >
+            <i class="fa-solid fa-gear w-5"></i>
+            <span>Paramètres</span>
+        </button>
+
+        <button
+            onclick="logout()"
+            class="w-full flex items-center gap-3 px-4 py-3
+                   rounded-xl text-red-500 hover:bg-red-50 transition"
+        >
+            <i class="fa-solid fa-right-from-bracket w-5"></i>
+            <span>Déconnexion</span>
+        </button>
+
+    </div>
+
+</aside>
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+
+<div class="lg:ml-72 min-h-screen">
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <header
+        class="h-20 bg-white border-b border-slate-200
+               sticky top-0 z-30"
+    >
+
+        <div
+            class="h-full px-4 sm:px-6 lg:px-8
+                   flex items-center justify-between"
+        >
+
+            <div class="flex items-center gap-4">
+
+                <button
+                    id="openSidebar"
+                    class="lg:hidden w-10 h-10 rounded-lg
+                           hover:bg-slate-100 flex items-center
+                           justify-center text-slate-600"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">
+                        Écoles
+                    </h2>
+
+                    <p class="hidden sm:block text-xs sm:text-sm text-slate-400">
+                        Gestion des établissements scolaires
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <!-- Notifications -->
+
+                <button
+                    class="relative w-10 h-10 rounded-xl
+                           hover:bg-slate-100 flex items-center
+                           justify-center text-slate-500"
+                >
+
+                    <i class="fa-regular fa-bell text-lg"></i>
+
+                    <span
+                        class="absolute top-2 right-2 w-2 h-2
+                               rounded-full bg-red-500 border-2 border-white"
+                    ></span>
+
+                </button>
+
+                <!-- Profile -->
+
+                <div
+                    class="hidden sm:flex items-center gap-3
+                           pl-3 border-l border-slate-200"
+                >
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-sky-100
+                               text-sky-600 flex items-center
+                               justify-center font-bold"
+                    >
+                        SA
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p class="text-sm font-semibold text-slate-700">
+                            Super Admin
+                        </p>
+
+                        <p class="text-xs text-slate-400">
+                            Administrateur système
+                        </p>
+
+                    </div>
+
+                    <i
+                        class="fa-solid fa-chevron-down
+                               text-xs text-slate-400"
+                    ></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ===================================================== -->
+    <!-- CONTENT -->
+    <!-- ===================================================== -->
+
+    <main class="p-4 sm:p-6 lg:p-8">
+
+        <!-- PAGE TITLE -->
+
+        <div
+            class="flex flex-col lg:flex-row lg:items-center
+                   lg:justify-between gap-4 mb-8"
+        >
+
+            <div>
+
+                <h1 class="text-2xl font-bold text-slate-800">
+                    Gestion des écoles
+                </h1>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Gérez les établissements enregistrés sur Smart School.
+                </p>
+
+            </div>
+
+            <button
+                onclick="openCreateModal()"
+                class="inline-flex items-center justify-center gap-2
+                       px-5 py-3 rounded-xl bg-sky-500
+                       hover:bg-sky-600 text-white
+                       text-sm font-semibold shadow-sm transition"
+            >
+
+                <i class="fa-solid fa-plus"></i>
+
+                Nouvelle école
+
+            </button>
+
+        </div>
+
+        <!-- ================================================= -->
+        <!-- SUMMARY -->
+        <!-- ================================================= -->
+
+        <section
+            class="grid grid-cols-1 sm:grid-cols-2
+                   xl:grid-cols-4 gap-5 mb-8"
+        >
+
+            <!-- Total -->
+
+            <div
+                class="bg-white border border-slate-200
+                       rounded-2xl p-5 shadow-sm"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Total écoles
+                        </p>
+
+                        <p
+                            id="totalSchools"
+                            class="mt-2 text-3xl font-bold text-slate-800"
+                        >
+                            128
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-sky-50
+                               text-sky-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-school text-xl"></i>
+                    </div>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-400">
+                    Établissements enregistrés
+                </p>
+
+            </div>
+
+            <!-- Active -->
+
+            <div
+                class="bg-white border border-slate-200
+                       rounded-2xl p-5 shadow-sm"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Écoles actives
+                        </p>
+
+                        <p class="mt-2 text-3xl font-bold text-slate-800">
+                            121
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-emerald-50
+                               text-emerald-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                    </div>
+
+                </div>
+
+                <p class="mt-4 text-xs text-emerald-500 font-medium">
+                    94.5% du total
+                </p>
+
+            </div>
+
+            <!-- Suspended -->
+
+            <div
+                class="bg-white border border-slate-200
+                       rounded-2xl p-5 shadow-sm"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Suspendues
+                        </p>
+
+                        <p class="mt-2 text-3xl font-bold text-slate-800">
+                            7
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-amber-50
+                               text-amber-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-ban text-xl"></i>
+                    </div>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-400">
+                    Nécessitent une vérification
+                </p>
+
+            </div>
+
+            <!-- Students -->
+
+            <div
+                class="bg-white border border-slate-200
+                       rounded-2xl p-5 shadow-sm"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Élèves inscrits
+                        </p>
+
+                        <p class="mt-2 text-3xl font-bold text-slate-800">
+                            29,841
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-indigo-50
+                               text-indigo-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-user-graduate text-xl"></i>
+                    </div>
+
+                </div>
+
+                <p class="mt-4 text-xs text-indigo-500 font-medium">
+                    Dans tous les établissements
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- SEARCH / FILTER -->
+        <!-- ================================================= -->
+
+        <section
+            class="bg-white rounded-2xl border border-slate-200
+                   shadow-sm mb-6"
+        >
+
+            <div class="p-5 sm:p-6">
+
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2
+                           xl:grid-cols-5 gap-4"
+                >
+
+                    <!-- Search -->
+
+                    <div class="xl:col-span-2">
+
+                        <label
+                            class="block text-xs font-semibold
+                                   text-slate-500 mb-2"
+                        >
+                            Rechercher une école
+                        </label>
+
+                        <div class="relative">
+
+                            <i
+                                class="fa-solid fa-magnifying-glass
+                                       absolute left-3 top-1/2
+                                       -translate-y-1/2
+                                       text-slate-400"
+                            ></i>
+
+                            <input
+                                id="searchInput"
+                                type="text"
+                                placeholder="Nom, ville, email..."
+                                class="w-full pl-10 pr-4 py-3 rounded-xl
+                                       border border-slate-200
+                                       bg-slate-50 text-sm outline-none
+                                       focus:ring-2 focus:ring-sky-200
+                                       focus:border-sky-400"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <!-- Status -->
+
+                    <div>
+
+                        <label
+                            class="block text-xs font-semibold
+                                   text-slate-500 mb-2"
+                        >
+                            Statut
+                        </label>
+
+                        <select
+                            id="statusFilter"
+                            class="w-full px-4 py-3 rounded-xl
+                                   border border-slate-200
+                                   bg-slate-50 text-sm outline-none
+                                   focus:ring-2 focus:ring-sky-200
+                                   focus:border-sky-400"
+                        >
+
+                            <option value="">
+                                Tous
+                            </option>
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="suspended">
+                                Suspendue
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Province -->
+
+                    <div>
+
+                        <label
+                            class="block text-xs font-semibold
+                                   text-slate-500 mb-2"
+                        >
+                            Province
+                        </label>
+
+                        <select
+                            id="provinceFilter"
+                            class="w-full px-4 py-3 rounded-xl
+                                   border border-slate-200
+                                   bg-slate-50 text-sm outline-none
+                                   focus:ring-2 focus:ring-sky-200
+                                   focus:border-sky-400"
+                        >
+
+                            <option value="">
+                                Toutes
+                            </option>
+
+                            <option value="kinshasa">
+                                Kinshasa
+                            </option>
+
+                            <option value="kongo-central">
+                                Kongo-Central
+                            </option>
+
+                            <option value="haut-katanga">
+                                Haut-Katanga
+                            </option>
+
+                            <option value="lualaba">
+                                Lualaba
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Reset -->
+
+                    <div class="flex items-end">
+
+                        <button
+                            onclick="resetFilters()"
+                            class="w-full px-4 py-3 rounded-xl
+                                   border border-slate-200
+                                   text-sm font-semibold
+                                   text-slate-600 hover:bg-slate-50
+                                   transition"
+                        >
+
+                            <i class="fa-solid fa-rotate-left mr-2"></i>
+
+                            Réinitialiser
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================= -->
+        <!-- TABLE -->
+        <!-- ================================================= -->
+
+        <section
+            class="bg-white rounded-2xl border border-slate-200
+                   shadow-sm overflow-hidden"
+        >
+
+            <!-- Table header -->
+
+            <div
+                class="p-5 sm:p-6 border-b border-slate-100
+                       flex flex-col sm:flex-row
+                       sm:items-center sm:justify-between gap-3"
+            >
+
+                <div>
+
+                    <h2 class="font-bold text-slate-800">
+                        Liste des écoles
+                    </h2>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        Établissements enregistrés sur la plateforme.
+                    </p>
+
+                </div>
+
+                <span
+                    id="resultCount"
+                    class="inline-flex w-fit px-3 py-1.5
+                           rounded-full bg-slate-100
+                           text-xs font-semibold text-slate-500"
+                >
+                    8 écoles
+                </span>
+
+            </div>
+
+            <!-- Table -->
+
+            <div class="overflow-x-auto scrollbar-hide">
+
+                <table class="w-full min-w-[1100px]">
+
+                    <thead class="bg-slate-50 border-b border-slate-100">
+
+                        <tr>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                École
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Localisation
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Élèves
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Administrateur
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Création
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Statut
+                            </th>
+
+                            <th
+                                class="px-6 py-4 text-right text-xs
+                                       font-semibold uppercase
+                                       tracking-wider text-slate-400"
+                            >
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="schoolsTable"
+                        class="divide-y divide-slate-100"
+                    >
+
+                        <!-- SCHOOL 1 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Complexe Scolaire La Réussite"
+                            data-city="Kinshasa"
+                            data-province="kinshasa"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl
+                                               bg-sky-50 text-sky-600
+                                               flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Complexe Scolaire La Réussite
+                                        </p>
+
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0001
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <p class="text-sm text-slate-600">
+                                    Kinshasa
+                                </p>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Limete
+                                </p>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span class="text-sm font-semibold text-slate-700">
+                                    1,248
+                                </span>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <p class="text-sm font-medium text-slate-700">
+                                    Jean Kabasele
+                                </p>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@lareussite.cd
+                                </p>
+
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                12 Jan. 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+
+                                    <span
+                                        class="w-1.5 h-1.5 rounded-full
+                                               bg-emerald-500"
+                                    ></span>
+
+                                    Active
+
+                                </span>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Complexe Scolaire La Réussite')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Complexe Scolaire La Réussite')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('Complexe Scolaire La Réussite')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Complexe Scolaire La Réussite')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 2 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Collège Saint Pierre"
+                            data-city="Kinshasa"
+                            data-province="kinshasa"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-indigo-50
+                                               text-indigo-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Collège Saint Pierre
+                                        </p>
+
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0002
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Kinshasa
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Gombe
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    936
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    Marie Ilunga
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@saintpierre.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                24 Jan. 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active
+                                </span>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Collège Saint Pierre')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Collège Saint Pierre')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('Collège Saint Pierre')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Collège Saint Pierre')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 3 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Institut Horizon"
+                            data-city="Lubumbashi"
+                            data-province="haut-katanga"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-emerald-50
+                                               text-emerald-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Institut Horizon
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0003
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Lubumbashi
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Lubumbashi
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    1,472
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    Patrick Mulamba
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@horizon.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                02 Fév. 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Institut Horizon')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Institut Horizon')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('Institut Horizon')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Institut Horizon')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 4 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Complexe Scolaire Les Elites"
+                            data-city="Matadi"
+                            data-province="kongo-central"
+                            data-status="suspended"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-amber-50
+                                               text-amber-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Complexe Scolaire Les Élites
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0004
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Matadi
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Bas-Congo
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    684
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    André Mavungu
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@leselites.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                17 Fév. 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-amber-50 text-amber-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    Suspendue
+                                </span>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Complexe Scolaire Les Élites')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Complexe Scolaire Les Élites')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="activateSchool('Complexe Scolaire Les Élites')"
+                                        title="Réactiver"
+                                        class="action-btn text-emerald-600 hover:bg-emerald-50"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Complexe Scolaire Les Élites')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 5 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="École Internationale de Kinshasa"
+                            data-city="Kinshasa"
+                            data-province="kinshasa"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-violet-50
+                                               text-violet-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            École Internationale de Kinshasa
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0005
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Kinshasa
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Ngaliema
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    2,108
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    Sarah Tshibangu
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@eik.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                01 Mars 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('École Internationale de Kinshasa')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('École Internationale de Kinshasa')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('École Internationale de Kinshasa')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('École Internationale de Kinshasa')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 6 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Institut Technique Moderne"
+                            data-city="Kolwezi"
+                            data-province="lualaba"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-sky-50
+                                               text-sky-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Institut Technique Moderne
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0006
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Kolwezi
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Lualaba
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    1,035
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    David Kabeya
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@itm.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                14 Mars 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Institut Technique Moderne')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Institut Technique Moderne')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('Institut Technique Moderne')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Institut Technique Moderne')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 7 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="Complexe Scolaire Avenir"
+                            data-city="Kinshasa"
+                            data-province="kinshasa"
+                            data-status="active"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-rose-50
+                                               text-rose-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            Complexe Scolaire Avenir
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0007
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Kinshasa
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Masina
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    742
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    Esther Mbala
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@avenir.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                29 Mars 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-emerald-50 text-emerald-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('Complexe Scolaire Avenir')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('Complexe Scolaire Avenir')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="suspendSchool('Complexe Scolaire Avenir')"
+                                        title="Suspendre"
+                                        class="action-btn text-amber-600 hover:bg-amber-50"
+                                    >
+                                        <i class="fa-solid fa-ban"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('Complexe Scolaire Avenir')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- SCHOOL 8 -->
+
+                        <tr
+                            class="school-row hover:bg-slate-50 transition"
+                            data-name="École Sainte Marie"
+                            data-city="Kinshasa"
+                            data-province="kinshasa"
+                            data-status="suspended"
+                        >
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-11 h-11 rounded-xl bg-amber-50
+                                               text-amber-600 flex items-center
+                                               justify-center shrink-0"
+                                    >
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            École Sainte Marie
+                                        </p>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            SCH-0008
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-600">
+                                    Kinshasa
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Mont-Ngafula
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-semibold text-slate-700">
+                                    568
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-slate-700">
+                                    Paul Nsimba
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    admin@stemarie.cd
+                                </p>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                05 Avril 2026
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span
+                                    class="inline-flex items-center gap-1.5
+                                           px-2.5 py-1 rounded-full
+                                           bg-amber-50 text-amber-600
+                                           text-xs font-semibold"
+                                >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    Suspendue
+                                </span>
+
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        onclick="viewSchool('École Sainte Marie')"
+                                        title="Détails"
+                                        class="action-btn text-sky-600 hover:bg-sky-50"
+                                    >
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="editSchool('École Sainte Marie')"
+                                        title="Modifier"
+                                        class="action-btn text-indigo-600 hover:bg-indigo-50"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="activateSchool('École Sainte Marie')"
+                                        title="Réactiver"
+                                        class="action-btn text-emerald-600 hover:bg-emerald-50"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+
+                                    <button
+                                        onclick="deleteSchool('École Sainte Marie')"
+                                        title="Supprimer"
+                                        class="action-btn text-red-600 hover:bg-red-50"
+                                    >
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Empty -->
+
+            <div
+                id="emptyState"
+                class="hidden px-6 py-16 text-center"
+            >
+
+                <div
+                    class="w-16 h-16 mx-auto rounded-2xl
+                           bg-slate-100 text-slate-400
+                           flex items-center justify-center"
+                >
+                    <i class="fa-solid fa-school-circle-xmark text-2xl"></i>
+                </div>
+
+                <h3 class="mt-4 font-semibold text-slate-700">
+                    Aucune école trouvée
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-400">
+                    Modifiez vos critères de recherche.
+                </p>
+
+            </div>
+
+            <!-- Pagination -->
+
+            <div
+                class="px-5 sm:px-6 py-4 border-t border-slate-100
+                       flex flex-col sm:flex-row
+                       sm:items-center sm:justify-between gap-4"
+            >
+
+                <p class="text-xs text-slate-400">
+
+                    Affichage de
+
+                    <span class="font-semibold text-slate-600">
+                        1
+                    </span>
+
+                    à
+
+                    <span class="font-semibold text-slate-600">
+                        8
+                    </span>
+
+                    sur
+
+                    <span class="font-semibold text-slate-600">
+                        128
+                    </span>
+
+                    écoles
+
+                </p>
+
+                <div class="flex items-center gap-1">
+
+                    <button
+                        disabled
+                        class="w-9 h-9 rounded-lg border border-slate-200
+                               text-slate-300 cursor-not-allowed"
+                    >
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+
+                    <button
+                        class="w-9 h-9 rounded-lg bg-sky-500
+                               text-white text-sm font-semibold"
+                    >
+                        1
+                    </button>
+
+                    <button
+                        class="w-9 h-9 rounded-lg border border-slate-200
+                               text-slate-600 hover:bg-sky-50
+                               hover:text-sky-600 text-sm"
+                    >
+                        2
+                    </button>
+
+                    <button
+                        class="w-9 h-9 rounded-lg border border-slate-200
+                               text-slate-600 hover:bg-sky-50
+                               hover:text-sky-600 text-sm"
+                    >
+                        3
+                    </button>
+
+                    <span class="px-1 text-slate-400">
+                        ...
+                    </span>
+
+                    <button
+                        class="w-9 h-9 rounded-lg border border-slate-200
+                               text-slate-600 hover:bg-sky-50
+                               hover:text-sky-600 text-sm"
+                    >
+                        16
+                    </button>
+
+                    <button
+                        class="w-9 h-9 rounded-lg border border-slate-200
+                               text-slate-600 hover:bg-sky-50
+                               hover:text-sky-600"
+                    >
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- FOOTER -->
+
+        <footer class="mt-8 text-center">
+
+            <p class="text-xs text-slate-400">
+                © 2026 Smart School. Tous droits réservés.
+            </p>
+
+        </footer>
+
+    </main>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- CREATE SCHOOL MODAL -->
+<!-- ========================================================= -->
+
+<div
+    id="createModal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center
+           bg-slate-900/50 p-4 opacity-0 modal-transition"
+>
+
+    <div
+        id="createModalContent"
+        class="w-full max-w-3xl max-h-[90vh] overflow-y-auto
+               bg-white rounded-2xl shadow-2xl scale-95
+               modal-transition"
+    >
+
+        <!-- Header -->
+
+        <div
+            class="sticky top-0 bg-white z-10 px-6 py-5
+                   border-b border-slate-100
+                   flex items-center justify-between"
+        >
+
+            <div>
+
+                <h3 class="text-lg font-bold text-slate-800">
+                    Nouvelle école
+                </h3>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Enregistrer un nouvel établissement.
+                </p>
+
+            </div>
+
+            <button
+                onclick="closeCreateModal()"
+                class="w-9 h-9 rounded-lg hover:bg-slate-100
+                       text-slate-400"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <!-- Form -->
+
+        <form
+            onsubmit="createSchool(event)"
+            class="p-6"
+        >
+
+            <div class="mb-6">
+
+                <div class="flex items-center gap-3 mb-4">
+
+                    <div
+                        class="w-10 h-10 rounded-xl bg-sky-50
+                               text-sky-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+
+                    <div>
+
+                        <h4 class="font-semibold text-slate-700">
+                            Informations générales
+                        </h4>
+
+                        <p class="text-xs text-slate-400">
+                            Informations principales de l'établissement.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <div class="md:col-span-2">
+
+                        <label class="form-label">
+                            Nom de l'école *
+                        </label>
+
+                        <input
+                            type="text"
+                            required
+                            placeholder="Ex : Complexe Scolaire La Réussite"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Type d'établissement *
+                        </label>
+
+                        <select required class="form-input">
+
+                            <option value="">
+                                Sélectionner
+                            </option>
+
+                            <option>
+                                École primaire
+                            </option>
+
+                            <option>
+                                École secondaire
+                            </option>
+
+                            <option>
+                                École primaire et secondaire
+                            </option>
+
+                            <option>
+                                Institut technique
+                            </option>
+
+                            <option>
+                                Établissement supérieur
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Téléphone
+                        </label>
+
+                        <input
+                            type="tel"
+                            placeholder="+243 ..."
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            placeholder="contact@ecole.cd"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Site web
+                        </label>
+
+                        <input
+                            type="url"
+                            placeholder="https://..."
+                            class="form-input"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Location -->
+
+            <div class="pt-6 border-t border-slate-100">
+
+                <div class="flex items-center gap-3 mb-4">
+
+                    <div
+                        class="w-10 h-10 rounded-xl bg-indigo-50
+                               text-indigo-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+
+                    <div>
+
+                        <h4 class="font-semibold text-slate-700">
+                            Localisation
+                        </h4>
+
+                        <p class="text-xs text-slate-400">
+                            Adresse géographique de l'établissement.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <div>
+
+                        <label class="form-label">
+                            Province *
+                        </label>
+
+                        <select required class="form-input">
+
+                            <option value="">
+                                Sélectionner
+                            </option>
+
+                            <option>
+                                Kinshasa
+                            </option>
+
+                            <option>
+                                Kongo-Central
+                            </option>
+
+                            <option>
+                                Haut-Katanga
+                            </option>
+
+                            <option>
+                                Lualaba
+                            </option>
+
+                            <option>
+                                Autre
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Ville *
+                        </label>
+
+                        <input
+                            type="text"
+                            required
+                            placeholder="Ex : Kinshasa"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Commune / Territoire
+                        </label>
+
+                        <input
+                            type="text"
+                            placeholder="Ex : Limete"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Quartier
+                        </label>
+
+                        <input
+                            type="text"
+                            placeholder="Ex : Kingabwa"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div class="md:col-span-2">
+
+                        <label class="form-label">
+                            Adresse complète
+                        </label>
+
+                        <textarea
+                            rows="3"
+                            placeholder="Adresse de l'établissement..."
+                            class="form-input resize-none"
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Admin -->
+
+            <div class="pt-6 border-t border-slate-100 mt-6">
+
+                <div class="flex items-center gap-3 mb-4">
+
+                    <div
+                        class="w-10 h-10 rounded-xl bg-emerald-50
+                               text-emerald-500 flex items-center
+                               justify-center"
+                    >
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <div>
+
+                        <h4 class="font-semibold text-slate-700">
+                            Administrateur de l'école
+                        </h4>
+
+                        <p class="text-xs text-slate-400">
+                            Compte principal de gestion de l'établissement.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <div>
+
+                        <label class="form-label">
+                            Prénom *
+                        </label>
+
+                        <input
+                            type="text"
+                            required
+                            placeholder="Prénom"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Nom *
+                        </label>
+
+                        <input
+                            type="text"
+                            required
+                            placeholder="Nom"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Email administrateur *
+                        </label>
+
+                        <input
+                            type="email"
+                            required
+                            placeholder="admin@ecole.cd"
+                            class="form-input"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+                            Téléphone administrateur
+                        </label>
+
+                        <input
+                            type="tel"
+                            placeholder="+243 ..."
+                            class="form-input"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+
+            <div
+                class="mt-7 pt-5 border-t border-slate-100
+                       flex flex-col-reverse sm:flex-row
+                       sm:justify-end gap-3"
+            >
+
+                <button
+                    type="button"
+                    onclick="closeCreateModal()"
+                    class="px-5 py-2.5 rounded-xl
+                           border border-slate-200
+                           text-sm font-semibold text-slate-600
+                           hover:bg-slate-50"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-5 py-2.5 rounded-xl
+                           bg-sky-500 hover:bg-sky-600
+                           text-white text-sm font-semibold"
+                >
+
+                    <i class="fa-solid fa-school mr-2"></i>
+
+                    Créer l'école
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- CONFIRMATION MODAL -->
+<!-- ========================================================= -->
+
+<div
+    id="confirmModal"
+    class="fixed inset-0 z-[110] hidden items-center
+           justify-center bg-slate-900/50 p-4 opacity-0
+           modal-transition"
+>
+
+    <div
+        id="confirmModalContent"
+        class="w-full max-w-md bg-white rounded-2xl
+               shadow-2xl scale-95 modal-transition"
+    >
+
+        <div class="p-6">
+
+            <div
+                id="confirmIcon"
+                class="w-14 h-14 rounded-2xl mx-auto
+                       flex items-center justify-center
+                       bg-amber-50 text-amber-500"
+            >
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+
+            <div class="text-center mt-5">
+
+                <h3
+                    id="confirmTitle"
+                    class="text-lg font-bold text-slate-800"
+                >
+                    Confirmation
+                </h3>
+
+                <p
+                    id="confirmMessage"
+                    class="text-sm text-slate-500
+                           leading-6 mt-2"
+                >
+                    Êtes-vous sûr de vouloir continuer ?
+                </p>
+
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 mt-7">
+
+                <button
+                    onclick="closeConfirmModal()"
+                    class="flex-1 px-4 py-3 rounded-xl
+                           border border-slate-200
+                           text-sm font-semibold
+                           text-slate-600 hover:bg-slate-50"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    id="confirmActionButton"
+                    class="flex-1 px-4 py-3 rounded-xl
+                           bg-amber-500 hover:bg-amber-600
+                           text-white text-sm font-semibold"
+                >
+                    Confirmer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- SCHOOL DETAILS MODAL -->
+<!-- ========================================================= -->
+
+<div
+    id="detailsModal"
+    class="fixed inset-0 z-[100] hidden items-center
+           justify-center bg-slate-900/50 p-4 opacity-0
+           modal-transition"
+>
+
+    <div
+        id="detailsModalContent"
+        class="w-full max-w-3xl max-h-[90vh]
+               overflow-y-auto bg-white rounded-2xl
+               shadow-2xl scale-95 modal-transition"
+    >
+
+        <!-- Header -->
+
+        <div
+            class="sticky top-0 bg-white z-10
+                   px-6 py-5 border-b border-slate-100
+                   flex items-center justify-between"
+        >
+
+            <div class="flex items-center gap-3">
+
+                <div
+                    class="w-12 h-12 rounded-xl bg-sky-50
+                           text-sky-600 flex items-center
+                           justify-center"
+                >
+                    <i class="fa-solid fa-school text-xl"></i>
+                </div>
+
+                <div>
+
+                    <h3
+                        id="detailsSchoolName"
+                        class="font-bold text-slate-800"
+                    >
+                        École
+                    </h3>
+
+                    <p
+                        id="detailsSchoolId"
+                        class="text-xs text-slate-400 mt-1"
+                    >
+                        SCH-0000
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button
+                onclick="closeDetailsModal()"
+                class="w-9 h-9 rounded-lg hover:bg-slate-100
+                       text-slate-400"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="p-6">
+
+            <!-- Quick stats -->
+
+            <div
+                class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6"
+            >
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-xs text-slate-400">
+                        Élèves
+                    </p>
+                    <p class="text-xl font-bold text-slate-800 mt-1">
+                        1,248
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-xs text-slate-400">
+                        Enseignants
+                    </p>
+                    <p class="text-xl font-bold text-slate-800 mt-1">
+                        84
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-xs text-slate-400">
+                        Classes
+                    </p>
+                    <p class="text-xl font-bold text-slate-800 mt-1">
+                        36
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-xs text-slate-400">
+                        Statut
+                    </p>
+                    <p class="text-sm font-semibold text-emerald-600 mt-2">
+                        Active
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Information -->
+
+            <div
+                class="border border-slate-200 rounded-xl
+                       overflow-hidden"
+            >
+
+                <div
+                    class="px-5 py-4 border-b border-slate-100"
+                >
+
+                    <h4 class="font-semibold text-slate-700">
+                        Informations de l'établissement
+                    </h4>
+
+                </div>
+
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2
+                           divide-y sm:divide-y-0"
+                >
+
+                    <div class="p-5">
+
+                        <p class="text-xs text-slate-400">
+                            Province
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            Kinshasa
+                        </p>
+
+                    </div>
+
+                    <div class="p-5">
+
+                        <p class="text-xs text-slate-400">
+                            Ville
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            Kinshasa
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-t border-slate-100">
+
+                        <p class="text-xs text-slate-400">
+                            Commune
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            Limete
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-t border-slate-100">
+
+                        <p class="text-xs text-slate-400">
+                            Date de création
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            12 Janvier 2026
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-t border-slate-100">
+
+                        <p class="text-xs text-slate-400">
+                            Email
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            admin@lareussite.cd
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-t border-slate-100">
+
+                        <p class="text-xs text-slate-400">
+                            Téléphone
+                        </p>
+
+                        <p class="text-sm font-medium text-slate-700 mt-1">
+                            +243 81 000 00 00
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Administrator -->
+
+            <div class="mt-6">
+
+                <h4 class="font-semibold text-slate-700 mb-3">
+                    Administrateur
+                </h4>
+
+                <div
+                    class="flex items-center gap-4
+                           p-4 rounded-xl bg-slate-50"
+                >
+
+                    <div
+                        class="w-11 h-11 rounded-full bg-sky-100
+                               text-sky-600 flex items-center
+                               justify-center font-bold"
+                    >
+                        JK
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-slate-700">
+                            Jean Kabasele
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            admin@lareussite.cd
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            class="px-6 py-4 border-t border-slate-100
+                   flex justify-end"
+        >
+
+            <button
+                onclick="closeDetailsModal()"
+                class="px-5 py-2.5 rounded-xl
+                       bg-slate-100 hover:bg-slate-200
+                       text-sm font-semibold text-slate-600"
+            >
+                Fermer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+    /* =========================================================
+       COMMON STYLES
+    ========================================================= */
+
+    const style = document.createElement("style");
+
+    style.innerHTML = `
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            transition: .2s ease;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: .5rem;
+            font-size: .75rem;
+            line-height: 1rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: .875rem;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+        }
+    `;
+
+    document.head.appendChild(style);
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const sidebarOverlay =
+        document.getElementById("sidebarOverlay");
+
+    document
+        .getElementById("openSidebar")
+        .addEventListener("click", () => {
+
+            sidebar.classList.remove("-translate-x-full");
+
+            sidebarOverlay.classList.remove("hidden");
+
+            setTimeout(() => {
+                sidebarOverlay.classList.remove("opacity-0");
+            }, 10);
+
+        });
+
+    function hideSidebar() {
+
+        sidebar.classList.add("-translate-x-full");
+
+        sidebarOverlay.classList.add("opacity-0");
+
+        setTimeout(() => {
+
+            sidebarOverlay.classList.add("hidden");
+
+        }, 300);
+
+    }
+
+    document
+        .getElementById("closeSidebar")
+        .addEventListener("click", hideSidebar);
+
+    sidebarOverlay.addEventListener("click", hideSidebar);
+
+    /* =========================================================
+       CREATE MODAL
+    ========================================================= */
+
+    const createModal =
+        document.getElementById("createModal");
+
+    const createModalContent =
+        document.getElementById("createModalContent");
+
+    function openCreateModal() {
+
+        createModal.classList.remove("hidden");
+
+        createModal.classList.add("flex");
+
+        setTimeout(() => {
+
+            createModal.classList.remove("opacity-0");
+
+            createModalContent.classList.remove("scale-95");
+
+            createModalContent.classList.add("scale-100");
+
+        }, 10);
+
+    }
+
+    function closeCreateModal() {
+
+        createModal.classList.add("opacity-0");
+
+        createModalContent.classList.remove("scale-100");
+
+        createModalContent.classList.add("scale-95");
+
+        setTimeout(() => {
+
+            createModal.classList.remove("flex");
+
+            createModal.classList.add("hidden");
+
+        }, 200);
+
+    }
+
+    function createSchool(event) {
+
+        event.preventDefault();
+
+        /*
+         * Plus tard :
+         *
+         * POST /api/super-admin/schools
+         *
+         * Les données du formulaire seront envoyées
+         * au backend AdonisJS.
+         */
+
+        closeCreateModal();
+
+        alert(
+            "L'école sera créée via l'API AdonisJS."
+        );
+
+    }
+
+    /* =========================================================
+       DETAILS MODAL
+    ========================================================= */
+
+    const detailsModal =
+        document.getElementById("detailsModal");
+
+    const detailsModalContent =
+        document.getElementById("detailsModalContent");
+
+    function viewSchool(name) {
+
+        document.getElementById(
+            "detailsSchoolName"
+        ).textContent = name;
+
+        detailsModal.classList.remove("hidden");
+
+        detailsModal.classList.add("flex");
+
+        setTimeout(() => {
+
+            detailsModal.classList.remove("opacity-0");
+
+            detailsModalContent.classList.remove("scale-95");
+
+            detailsModalContent.classList.add("scale-100");
+
+        }, 10);
+
+    }
+
+    function closeDetailsModal() {
+
+        detailsModal.classList.add("opacity-0");
+
+        detailsModalContent.classList.remove("scale-100");
+
+        detailsModalContent.classList.add("scale-95");
+
+        setTimeout(() => {
+
+            detailsModal.classList.remove("flex");
+
+            detailsModal.classList.add("hidden");
+
+        }, 200);
+
+    }
+
+    /* =========================================================
+       CONFIRMATION MODAL
+    ========================================================= */
+
+    const confirmModal =
+        document.getElementById("confirmModal");
+
+    const confirmModalContent =
+        document.getElementById("confirmModalContent");
+
+    let confirmCallback = null;
+
+    function openConfirmModal(
+        title,
+        message,
+        callback,
+        type = "warning"
+    ) {
+
+        document.getElementById(
+            "confirmTitle"
+        ).textContent = title;
+
+        document.getElementById(
+            "confirmMessage"
+        ).textContent = message;
+
+        const button =
+            document.getElementById(
+                "confirmActionButton"
+            );
+
+        const icon =
+            document.getElementById(
+                "confirmIcon"
+            );
+
+        confirmCallback = callback;
+
+        if (type === "danger") {
+
+            button.className =
+                "flex-1 px-4 py-3 rounded-xl bg-red-500 " +
+                "hover:bg-red-600 text-white text-sm font-semibold";
+
+            button.textContent = "Supprimer";
+
+            icon.className =
+                "w-14 h-14 rounded-2xl mx-auto flex items-center " +
+                "justify-center bg-red-50 text-red-500";
+
+            icon.innerHTML =
+                '<i class="fa-solid fa-trash text-xl"></i>';
+
+        } else if (type === "success") {
+
+            button.className =
+                "flex-1 px-4 py-3 rounded-xl bg-emerald-500 " +
+                "hover:bg-emerald-600 text-white text-sm font-semibold";
+
+            button.textContent = "Réactiver";
+
+            icon.className =
+                "w-14 h-14 rounded-2xl mx-auto flex items-center " +
+                "justify-center bg-emerald-50 text-emerald-500";
+
+            icon.innerHTML =
+                '<i class="fa-solid fa-check text-xl"></i>';
+
+        } else {
+
+            button.className =
+                "flex-1 px-4 py-3 rounded-xl bg-amber-500 " +
+                "hover:bg-amber-600 text-white text-sm font-semibold";
+
+            button.textContent = "Confirmer";
+
+            icon.className =
+                "w-14 h-14 rounded-2xl mx-auto flex items-center " +
+                "justify-center bg-amber-50 text-amber-500";
+
+            icon.innerHTML =
+                '<i class="fa-solid fa-triangle-exclamation text-xl"></i>';
+
+        }
+
+        confirmModal.classList.remove("hidden");
+
+        confirmModal.classList.add("flex");
+
+        setTimeout(() => {
+
+            confirmModal.classList.remove("opacity-0");
+
+            confirmModalContent.classList.remove("scale-95");
+
+            confirmModalContent.classList.add("scale-100");
+
+        }, 10);
+
+    }
+
+    function closeConfirmModal() {
+
+        confirmModal.classList.add("opacity-0");
+
+        confirmModalContent.classList.remove("scale-100");
+
+        confirmModalContent.classList.add("scale-95");
+
+        setTimeout(() => {
+
+            confirmModal.classList.remove("flex");
+
+            confirmModal.classList.add("hidden");
+
+            confirmCallback = null;
+
+        }, 200);
+
+    }
+
+    document
+        .getElementById("confirmActionButton")
+        .addEventListener("click", () => {
+
+            if (typeof confirmCallback === "function") {
+
+                confirmCallback();
+
+            }
+
+            closeConfirmModal();
+
+        });
+
+    /* =========================================================
+       SCHOOL ACTIONS
+    ========================================================= */
+
+    function editSchool(name) {
+
+        /*
+         * Plus tard :
+         *
+         * window.location.href =
+         * `/super-admin/ecoles/${schoolId}/edit`;
+         */
+
+        alert(
+            "Ouverture du formulaire de modification pour :\n\n" +
+            name
+        );
+
+    }
+
+    function suspendSchool(name) {
+
+        openConfirmModal(
+            "Suspendre l'école ?",
+            "L'école « " + name +
+            " » ne pourra plus utiliser normalement la plateforme " +
+            "tant qu'elle sera suspendue.",
+            () => {
+
+                /*
+                 * PATCH /api/super-admin/schools/:id/suspend
+                 */
+
+                alert(
+                    "L'école sera suspendue via AdonisJS."
+                );
+
+            }
+        );
+
+    }
+
+    function activateSchool(name) {
+
+        openConfirmModal(
+            "Réactiver l'école ?",
+            "L'école « " + name +
+            " » sera de nouveau active sur la plateforme.",
+            () => {
+
+                /*
+                 * PATCH /api/super-admin/schools/:id/activate
+                 */
+
+                alert(
+                    "L'école sera réactivée via AdonisJS."
+                );
+
+            },
+            "success"
+        );
+
+    }
+
+    function deleteSchool(name) {
+
+        openConfirmModal(
+            "Supprimer définitivement ?",
+            "Cette action supprimera l'école « " +
+            name +
+            " ». Cette opération devra être confirmée par le backend.",
+            () => {
+
+                /*
+                 * DELETE /api/super-admin/schools/:id
+                 */
+
+                alert(
+                    "L'école sera supprimée via AdonisJS."
+                );
+
+            },
+            "danger"
+        );
+
+    }
+
+    /* =========================================================
+       SEARCH / FILTER
+    ========================================================= */
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+    const provinceFilter =
+        document.getElementById("provinceFilter");
+
+    const schoolRows =
+        document.querySelectorAll(".school-row");
+
+    const emptyState =
+        document.getElementById("emptyState");
+
+    const resultCount =
+        document.getElementById("resultCount");
+
+    function filterSchools() {
+
+        const search =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+        const status =
+            statusFilter.value;
+
+        const province =
+            provinceFilter.value;
+
+        let visible = 0;
+
+        schoolRows.forEach(row => {
+
+            const name =
+                row.dataset.name.toLowerCase();
+
+            const city =
+                row.dataset.city.toLowerCase();
+
+            const rowStatus =
+                row.dataset.status;
+
+            const rowProvince =
+                row.dataset.province;
+
+            const matchesSearch =
+                !search ||
+                name.includes(search) ||
+                city.includes(search);
+
+            const matchesStatus =
+                !status ||
+                rowStatus === status;
+
+            const matchesProvince =
+                !province ||
+                rowProvince === province;
+
+            const show =
+                matchesSearch &&
+                matchesStatus &&
+                matchesProvince;
+
+            if (show) {
+
+                row.classList.remove("hidden");
+
+                visible++;
+
+            } else {
+
+                row.classList.add("hidden");
+
+            }
+
+        });
+
+        resultCount.textContent =
+            visible +
+            (visible > 1 ? " écoles" : " école");
+
+        if (visible === 0) {
+
+            emptyState.classList.remove("hidden");
+
+        } else {
+
+            emptyState.classList.add("hidden");
+
+        }
+
+    }
+
+    searchInput.addEventListener(
+        "input",
+        filterSchools
+    );
+
+    statusFilter.addEventListener(
+        "change",
+        filterSchools
+    );
+
+    provinceFilter.addEventListener(
+        "change",
+        filterSchools
+    );
+
+    function resetFilters() {
+
+        searchInput.value = "";
+
+        statusFilter.value = "";
+
+        provinceFilter.value = "";
+
+        filterSchools();
+
+    }
+
+    /* =========================================================
+       LOGOUT
+    ========================================================= */
+
+    function logout() {
+
+        const confirmed =
+            confirm(
+                "Voulez-vous vraiment vous déconnecter ?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        /*
+         * Plus tard :
+         *
+         * POST /api/auth/logout
+         */
+
+        window.location.href = "/";
+
+    }
+
+    /* =========================================================
+       ESCAPE
+    ========================================================= */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Escape") {
+
+                hideSidebar();
+
+                closeCreateModal();
+
+                closeDetailsModal();
+
+                closeConfirmModal();
+
+            }
+
+        }
+    );
+
+    /* =========================================================
+       OUTSIDE CLICK
+    ========================================================= */
+
+    createModal.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === createModal) {
+
+                closeCreateModal();
+
+            }
+
+        }
+    );
+
+    detailsModal.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === detailsModal) {
+
+                closeDetailsModal();
+
+            }
+
+        }
+    );
+
+    confirmModal.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === confirmModal) {
+
+                closeConfirmModal();
+
+            }
+
+        }
+    );
+
+</script>
+
+<script src="/assets/js/smart-school-api.js"></script>
+</body>
+</html>
