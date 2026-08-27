@@ -4,7 +4,7 @@ export default class SuperAdminSeeder {
 
   async run() {
 
-    const email = 'prod@gmail.com'
+    const email = 'bmm@gmail.com'
 
     const password = '34383438'
 

@@ -1,19 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Super Admin Dashboard | Smart School</title>
 
+
+    <!-- =========================================================
+         TAILWIND
+    ========================================================== -->
+
     <script src="https://cdn.tailwindcss.com"></script>
 
+
+    <!-- =========================================================
+         FONT AWESOME
+    ========================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- =========================================================
+         TAILWIND CONFIG
+    ========================================================== -->
+
     <script>
+
         tailwind.config = {
+
             theme: {
+
                 extend: {
+
                     colors: {
+
                         primary: {
+
                             50: '#f0f9ff',
                             100: '#e0f2fe',
                             200: '#bae6fd',
@@ -24,163 +56,507 @@
                             700: '#0369a1',
                             800: '#075985',
                             900: '#0c4a6e'
+
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     </script>
+
+
+    <!-- =========================================================
+         LUCIDE
+    ========================================================== -->
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
+
     <style>
+
         * {
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 transparent;
         }
 
         body {
-            font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                sans-serif;
         }
 
         .sidebar-transition {
-            transition: transform .3s ease;
+            transition:
+                transform .3s ease;
         }
 
         .overlay {
-            transition: opacity .3s ease;
+            transition:
+                opacity .3s ease;
         }
 
         .chart-line {
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
-            animation: drawChart 2s ease forwards;
+            animation:
+                drawChart 1.5s ease forwards;
         }
 
         @keyframes drawChart {
+
             to {
                 stroke-dashoffset: 0;
             }
+
         }
+
+        .loading {
+            animation:
+                pulse 1.5s ease-in-out infinite;
+        }
+
     </style>
+
 </head>
+
 
 <body class="bg-slate-50 text-slate-900">
 
-<!-- Mobile overlay -->
-<div id="overlay"
-     class="fixed inset-0 z-40 hidden bg-slate-900/40 backdrop-blur-sm lg:hidden">
-</div>
 
-<!-- Sidebar -->
-<aside id="sidebar"
-       class="sidebar-transition fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-white border-r border-slate-200 lg:translate-x-0">
+<!-- =========================================================
+     MOBILE OVERLAY
+========================================================== -->
 
-    <div class="flex h-20 items-center gap-3 border-b border-slate-100 px-6">
+<div
+    id="overlay"
+    class="
+        fixed
+        inset-0
+        z-40
+        hidden
+        bg-slate-900/40
+        backdrop-blur-sm
+        lg:hidden
+    "
+></div>
 
-        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white shadow-lg shadow-primary-600/20">
-            <i data-lucide="graduation-cap"></i>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================== -->
+
+<aside
+    id="sidebar"
+    class="
+        sidebar-transition
+        fixed
+        inset-y-0
+        left-0
+        z-50
+        flex
+        w-72
+        -translate-x-full
+        flex-col
+        border-r
+        border-slate-200
+        bg-white
+        lg:translate-x-0
+    "
+>
+
+    <!-- BRAND -->
+
+    <div
+        class="
+            flex
+            h-20
+            items-center
+            gap-3
+            border-b
+            border-slate-100
+            px-6
+        "
+    >
+
+        <div
+            class="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+                bg-primary-600
+                text-white
+                shadow-lg
+                shadow-primary-600/20
+            "
+        >
+
+            <i
+                data-lucide="graduation-cap"
+                class="h-6 w-6"
+            ></i>
+
         </div>
 
+
         <div>
-            <h1 class="font-extrabold text-slate-900">SMART SCHOOL</h1>
-            <p class="text-xs text-slate-400">Administration Platform</p>
+
+            <h1 class="font-extrabold text-slate-900">
+                SMART SCHOOL
+            </h1>
+
+            <p class="text-xs text-slate-400">
+                Administration Platform
+            </p>
+
         </div>
 
     </div>
+
+
+    <!-- NAVIGATION -->
 
     <div class="flex-1 overflow-y-auto px-4 py-6">
 
-        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        <p
+            class="
+                mb-3
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-widest
+                text-slate-400
+            "
+        >
             Principal
         </p>
 
+
         <nav class="space-y-1">
 
-            <a href="#"
-               class="flex items-center gap-3 rounded-xl bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-700">
-                <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
+            <a
+                href="/super-admin/dashboard"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i
+                    data-lucide="layout-dashboard"
+                    class="h-5 w-5"
+                ></i>
+
                 Tableau de bord
+
             </a>
 
-            <a href="#"
-               class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="school" class="h-5 w-5"></i>
+
+            <a
+                href="/super-admin/ecoles"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
+
+                <i
+                    data-lucide="school"
+                    class="h-5 w-5"
+                ></i>
+
                 Écoles
+
             </a>
 
-            <a href="#"
-               class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="users" class="h-5 w-5"></i>
+
+            <a
+                href="/super-admin/utilisateurs"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
+
+                <i
+                    data-lucide="users"
+                    class="h-5 w-5"
+                ></i>
+
                 Utilisateurs
+
             </a>
 
         </nav>
 
-        <p class="mb-3 mt-8 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-widest
+                text-slate-400
+            "
+        >
             Supervision
         </p>
 
+
         <nav class="space-y-1">
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="activity" class="h-5 w-5"></i>
-                Activité
-            </a>
+            <a
+                href="/super-admin/statistiques"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+                <i
+                    data-lucide="bar-chart-3"
+                    class="h-5 w-5"
+                ></i>
+
                 Statistiques
+
             </a>
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="file-text" class="h-5 w-5"></i>
+
+            <a
+                href="/super-admin/rapports"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
+
+                <i
+                    data-lucide="file-text"
+                    class="h-5 w-5"
+                ></i>
+
                 Rapports
-            </a>
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="shield" class="h-5 w-5"></i>
-                Journaux système
             </a>
 
         </nav>
 
-        <p class="mb-3 mt-8 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-widest
+                text-slate-400
+            "
+        >
             Système
         </p>
 
+
         <nav class="space-y-1">
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="bell" class="h-5 w-5"></i>
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
+
+                <i
+                    data-lucide="bell"
+                    class="h-5 w-5"
+                ></i>
+
                 Notifications
+
             </a>
 
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
-                <i data-lucide="settings" class="h-5 w-5"></i>
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    hover:bg-slate-50
+                "
+            >
+
+                <i
+                    data-lucide="settings"
+                    class="h-5 w-5"
+                ></i>
+
                 Paramètres
+
             </a>
+
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-red-500
+                    transition
+                    hover:bg-red-50
+                "
+            >
+
+                <i
+                    class="fa-solid fa-right-from-bracket w-5"
+                ></i>
+
+                <span>
+                    Déconnexion
+                </span>
+
+            </button>
 
         </nav>
 
     </div>
 
+
+    <!-- USER -->
+
     <div class="border-t border-slate-100 p-4">
 
-        <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+        <div
+            class="
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-slate-50
+                p-3
+            "
+        >
 
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-700">
-                BM
+            <div
+                id="sidebarAvatar"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-primary-100
+                    font-bold
+                    text-primary-700
+                "
+            >
+                SA
             </div>
+
 
             <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-bold">Super Administrateur</p>
-                <p class="truncate text-xs text-slate-400">admin@smartschool.com</p>
-            </div>
 
-            <button class="text-slate-400 hover:text-slate-700">
-                <i data-lucide="more-vertical" class="h-5 w-5"></i>
-            </button>
+                <p
+                    id="sidebarUserName"
+                    class="
+                        truncate
+                        text-sm
+                        font-bold
+                    "
+                >
+                    Super Administrateur
+                </p>
+
+
+                <p
+                    id="sidebarUserEmail"
+                    class="
+                        truncate
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Chargement...
+                </p>
+
+            </div>
 
         </div>
 
@@ -188,142 +564,661 @@
 
 </aside>
 
-<!-- Main -->
+
+<!-- =========================================================
+     MAIN
+========================================================== -->
+
 <div class="lg:pl-72">
 
-    <!-- Navbar -->
-    <header class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
 
-        <button id="menuButton"
-                class="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden">
-            <i data-lucide="menu"></i>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header
+        class="
+            sticky
+            top-0
+            z-30
+            flex
+            h-20
+            items-center
+            justify-between
+            border-b
+            border-slate-200
+            bg-white/90
+            px-4
+            backdrop-blur-md
+            sm:px-6
+            lg:px-8
+        "
+    >
+
+        <button
+            id="menuButton"
+            type="button"
+            class="
+                rounded-xl
+                p-2
+                text-slate-600
+                hover:bg-slate-100
+                lg:hidden
+            "
+        >
+
+            <i
+                data-lucide="menu"
+                class="h-5 w-5"
+            ></i>
+
         </button>
 
+
         <div class="hidden lg:block">
-            <p class="text-sm text-slate-400">Mardi 11 août 2026</p>
-            <h2 class="font-bold">Vue globale de la plateforme</h2>
+
+            <p
+                id="dashboardDate"
+                class="text-sm text-slate-400"
+            >
+                Chargement...
+            </p>
+
+            <h2 class="font-bold">
+                Vue globale de la plateforme
+            </h2>
+
         </div>
+
 
         <div class="flex items-center gap-3">
 
-            <button class="relative rounded-xl p-2.5 text-slate-500 hover:bg-slate-100">
-                <i data-lucide="bell" class="h-5 w-5"></i>
-                <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
+            <button
+                type="button"
+                class="
+                    relative
+                    rounded-xl
+                    p-2.5
+                    text-slate-500
+                    hover:bg-slate-100
+                "
+            >
+
+                <i
+                    data-lucide="bell"
+                    class="h-5 w-5"
+                ></i>
+
             </button>
 
-            <div class="hidden h-8 w-px bg-slate-200 sm:block"></div>
+
+            <div
+                class="
+                    hidden
+                    h-8
+                    w-px
+                    bg-slate-200
+                    sm:block
+                "
+            ></div>
+
 
             <div class="flex items-center gap-3">
-                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">
-                    BM
+
+                <div
+                    id="headerAvatar"
+                    class="
+                        flex
+                        h-9
+                        w-9
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-primary-600
+                        text-sm
+                        font-bold
+                        text-white
+                    "
+                >
+                    SA
                 </div>
 
+
                 <div class="hidden sm:block">
-                    <p class="text-sm font-bold">Bonsomi Manassé</p>
-                    <p class="text-xs text-slate-400">Super Admin</p>
+
+                    <p
+                        id="headerUserName"
+                        class="text-sm font-bold"
+                    >
+                        Super Administrateur
+                    </p>
+
+
+                    <p
+                        class="
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Super Admin
+                    </p>
+
                 </div>
+
             </div>
 
         </div>
 
     </header>
 
-    <!-- Content -->
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
     <main class="p-4 sm:p-6 lg:p-8">
 
+
+        <!-- PAGE HEADER -->
+
         <div class="mb-8">
-            <p class="mb-2 text-sm font-medium text-primary-600">Bonjour, Manassé 👋</p>
-            <h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl">
+
+            <p
+                id="welcomeText"
+                class="
+                    mb-2
+                    text-sm
+                    font-medium
+                    text-primary-600
+                "
+            >
+                Bonjour 👋
+            </p>
+
+
+            <h1
+                class="
+                    text-2xl
+                    font-extrabold
+                    tracking-tight
+                    sm:text-3xl
+                "
+            >
                 Tableau de bord
             </h1>
-            <p class="mt-2 text-sm text-slate-500">
+
+
+            <p
+                class="
+                    mt-2
+                    text-sm
+                    text-slate-500
+                "
+            >
                 Voici un aperçu global de votre plateforme scolaire.
             </p>
-        </div>
-
-        <!-- Stats -->
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div class="rounded-xl bg-primary-50 p-3 text-primary-600">
-                        <i data-lucide="school"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600">+8.2%</span>
-                </div>
-
-                <p class="mt-5 text-sm text-slate-500">Écoles</p>
-                <h3 data-kpi="totalSchools" class="mt-1 text-3xl font-extrabold">48</h3>
-                <p class="mt-1 text-xs text-slate-400">vs mois précédent</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div class="rounded-xl bg-violet-50 p-3 text-violet-600">
-                        <i data-lucide="users"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600">+12.4%</span>
-                </div>
-
-                <p class="mt-5 text-sm text-slate-500">Utilisateurs</p>
-                <h3 data-kpi="totalUsers" class="mt-1 text-3xl font-extrabold">2 840</h3>
-                <p class="mt-1 text-xs text-slate-400">tous établissements</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
-                        <i data-lucide="graduation-cap"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600">+10.1%</span>
-                </div>
-
-                <p class="mt-5 text-sm text-slate-500">Élèves</p>
-                <h3 data-kpi="totalStudents" class="mt-1 text-3xl font-extrabold">2 160</h3>
-                <p class="mt-1 text-xs text-slate-400">élèves actifs</p>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
-                        <i data-lucide="presentation"></i>
-                    </div>
-                    <span class="text-xs font-bold text-emerald-600">+6.4%</span>
-                </div>
-
-                <p class="mt-5 text-sm text-slate-500">Enseignants</p>
-                <h3 data-kpi="activeTeachers" class="mt-1 text-3xl font-extrabold">380</h3>
-                <p class="mt-1 text-xs text-slate-400">enseignants actifs</p>
-            </div>
 
         </div>
 
-        <!-- Charts -->
-        <div class="mt-6 grid gap-6 xl:grid-cols-3">
 
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
+        <!-- =====================================================
+             ERROR
+        ====================================================== -->
+
+        <div
+            id="dashboardError"
+            class="
+                mb-6
+                hidden
+                rounded-2xl
+                border
+                border-red-200
+                bg-red-50
+                px-5
+                py-4
+                text-sm
+                text-red-700
+            "
+        ></div>
+
+
+        <!-- =====================================================
+             KPI
+        ====================================================== -->
+
+        <div
+            class="
+                grid
+                gap-4
+                sm:grid-cols-2
+                xl:grid-cols-4
+            "
+        >
+
+
+            <!-- ECOLES -->
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
 
                 <div class="flex items-center justify-between">
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-primary-50
+                            p-3
+                            text-primary-600
+                        "
+                    >
+
+                        <i
+                            data-lucide="school"
+                            class="h-5 w-5"
+                        ></i>
+
+                    </div>
+
+
+                    <span
+                        id="activeSchoolsValue"
+                        class="
+                            text-xs
+                            font-bold
+                            text-emerald-600
+                        "
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <p class="mt-5 text-sm text-slate-500">
+                    Écoles
+                </p>
+
+
+                <h3
+                    id="totalSchools"
+                    class="
+                        mt-1
+                        text-3xl
+                        font-extrabold
+                    "
+                >
+                    —
+                </h3>
+
+
+                <p
+                    id="schoolsSubtext"
+                    class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Chargement...
+                </p>
+
+            </div>
+
+
+            <!-- UTILISATEURS -->
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-violet-50
+                            p-3
+                            text-violet-600
+                        "
+                    >
+
+                        <i
+                            data-lucide="users"
+                            class="h-5 w-5"
+                        ></i>
+
+                    </div>
+
+
+                    <span
+                        id="activeUsersValue"
+                        class="
+                            text-xs
+                            font-bold
+                            text-emerald-600
+                        "
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <p class="mt-5 text-sm text-slate-500">
+                    Utilisateurs
+                </p>
+
+
+                <h3
+                    id="totalUsers"
+                    class="
+                        mt-1
+                        text-3xl
+                        font-extrabold
+                    "
+                >
+                    —
+                </h3>
+
+
+                <p
+                    class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    utilisateurs actifs
+                </p>
+
+            </div>
+
+
+            <!-- ELEVES -->
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-emerald-50
+                            p-3
+                            text-emerald-600
+                        "
+                    >
+
+                        <i
+                            data-lucide="graduation-cap"
+                            class="h-5 w-5"
+                        ></i>
+
+                    </div>
+
+
+                    <span
+                        class="
+                            text-xs
+                            font-bold
+                            text-slate-400
+                        "
+                    >
+                        Global
+                    </span>
+
+                </div>
+
+
+                <p class="mt-5 text-sm text-slate-500">
+                    Élèves
+                </p>
+
+
+                <h3
+                    id="totalStudents"
+                    class="
+                        mt-1
+                        text-3xl
+                        font-extrabold
+                    "
+                >
+                    —
+                </h3>
+
+
+                <p
+                    class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    élèves enregistrés
+                </p>
+
+            </div>
+
+
+            <!-- ENSEIGNANTS -->
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-amber-50
+                            p-3
+                            text-amber-600
+                        "
+                    >
+
+                        <i
+                            data-lucide="presentation"
+                            class="h-5 w-5"
+                        ></i>
+
+                    </div>
+
+
+                    <span
+                        id="activeTeachersValue"
+                        class="
+                            text-xs
+                            font-bold
+                            text-emerald-600
+                        "
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <p class="mt-5 text-sm text-slate-500">
+                    Enseignants
+                </p>
+
+
+                <h3
+                    id="activeTeachers"
+                    class="
+                        mt-1
+                        text-3xl
+                        font-extrabold
+                    "
+                >
+                    —
+                </h3>
+
+
+                <p
+                    class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    enseignants actifs
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CHARTS
+        ====================================================== -->
+
+        <div
+            class="
+                mt-6
+                grid
+                gap-6
+                xl:grid-cols-3
+            "
+        >
+
+
+            <!-- CROISSANCE ECOLES -->
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-6
+                    shadow-sm
+                    xl:col-span-2
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        items-center
+                        justify-between
+                    "
+                >
+
                     <div>
-                        <h3 class="font-bold">Croissance des écoles</h3>
-                        <p class="mt-1 text-xs text-slate-400">Évolution sur les 7 derniers mois</p>
+
+                        <h3 class="font-bold">
+                            Croissance des écoles
+                        </h3>
+
+                        <p
+                            class="
+                                mt-1
+                                text-xs
+                                text-slate-400
+                            "
+                        >
+                            Évolution mensuelle
+                        </p>
+
                     </div>
 
-                    <button class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium">
-                        2026
-                    </button>
+
+                    <span
+                        id="chartYear"
+                        class="
+                            rounded-lg
+                            border
+                            border-slate-200
+                            px-3
+                            py-2
+                            text-xs
+                            font-medium
+                            text-slate-600
+                        "
+                    >
+                        —
+                    </span>
+
                 </div>
+
 
                 <div class="mt-8 h-64">
-                    <svg viewBox="0 0 800 260" class="h-full w-full">
 
-                        <line x1="40" y1="220" x2="760" y2="220" stroke="#e2e8f0"/>
-                        <line x1="40" y1="170" x2="760" y2="170" stroke="#f1f5f9"/>
-                        <line x1="40" y1="120" x2="760" y2="120" stroke="#f1f5f9"/>
-                        <line x1="40" y1="70" x2="760" y2="70" stroke="#f1f5f9"/>
+                    <svg
+                        id="schoolsChart"
+                        viewBox="0 0 800 260"
+                        class="h-full w-full"
+                    >
+
+                        <line
+                            x1="40"
+                            y1="220"
+                            x2="760"
+                            y2="220"
+                            stroke="#e2e8f0"
+                        />
+
+                        <line
+                            x1="40"
+                            y1="170"
+                            x2="760"
+                            y2="170"
+                            stroke="#f1f5f9"
+                        />
+
+                        <line
+                            x1="40"
+                            y1="120"
+                            x2="760"
+                            y2="120"
+                            stroke="#f1f5f9"
+                        />
+
+                        <line
+                            x1="40"
+                            y1="70"
+                            x2="760"
+                            y2="70"
+                            stroke="#f1f5f9"
+                        />
 
                         <polyline
-                            points="40,210 150,190 260,175 370,150 480,130 590,90 700,65 760,50"
+                            id="schoolsChartLine"
+                            points=""
                             fill="none"
                             stroke="#0ea5e9"
                             stroke-width="4"
@@ -332,136 +1227,241 @@
                             class="chart-line"
                         />
 
-                        <circle cx="40" cy="210" r="5" fill="#0ea5e9"/>
-                        <circle cx="150" cy="190" r="5" fill="#0ea5e9"/>
-                        <circle cx="260" cy="175" r="5" fill="#0ea5e9"/>
-                        <circle cx="370" cy="150" r="5" fill="#0ea5e9"/>
-                        <circle cx="480" cy="130" r="5" fill="#0ea5e9"/>
-                        <circle cx="590" cy="90" r="5" fill="#0ea5e9"/>
-                        <circle cx="700" cy="65" r="5" fill="#0ea5e9"/>
+                        <g id="schoolsChartPoints"></g>
 
                     </svg>
+
                 </div>
 
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
-                <h3 class="font-bold">Utilisateurs</h3>
-                <p class="mt-1 text-xs text-slate-400">Répartition par profil</p>
+            <!-- REPARTITION UTILISATEURS -->
 
-                <div class="mx-auto mt-8 flex h-44 w-44 items-center justify-center rounded-full"
-                     style="background: conic-gradient(#0ea5e9 0 55%, #8b5cf6 55% 72%, #10b981 72% 86%, #f59e0b 86% 100%);">
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-6
+                    shadow-sm
+                "
+            >
 
-                    <div class="flex h-28 w-28 items-center justify-center rounded-full bg-white">
+                <h3 class="font-bold">
+                    Utilisateurs
+                </h3>
+
+                <p
+                    class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Répartition par profil
+                </p>
+
+
+                <div
+                    id="usersDonut"
+                    class="
+                        relative
+                        mx-auto
+                        mt-8
+                        flex
+                        h-44
+                        w-44
+                        items-center
+                        justify-center
+                        rounded-full
+                    "
+                >
+
+                    <div
+                        class="
+                            flex
+                            h-28
+                            w-28
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-white
+                        "
+                    >
+
                         <div class="text-center">
-                            <p class="text-2xl font-extrabold">2.8K</p>
-                            <p class="text-xs text-slate-400">Total</p>
+
+                            <p
+                                id="usersDonutTotal"
+                                class="text-2xl font-extrabold"
+                            >
+                                —
+                            </p>
+
+                            <p
+                                class="text-xs text-slate-400"
+                            >
+                                Total
+                            </p>
+
                         </div>
+
                     </div>
 
                 </div>
 
-                <div class="mt-6 space-y-3 text-sm">
 
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2">
-                            <span class="h-2.5 w-2.5 rounded-full bg-primary-500"></span>
-                            Élèves
-                        </span>
-                        <strong>55%</strong>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2">
-                            <span class="h-2.5 w-2.5 rounded-full bg-violet-500"></span>
-                            Enseignants
-                        </span>
-                        <strong>17%</strong>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2">
-                            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                            Parents
-                        </span>
-                        <strong>14%</strong>
-                    </div>
-
-                </div>
+                <div
+                    id="usersLegend"
+                    class="mt-6 space-y-3 text-sm"
+                ></div>
 
             </div>
 
         </div>
 
-        <!-- Schools table -->
-        <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-            <div class="flex flex-col gap-4 border-b border-slate-100 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <!-- =====================================================
+             SCHOOLS TABLE
+        ====================================================== -->
+
+        <div
+            class="
+                mt-6
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div
+                class="
+                    flex
+                    flex-col
+                    gap-4
+                    border-b
+                    border-slate-100
+                    p-6
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                "
+            >
 
                 <div>
-                    <h3 class="font-bold">Écoles récemment ajoutées</h3>
-                    <p class="mt-1 text-xs text-slate-400">Derniers établissements enregistrés</p>
+
+                    <h3 class="font-bold">
+                        Écoles récemment ajoutées
+                    </h3>
+
+                    <p
+                        class="
+                            mt-1
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Derniers établissements enregistrés
+                    </p>
+
                 </div>
 
-                <button class="rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
+
+                <a
+                    href="/super-admin/ecoles"
+                    class="
+                        rounded-xl
+                        bg-primary-600
+                        px-4
+                        py-2.5
+                        text-center
+                        text-sm
+                        font-semibold
+                        text-white
+                        hover:bg-primary-700
+                    "
+                >
                     Voir toutes les écoles
-                </button>
+                </a>
 
             </div>
 
+
             <div class="overflow-x-auto">
 
-                <table class="w-full min-w-[700px] text-left">
+                <table
+                    class="
+                        w-full
+                        min-w-[800px]
+                        text-left
+                    "
+                >
 
-                    <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
+                    <thead
+                        class="
+                            bg-slate-50
+                            text-xs
+                            uppercase
+                            tracking-wide
+                            text-slate-400
+                        "
+                    >
 
                         <tr>
-                            <th class="px-6 py-4">École</th>
-                            <th class="px-6 py-4">Ville</th>
-                            <th class="px-6 py-4">Administrateur</th>
-                            <th class="px-6 py-4">Utilisateurs</th>
-                            <th class="px-6 py-4">Statut</th>
+
+                            <th class="px-6 py-4">
+                                École
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Adresse
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Administrateurs
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Utilisateurs
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Élèves
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Statut
+                            </th>
+
                         </tr>
 
                     </thead>
 
-                    <tbody class="divide-y divide-slate-100 text-sm">
 
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-6 py-4 font-semibold">Institut Horizon</td>
-                            <td class="px-6 py-4 text-slate-500">Kinshasa</td>
-                            <td class="px-6 py-4 text-slate-500">Jean Kabeya</td>
-                            <td class="px-6 py-4">284</td>
-                            <td class="px-6 py-4">
-                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
-                                    Active
-                                </span>
-                            </td>
-                        </tr>
+                    <tbody
+                        id="schoolsTableBody"
+                        class="divide-y divide-slate-100 text-sm"
+                    >
 
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-6 py-4 font-semibold">Complexe Scolaire Excellence</td>
-                            <td class="px-6 py-4 text-slate-500">Lubumbashi</td>
-                            <td class="px-6 py-4 text-slate-500">Marie Ilunga</td>
-                            <td class="px-6 py-4">192</td>
-                            <td class="px-6 py-4">
-                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
-                                    Active
-                                </span>
-                            </td>
-                        </tr>
+                        <tr>
 
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-6 py-4 font-semibold">École La Réussite</td>
-                            <td class="px-6 py-4 text-slate-500">Goma</td>
-                            <td class="px-6 py-4 text-slate-500">Patrick Mbuyi</td>
-                            <td class="px-6 py-4">145</td>
-                            <td class="px-6 py-4">
-                                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600">
-                                    En attente
-                                </span>
+                            <td
+                                colspan="6"
+                                class="
+                                    px-6
+                                    py-10
+                                    text-center
+                                    text-slate-400
+                                "
+                            >
+                                Chargement des écoles...
                             </td>
+
                         </tr>
 
                     </tbody>
@@ -472,44 +1472,154 @@
 
         </div>
 
+
+        <!-- =====================================================
+             SYSTEM STATUS
+        ====================================================== -->
+
+        <div
+            class="
+                mt-6
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                p-6
+                shadow-sm
+            "
+        >
+
+            <div
+                class="
+                    flex
+                    flex-col
+                    gap-4
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                "
+            >
+
+                <div>
+
+                    <h3 class="font-bold">
+                        État du système
+                    </h3>
+
+                    <p
+                        class="
+                            mt-1
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Dernière vérification
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="
+                        flex
+                        items-center
+                        gap-2
+                        text-sm
+                    "
+                >
+
+                    <span
+                        id="systemStatusDot"
+                        class="
+                            h-2.5
+                            w-2.5
+                            rounded-full
+                            bg-slate-300
+                        "
+                    ></span>
+
+
+                    <span
+                        id="systemStatus"
+                        class="font-semibold"
+                    >
+                        Vérification...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="
+                    mt-5
+                    grid
+                    gap-4
+                    sm:grid-cols-2
+                "
+            >
+
+                <div class="rounded-xl bg-slate-50 p-4">
+
+                    <p
+                        class="
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Base de données
+                    </p>
+
+                    <p
+                        id="databaseStatus"
+                        class="
+                            mt-1
+                            font-bold
+                            text-slate-700
+                        "
+                    >
+                        —
+                    </p>
+
+                </div>
+
+
+                <div class="rounded-xl bg-slate-50 p-4">
+
+                    <p
+                        class="
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Temps de réponse
+                    </p>
+
+                    <p
+                        id="responseTime"
+                        class="
+                            mt-1
+                            font-bold
+                            text-slate-700
+                        "
+                    >
+                        —
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </main>
 
 </div>
 
-<script>
-    lucide.createIcons();
+<script src="/assets/js/super-admin/auth.js"></script>
+<script src="/assets/js/super-admin/dashboard.js"></script>
 
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const menuButton = document.getElementById('menuButton');
-
-    menuButton?.addEventListener('click', () => {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-    });
-
-    overlay?.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    });
-
-
-
-    const token = sessionStorage.getItem(
-    'smart_school_access_token'
-)
-
-const response = await fetch(
-    '/api/super-admin/dashboard',
-    {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-        },
-    }
-)
-</script>
-
-<script src="/assets/js/smart-school-api.js"></script>
 </body>
+
 </html>

@@ -4,8 +4,6 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
-    'auth.login': { paramsTuple?: []; params?: {} }
-    'login': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -26,6 +24,7 @@ export type ScannedRoutes = {
     'api.auth.logout': { paramsTuple?: []; params?: {} }
     'api.auth.switchSchool': { paramsTuple?: []; params?: {} }
     'api.auth.changePassword': { paramsTuple?: []; params?: {} }
+    'login': { paramsTuple?: []; params?: {} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
@@ -81,8 +80,6 @@ export type ScannedRoutes = {
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
   }
   GET: {
-    'auth.login': { paramsTuple?: []; params?: {} }
-    'login': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -91,6 +88,7 @@ export type ScannedRoutes = {
     'password.reset.success': { paramsTuple?: []; params?: {} }
     'api.auth.verifyEmail': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'api.auth.me': { paramsTuple?: []; params?: {} }
+    'login': { paramsTuple?: []; params?: {} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
@@ -132,8 +130,6 @@ export type ScannedRoutes = {
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
   }
   HEAD: {
-    'auth.login': { paramsTuple?: []; params?: {} }
-    'login': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -142,6 +138,7 @@ export type ScannedRoutes = {
     'password.reset.success': { paramsTuple?: []; params?: {} }
     'api.auth.verifyEmail': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'api.auth.me': { paramsTuple?: []; params?: {} }
+    'login': { paramsTuple?: []; params?: {} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
