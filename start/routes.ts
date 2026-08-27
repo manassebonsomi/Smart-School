@@ -32,14 +32,14 @@ router
     router.post('/password/reset/new', [controllers.ForgotPasswords, 'processStep3'])
   }).use(middleware.guest())
 
-router
+/* router
   .group(() => {
     router.get('/profile/edit', [controllers.Profile, 'edit']).as('profile.edit')
     router.get('/profile/:id?', [controllers.Profile, 'show']).as('profile.show')
     router.put('/profile/edit', [controllers.Profile, 'update']).as('profile.update')
     router.post('/profile/privacy', [controllers.Profile, 'togglePrivacy']).as('profile.togglePrivacy')
     router.post('/logout', [controllers.Session, 'logout'])
-  }).use(middleware.auth())
+  }).use(middleware.auth()) */
 
 
 /*
