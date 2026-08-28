@@ -14,6 +14,7 @@ export const controllers = {
     Dashboard: () => import('#controllers/super_admin/dashboard_controller'),
     Ecoles: () => import('#controllers/super_admin/ecoles_controller'),
     Reports: () => import('#controllers/super_admin/reports_controller'),
+    Statistics: () => import('#controllers/super_admin/statistics_controller'),
     SuperAdmin: () => import('#controllers/super_admin/super_admin_controller'),
   },
 }

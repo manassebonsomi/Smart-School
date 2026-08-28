@@ -1,16 +1,36 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Utilisateurs | Smart School</title>
+    <title>Administrateurs | Smart School</title>
+
+
+    <!-- TAILWIND -->
 
     <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <!-- LUCIDE -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
 
     <script>
 
@@ -47,33 +67,129 @@
 
     </script>
 
+
     <style>
 
         body {
 
-            font-family: Inter, ui-sans-serif, system-ui,
-                -apple-system, BlinkMacSystemFont,
-                "Segoe UI", sans-serif;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
 
         }
+
+
+        * {
+
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+
+        }
+
 
         .sidebar-transition {
 
-            transition: transform .3s ease-in-out;
+            transition:
+                transform .3s ease-in-out;
 
         }
 
-        ::-webkit-scrollbar {
 
-            width: 7px;
-            height: 7px;
+        .modal-transition {
+
+            transition:
+                opacity .2s ease,
+                transform .2s ease;
 
         }
 
-        ::-webkit-scrollbar-thumb {
 
-            background: #bae6fd;
-            border-radius: 10px;
+        .action-btn {
+
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .form-input {
+
+            width: 100%;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius:
+                .75rem;
+
+            background:
+                #f8fafc;
+
+            padding:
+                .75rem 1rem;
+
+            font-size:
+                .875rem;
+
+            outline:
+                none;
+
+        }
+
+
+        .form-input:focus {
+
+            border-color:
+                #38bdf8;
+
+            background:
+                white;
+
+            box-shadow:
+                0 0 0 3px rgba(
+                    56,
+                    189,
+                    248,
+                    .15
+                );
+
+        }
+
+
+        .form-label {
+
+            display:
+                block;
+
+            margin-bottom:
+                .5rem;
+
+            font-size:
+                .75rem;
+
+            font-weight:
+                600;
+
+            color:
+                #64748b;
 
         }
 
@@ -81,63 +197,761 @@
 
 </head>
 
+
 <body class="bg-slate-50 text-slate-800">
 
-<div class="min-h-screen">
 
-    <!-- MOBILE OVERLAY -->
+<!-- =========================================================
+     OVERLAY
+========================================================= -->
 
-    <div id="sidebarOverlay"
-         class="fixed inset-0 bg-slate-900/50 z-40
-                hidden lg:hidden">
+<div
+    id="sidebarOverlay"
+    class="
+        fixed
+        inset-0
+        z-40
+        hidden
+        bg-slate-900/50
+        lg:hidden
+    "
+></div>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    id="sidebar"
+    class="
+        sidebar-transition
+        fixed
+        inset-y-0
+        left-0
+        z-50
+        flex
+        w-72
+        -translate-x-full
+        flex-col
+        border-r
+        border-slate-200
+        bg-white
+        lg:translate-x-0
+    "
+>
+
+
+    <!-- =====================================================
+         SIDEBAR HEADER
+    ====================================================== -->
+
+    <div
+        class="
+            flex
+            h-20
+            items-center
+            gap-3
+            border-b
+            border-slate-100
+            px-6
+        "
+    >
+
+        <div
+            class="
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-primary-600
+                text-white
+                shadow-lg
+                shadow-primary-600/20
+            "
+        >
+
+            <i
+                class="
+                    fa-solid
+                    fa-graduation-cap
+                    text-lg
+                "
+            ></i>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+            <h1
+                class="
+                    truncate
+                    text-base
+                    font-extrabold
+                    tracking-tight
+                    text-slate-900
+                "
+            >
+                SMART SCHOOL
+            </h1>
+
+
+            <p
+                class="
+                    truncate
+                    text-xs
+                    text-slate-400
+                "
+            >
+                Administration Platform
+            </p>
+
+        </div>
+
+
+        <button
+            id="closeSidebar"
+            type="button"
+            class="
+                ml-auto
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-lg
+                text-slate-400
+                hover:bg-slate-100
+                hover:text-slate-700
+                lg:hidden
+            "
+            aria-label="Fermer le menu"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
     </div>
 
-    <!-- SIDEBAR -->
 
-    <aside id="sidebar"
-           class="fixed top-0 left-0 z-50 h-screen w-72
-                  bg-white border-r border-slate-200
-                  transform -translate-x-full
-                  lg:translate-x-0 sidebar-transition">
+    <!-- =====================================================
+         SIDEBAR NAVIGATION
+    ====================================================== -->
 
-        <!-- BRAND -->
+    <div
+        class="
+            flex-1
+            overflow-y-auto
+            px-4
+            py-6
+        "
+    >
 
-        <div class="h-20 px-6 flex items-center
-                    border-b border-slate-200">
+        <p
+            class="
+                mb-3
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Principal
+        </p>
 
-            <div class="flex items-center gap-3">
 
-                <div class="w-11 h-11 rounded-xl
-                            bg-primary-500
-                            flex items-center justify-center">
+        <nav class="space-y-1">
 
-                    <svg class="w-6 h-6 text-white"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24">
 
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M12 14l9-5-9-5-9 5 9 5z"/>
+            <!-- Dashboard -->
 
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M12 14v7"/>
+            <a
+                href="/super-admin/dashboard"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
 
-                    </svg>
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-pie
+                        w-5
+                        text-center
+                    "
+                ></i>
 
+                <span>
+                    Tableau de bord
+                </span>
+
+            </a>
+
+
+            <!-- Écoles -->
+
+            <a
+                href="/super-admin/ecoles"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-school
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Écoles
+                </span>
+
+            </a>
+
+
+            <!-- Utilisateurs -->
+
+            <a
+                href="/super-admin/utilisateurs"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-users
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Utilisateurs
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Supervision
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Statistiques ACTIVE -->
+
+            <a
+                href="/super-admin/statistiques"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-line
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Statistiques
+                </span>
+
+            </a>
+
+
+            <!-- Rapports -->
+
+            <a
+                href="/super-admin/rapports"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-file-lines
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Rapports
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Système
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <a
+                href="/super-admin/profil"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i class="fa-solid fa-user-gear w-5 text-center"></i>
+
+                Mon profil
+
+            </a>
+
+
+            <!-- Notifications -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-bell
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Notifications
+                </span>
+
+            </a>
+
+
+            <!-- Paramètres -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-gear
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Paramètres
+                </span>
+
+            </a>
+
+
+            <!-- Déconnexion -->
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-500
+                    transition
+                    hover:bg-red-50
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-right-from-bracket
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Déconnexion
+                </span>
+
+            </button>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR USER
+    ====================================================== -->
+
+    <div
+        class="
+            border-t
+            border-slate-100
+            p-4
+        "
+    >
+
+        <div
+            class="
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-slate-50
+                p-3
+            "
+        >
+
+            <div
+                id="sidebarAvatar"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-primary-100
+                    text-sm
+                    font-bold
+                    text-primary-700
+                "
+            >
+                SA
+            </div>
+
+
+            <div class="min-w-0 flex-1">
+
+                <p
+                    id="sidebarUserName"
+                    class="
+                        truncate
+                        text-sm
+                        font-bold
+                        text-slate-800
+                    "
+                >
+                    Super Administrateur
+                </p>
+
+
+                <p
+                    id="sidebarUserEmail"
+                    class="
+                        truncate
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Chargement...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="min-h-screen lg:ml-72">
+
+
+    <!-- HEADER -->
+
+    <header
+        class="
+            sticky
+            top-0
+            z-30
+            flex
+            h-20
+            items-center
+            justify-between
+            border-b
+            border-slate-200
+            bg-white
+            px-4
+            sm:px-6
+            lg:px-8
+        "
+    >
+
+        <div class="flex items-center gap-4">
+
+            <button
+                id="menuButton"
+                type="button"
+                class="
+                    rounded-xl
+                    p-2
+                    text-slate-600
+                    hover:bg-slate-100
+                    lg:hidden
+                "
+            >
+
+                <i
+                    class="fa-solid fa-bars"
+                ></i>
+
+            </button>
+
+
+            <div>
+
+                <h2
+                    class="
+                        text-lg
+                        font-bold
+                        text-slate-900
+                        sm:text-xl
+                    "
+                >
+                    Administrateurs scolaires
+                </h2>
+
+
+                <p
+                    class="
+                        hidden
+                        text-sm
+                        text-slate-500
+                        sm:block
+                    "
+                >
+                    Gestion des comptes administrateurs des écoles.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="flex items-center gap-3">
+
+            <button
+                type="button"
+                class="
+                    relative
+                    rounded-xl
+                    p-2.5
+                    text-slate-500
+                    hover:bg-slate-100
+                "
+            >
+
+                <i
+                    class="fa-regular fa-bell text-lg"
+                ></i>
+
+            </button>
+
+
+            <div
+                class="
+                    hidden
+                    h-8
+                    w-px
+                    bg-slate-200
+                    sm:block
+                "
+            ></div>
+
+
+            <div class="hidden items-center gap-3 sm:flex">
+
+                <div
+                    id="headerAvatar"
+                    class="
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-primary-100
+                        font-bold
+                        text-primary-700
+                    "
+                >
+                    SA
                 </div>
+
 
                 <div>
 
-                    <h1 class="font-bold text-lg text-slate-900">
-                        Smart School
-                    </h1>
+                    <p
+                        id="headerUserName"
+                        class="
+                            text-sm
+                            font-semibold
+                        "
+                    >
+                        Super Admin
+                    </p>
 
-                    <p class="text-xs text-slate-500">
-                        Administration
+
+                    <p
+                        class="
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Administrateur système
                     </p>
 
                 </div>
@@ -146,1010 +960,1951 @@
 
         </div>
 
-        <!-- NAVIGATION -->
+    </header>
 
-        <nav class="p-4 space-y-1">
 
-            <p class="px-3 pt-2 pb-3 text-xs font-semibold
-                      text-slate-400 uppercase tracking-wider">
-                Administration
-            </p>
+    <!-- CONTENT -->
 
-            <a href="/super-admin/dashboard"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl text-slate-600
-                      hover:bg-primary-50
-                      hover:text-primary-600">
+    <main class="p-4 sm:p-6 lg:p-8">
 
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
 
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3 12l9-9 9 9M5 10v10h14V10"/>
+        <!-- PAGE HEADER -->
 
-                </svg>
+        <div
+            class="
+                mb-7
+                flex
+                flex-col
+                gap-4
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+            "
+        >
 
-                Dashboard
+            <div>
 
-            </a>
-
-            <a href="/super-admin/ecoles"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl text-slate-600
-                      hover:bg-primary-50
-                      hover:text-primary-600">
-
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3 21h18M5 21V10l7-5 7 5v11"/>
-
-                </svg>
-
-                Écoles
-
-            </a>
-
-            <a href="/super-admin/utilisateurs"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl bg-primary-50
-                      text-primary-600">
-
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1M12 12a4 4 0 100-8 4 4 0 000 8z"/>
-
-                </svg>
-
-                <span class="font-semibold">
-                    Utilisateurs
-                </span>
-
-            </a>
-
-            <a href="/super-admin/statistiques"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl text-slate-600
-                      hover:bg-primary-50
-                      hover:text-primary-600">
-
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16V4"/>
-
-                </svg>
-
-                Statistiques
-
-            </a>
-
-            <a href="/super-admin/rapports"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl text-slate-600
-                      hover:bg-primary-50
-                      hover:text-primary-600">
-
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2M5 21h14M6 3h9l3 3v15H6V3z"/>
-
-                </svg>
-
-                Rapports
-
-            </a>
-
-            <div class="border-t border-slate-200 my-5"></div>
-
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-3
-                      rounded-xl text-slate-600
-                      hover:bg-primary-50
-                      hover:text-primary-600">
-
-                <svg class="w-5 h-5"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"/>
-
-                </svg>
-
-                Paramètres
-
-            </a>
-
-        </nav>
-
-    </aside>
-
-    <!-- MAIN -->
-
-    <div class="lg:ml-72 min-h-screen">
-
-        <!-- HEADER -->
-
-        <header class="h-20 bg-white
-                       border-b border-slate-200
-                       flex items-center
-                       justify-between
-                       px-4 sm:px-6 lg:px-8
-                       sticky top-0 z-30">
-
-            <div class="flex items-center gap-4">
-
-                <button id="menuButton"
-                        class="lg:hidden p-2
-                               rounded-lg hover:bg-slate-100">
-
-                    <svg class="w-6 h-6"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24">
-
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-
-                    </svg>
-
-                </button>
-
-                <div>
-
-                    <h2 class="text-lg sm:text-xl
-                               font-bold text-slate-900">
-
-                        Administrateurs scolaires
-
-                    </h2>
-
-                    <p class="hidden sm:block
-                              text-sm text-slate-500">
-
-                        Gestion des comptes administrateurs des écoles.
-
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="flex items-center gap-3">
-
-                <button class="relative p-2
-                               rounded-xl hover:bg-slate-100">
-
-                    <svg class="w-6 h-6 text-slate-600"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24">
-
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15 17h5l-1.5-2V10a6.5 6.5 0 00-13 0v5L4 17h5"/>
-
-                    </svg>
-
-                    <span class="absolute top-1 right-1
-                                 w-2 h-2 bg-red-500
-                                 rounded-full"></span>
-
-                </button>
-
-                <div class="hidden sm:block text-right">
-
-                    <p class="text-sm font-semibold">
-                        Super Admin
-                    </p>
-
-                    <p class="text-xs text-slate-500">
-                        Administrateur système
-                    </p>
-
-                </div>
-
-                <div class="w-10 h-10 rounded-xl
-                            bg-primary-100
-                            flex items-center justify-center">
-
-                    <span class="font-bold text-primary-700">
-                        SA
-                    </span>
-
-                </div>
-
-            </div>
-
-        </header>
-
-        <!-- CONTENT -->
-
-        <main class="p-4 sm:p-6 lg:p-8">
-
-            <!-- TITLE -->
-
-            <div class="mb-6">
-
-                <h1 class="text-2xl font-bold text-slate-900">
+                <h1
+                    class="
+                        text-2xl
+                        font-bold
+                        text-slate-900
+                    "
+                >
                     Utilisateurs
                 </h1>
 
-                <p class="text-sm text-slate-500 mt-1">
+
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-500
+                    "
+                >
                     Administrateurs responsables de la gestion des écoles.
                 </p>
 
             </div>
 
-            <!-- STATS -->
 
-            <div class="grid grid-cols-1 sm:grid-cols-2
-                        xl:grid-cols-4 gap-4 mb-6">
+            <button
+                id="createAdminButton"
+                type="button"
+                class="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    bg-primary-600
+                    px-5
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-white
+                    shadow-sm
+                    hover:bg-primary-700
+                "
+            >
 
-                <div class="bg-white border
-                            border-slate-200
-                            rounded-2xl p-5">
+                <i
+                    class="fa-solid fa-user-plus"
+                ></i>
 
-                    <p class="text-sm text-slate-500">
-                        Administrateurs
-                    </p>
+                Nouvel administrateur
 
-                    <p class="text-2xl font-bold mt-2">
-                        128
-                    </p>
+            </button>
 
-                    <p class="text-xs text-emerald-600 mt-1">
-                        +8 ce mois
-                    </p>
+        </div>
 
-                </div>
 
-                <div class="bg-white border
-                            border-slate-200
-                            rounded-2xl p-5">
+        <!-- ALERTS -->
 
-                    <p class="text-sm text-slate-500">
-                        Comptes actifs
-                    </p>
+        <div
+            id="pageError"
+            class="
+                mb-6
+                hidden
+                rounded-xl
+                border
+                border-red-200
+                bg-red-50
+                px-4
+                py-3
+                text-sm
+                text-red-700
+            "
+        ></div>
 
-                    <p class="text-2xl font-bold mt-2">
-                        121
-                    </p>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                        94.5 %
-                    </p>
+        <div
+            id="pageSuccess"
+            class="
+                mb-6
+                hidden
+                rounded-xl
+                border
+                border-emerald-200
+                bg-emerald-50
+                px-4
+                py-3
+                text-sm
+                text-emerald-700
+            "
+        ></div>
 
-                </div>
 
-                <div class="bg-white border
-                            border-slate-200
-                            rounded-2xl p-5">
+        <!-- =====================================================
+             STATS
+        ====================================================== -->
 
-                    <p class="text-sm text-slate-500">
-                        Comptes suspendus
-                    </p>
+        <section
+            class="
+                mb-6
+                grid
+                grid-cols-1
+                gap-4
+                sm:grid-cols-2
+                xl:grid-cols-4
+            "
+        >
 
-                    <p class="text-2xl font-bold mt-2">
-                        7
-                    </p>
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
 
-                    <p class="text-xs text-red-500 mt-1">
-                        Nécessitent une vérification
-                    </p>
+                <div class="flex items-center justify-between">
 
-                </div>
+                    <div>
 
-                <div class="bg-white border
-                            border-slate-200
-                            rounded-2xl p-5">
+                        <p class="text-sm text-slate-500">
+                            Administrateurs
+                        </p>
 
-                    <p class="text-sm text-slate-500">
-                        Dernière connexion
-                    </p>
 
-                    <p class="text-2xl font-bold mt-2">
-                        96 %
-                    </p>
+                        <p
+                            id="statTotal"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            —
+                        </p>
 
-                    <p class="text-xs text-emerald-600 mt-1">
-                        Activité récente
-                    </p>
+                    </div>
 
-                </div>
 
-            </div>
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-primary-50
+                            text-primary-600
+                        "
+                    >
 
-            <!-- TABLE -->
-
-            <div class="bg-white border
-                        border-slate-200
-                        rounded-2xl overflow-hidden">
-
-                <!-- FILTER -->
-
-                <div class="p-4 sm:p-5
-                            border-b border-slate-200">
-
-                    <div class="flex flex-col
-                                md:flex-row
-                                gap-3
-                                md:justify-between">
-
-                        <div class="relative
-                                    w-full md:max-w-md">
-
-                            <svg class="absolute left-3 top-1/2
-                                        -translate-y-1/2
-                                        w-5 h-5 text-slate-400"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M21 21l-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z"/>
-
-                            </svg>
-
-                            <input
-                                id="searchUser"
-                                type="text"
-                                placeholder="Rechercher un administrateur..."
-                                class="w-full pl-10 pr-4 py-3
-                                       bg-slate-50
-                                       border border-slate-200
-                                       rounded-xl
-                                       outline-none
-                                       focus:bg-white
-                                       focus:ring-2
-                                       focus:ring-primary-200">
-
-                        </div>
-
-                        <button
-                            class="px-5 py-3
-                                   rounded-xl
-                                   bg-primary-500
-                                   hover:bg-primary-600
-                                   text-white font-semibold">
-
-                            + Nouvel administrateur
-
-                        </button>
+                        <i
+                            class="fa-solid fa-users-gear text-xl"
+                        ></i>
 
                     </div>
 
                 </div>
 
-                <!-- TABLE -->
 
-                <div class="overflow-x-auto">
+                <p
+                    id="statNew"
+                    class="
+                        mt-3
+                        text-xs
+                        text-emerald-600
+                    "
+                >
+                    —
+                </p>
 
-                    <table class="w-full min-w-[1050px]">
+            </div>
 
-                        <thead class="bg-slate-50
-                                      border-b border-slate-200">
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Comptes actifs
+                        </p>
+
+
+                        <p
+                            id="statActive"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-emerald-50
+                            text-emerald-600
+                        "
+                    >
+
+                        <i
+                            class="fa-solid fa-circle-check text-xl"
+                        ></i>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    id="statActivePercent"
+                    class="
+                        mt-3
+                        text-xs
+                        text-emerald-600
+                    "
+                >
+                    —
+                </p>
+
+            </div>
+
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Comptes suspendus
+                        </p>
+
+
+                        <p
+                            id="statInactive"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-amber-50
+                            text-amber-600
+                        "
+                    >
+
+                        <i
+                            class="fa-solid fa-user-lock text-xl"
+                        ></i>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="
+                        mt-3
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Accès actuellement bloqué
+                </p>
+
+            </div>
+
+
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Avec connexion
+                        </p>
+
+
+                        <p
+                            id="statLoginRate"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-indigo-50
+                            text-indigo-600
+                        "
+                    >
+
+                        <i
+                            class="fa-solid fa-right-to-bracket text-xl"
+                        ></i>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    id="statNeverLogin"
+                    class="
+                        mt-3
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    —
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FILTERS
+        ====================================================== -->
+
+        <section
+            class="
+                mb-6
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                p-5
+                shadow-sm
+            "
+        >
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-4
+                    md:grid-cols-2
+                    xl:grid-cols-4
+                "
+            >
+
+                <div class="xl:col-span-2">
+
+                    <label
+                        for="searchUser"
+                        class="form-label"
+                    >
+                        Rechercher
+                    </label>
+
+
+                    <div class="relative">
+
+                        <i
+                            class="
+                                fa-solid
+                                fa-magnifying-glass
+                                absolute
+                                left-4
+                                top-1/2
+                                -translate-y-1/2
+                                text-slate-400
+                            "
+                        ></i>
+
+
+                        <input
+                            id="searchUser"
+                            type="search"
+                            placeholder="Nom, email, téléphone, pseudo..."
+                            class="
+                                form-input
+                                pl-11
+                            "
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="statusFilter"
+                        class="form-label"
+                    >
+                        Statut
+                    </label>
+
+
+                    <select
+                        id="statusFilter"
+                        class="form-input"
+                    >
+
+                        <option value="">
+                            Tous les statuts
+                        </option>
+
+                        <option value="ACTIF">
+                            Actifs
+                        </option>
+
+                        <option value="INACTIF">
+                            Suspendus
+                        </option>
+
+                        <option value="SUPPRIME">
+                            Supprimés
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="schoolFilter"
+                        class="form-label"
+                    >
+                        École
+                    </label>
+
+
+                    <select
+                        id="schoolFilter"
+                        class="form-input"
+                    >
+
+                        <option value="">
+                            Toutes les écoles
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TABLE
+        ====================================================== -->
+
+        <section
+            class="
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div
+                class="
+                    flex
+                    flex-col
+                    gap-3
+                    border-b
+                    border-slate-100
+                    p-5
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                "
+            >
+
+                <div>
+
+                    <h2 class="font-bold">
+                        Liste des administrateurs
+                    </h2>
+
+
+                    <p
+                        class="
+                            mt-1
+                            text-sm
+                            text-slate-400
+                        "
+                    >
+                        Tous les comptes ayant le rôle administrateur d'école.
+                    </p>
+
+                </div>
+
+
+                <span
+                    id="resultCount"
+                    class="
+                        w-fit
+                        rounded-full
+                        bg-slate-100
+                        px-3
+                        py-1.5
+                        text-xs
+                        font-semibold
+                        text-slate-500
+                    "
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="overflow-x-auto">
+
+                <table
+                    class="
+                        w-full
+                        min-w-[1050px]
+                    "
+                >
+
+                    <thead
+                        class="
+                            border-b
+                            border-slate-100
+                            bg-slate-50
+                        "
+                    >
 
                         <tr>
 
-                            <th class="px-6 py-4 text-left
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Administrateur
-
                             </th>
 
-                            <th class="px-6 py-4 text-left
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 École
-
                             </th>
 
-                            <th class="px-6 py-4 text-left
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Email
-
                             </th>
 
-                            <th class="px-6 py-4 text-left
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Dernière connexion
-
                             </th>
 
-                            <th class="px-6 py-4 text-left
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Statut
-
                             </th>
 
-                            <th class="px-6 py-4 text-right
-                                       text-xs font-semibold
-                                       uppercase
-                                       text-slate-500">
-
+                            <th class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Actions
-
                             </th>
 
                         </tr>
 
-                        </thead>
-
-                        <tbody id="userTable"
-                               class="divide-y divide-slate-100">
-
-                        <!-- USER -->
-
-                        <tr class="hover:bg-slate-50">
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div class="w-10 h-10
-                                                rounded-xl
-                                                bg-primary-100
-                                                flex items-center
-                                                justify-center">
-
-                                        <span class="font-bold
-                                                     text-primary-600">
-
-                                            JM
-
-                                        </span>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="font-semibold
-                                                  text-slate-900">
-
-                                            Jean Mukendi
-
-                                        </p>
-
-                                        <p class="text-xs
-                                                  text-slate-500">
-
-                                            ADM-000128
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4
-                                       text-sm">
-
-                                Lycée Moderne
-
-                            </td>
-
-                            <td class="px-6 py-4
-                                       text-sm
-                                       text-slate-600">
-
-                                jean.mukendi@example.com
-
-                            </td>
-
-                            <td class="px-6 py-4
-                                       text-sm
-                                       text-slate-600">
-
-                                Aujourd'hui, 20:42
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span class="inline-flex
-                                             items-center gap-2
-                                             px-3 py-1
-                                             rounded-full
-                                             bg-emerald-50
-                                             text-emerald-700
-                                             text-xs font-semibold">
-
-                                    <span class="w-1.5 h-1.5
-                                                 rounded-full
-                                                 bg-emerald-500">
-                                    </span>
-
-                                    Actif
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end gap-1">
-
-                                    <!-- DETAILS -->
-
-                                    <button
-                                        title="Afficher"
-                                        class="p-2 rounded-lg
-                                               hover:bg-primary-50
-                                               text-slate-500
-                                               hover:text-primary-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <!-- EDIT -->
-
-                                    <button
-                                        title="Modifier"
-                                        class="p-2 rounded-lg
-                                               hover:bg-blue-50
-                                               text-slate-500
-                                               hover:text-blue-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"/>
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <!-- SUSPEND -->
-
-                                    <button
-                                        title="Suspendre"
-                                        class="p-2 rounded-lg
-                                               hover:bg-amber-50
-                                               text-slate-500
-                                               hover:text-amber-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M6 4h12M6 20h12"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <!-- DELETE -->
-
-                                    <button
-                                        title="Supprimer"
-                                        class="p-2 rounded-lg
-                                               hover:bg-red-50
-                                               text-slate-500
-                                               hover:text-red-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M6 7h12M10 11v6M14 11v6M9 7V4h6v3m-9 0l1 13h10l1-13"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- USER 2 -->
-
-                        <tr class="hover:bg-slate-50">
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div class="w-10 h-10
-                                                rounded-xl
-                                                bg-purple-100
-                                                flex items-center
-                                                justify-center">
-
-                                        <span class="font-bold
-                                                     text-purple-600">
-
-                                            MK
-
-                                        </span>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="font-semibold">
-                                            Marie Kabeya
-                                        </p>
-
-                                        <p class="text-xs text-slate-500">
-                                            ADM-000127
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm">
-                                Complexe Scolaire Horizon
-                            </td>
-
-                            <td class="px-6 py-4 text-sm
-                                       text-slate-600">
-
-                                marie.kabeya@example.com
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm
-                                       text-slate-600">
-
-                                Hier, 17:25
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span class="inline-flex
-                                             items-center gap-2
-                                             px-3 py-1
-                                             rounded-full
-                                             bg-emerald-50
-                                             text-emerald-700
-                                             text-xs font-semibold">
-
-                                    <span class="w-1.5 h-1.5
-                                                 rounded-full
-                                                 bg-emerald-500">
-                                    </span>
-
-                                    Actif
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end gap-1">
-
-                                    <button title="Afficher"
-                                            class="p-2 rounded-lg
-                                                   hover:bg-primary-50
-                                                   text-slate-500
-                                                   hover:text-primary-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <button title="Modifier"
-                                            class="p-2 rounded-lg
-                                                   hover:bg-blue-50
-                                                   text-slate-500
-                                                   hover:text-blue-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <button title="Suspendre"
-                                            class="p-2 rounded-lg
-                                                   hover:bg-amber-50
-                                                   text-slate-500
-                                                   hover:text-amber-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M6 4h12M6 20h12"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                    <button title="Supprimer"
-                                            class="p-2 rounded-lg
-                                                   hover:bg-red-50
-                                                   text-slate-500
-                                                   hover:text-red-600">
-
-                                        <svg class="w-5 h-5"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-
-                                            <path stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  stroke-width="2"
-                                                  d="M6 7h12M10 11v6M14 11v6M9 7V4h6v3m-9 0l1 13h10l1-13"/>
-
-                                        </svg>
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        </tbody>
-
-                    </table>
+                    </thead>
+
+
+                    <tbody
+                        id="userTable"
+                        class="divide-y divide-slate-100"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div
+                id="emptyState"
+                class="
+                    hidden
+                    px-6
+                    py-16
+                    text-center
+                "
+            >
+
+                <div
+                    class="
+                        mx-auto
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        bg-slate-100
+                        text-slate-400
+                    "
+                >
+
+                    <i
+                        class="fa-solid fa-users-slash text-2xl"
+                    ></i>
 
                 </div>
 
-                <!-- PAGINATION -->
 
-                <div class="px-4 sm:px-6 py-4
-                            border-t border-slate-200
-                            flex flex-col sm:flex-row
-                            justify-between items-center gap-4">
+                <h3
+                    class="
+                        mt-4
+                        font-semibold
+                        text-slate-700
+                    "
+                >
+                    Aucun administrateur trouvé
+                </h3>
 
-                    <p class="text-sm text-slate-500">
 
-                        Affichage de
-                        <strong>1</strong>
-                        à
-                        <strong>10</strong>
-                        sur
-                        <strong>128</strong>
-                        utilisateurs
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    Modifiez vos critères de recherche.
+                </p>
 
-                    </p>
+            </div>
 
-                    <div class="flex gap-1">
 
-                        <button
-                            class="px-3 py-2
-                                   border border-slate-200
-                                   rounded-lg text-sm">
+            <!-- PAGINATION -->
 
-                            Précédent
+            <div
+                class="
+                    flex
+                    flex-col
+                    gap-4
+                    border-t
+                    border-slate-100
+                    px-5
+                    py-4
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                "
+            >
 
-                        </button>
+                <p
+                    id="paginationInfo"
+                    class="text-sm text-slate-400"
+                >
+                    —
+                </p>
 
-                        <button
-                            class="w-9 h-9 rounded-lg
-                                   bg-primary-500
-                                   text-white font-semibold">
 
-                            1
+                <div
+                    id="pagination"
+                    class="flex items-center gap-1"
+                ></div>
 
-                        </button>
+            </div>
 
-                        <button
-                            class="w-9 h-9 rounded-lg
-                                   hover:bg-slate-100">
+        </section>
 
-                            2
+    </main>
 
-                        </button>
+</div>
 
-                        <button
-                            class="w-9 h-9 rounded-lg
-                                   hover:bg-slate-100">
 
-                            3
+<!-- =========================================================
+     CREATE MODAL
+========================================================= -->
 
-                        </button>
+<div
+    id="createModal"
+    class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
+>
 
-                        <span class="px-2 py-2 text-slate-400">
-                            ...
-                        </span>
+    <div
+        class="
+            max-h-[92vh]
+            w-full
+            max-w-2xl
+            overflow-y-auto
+            rounded-2xl
+            bg-white
+            shadow-2xl
+        "
+    >
 
-                        <button
-                            class="w-9 h-9 rounded-lg
-                                   hover:bg-slate-100">
+        <div
+            class="
+                sticky
+                top-0
+                z-10
+                flex
+                items-center
+                justify-between
+                border-b
+                border-slate-100
+                bg-white
+                px-6
+                py-5
+            "
+        >
 
-                            13
+            <div>
 
-                        </button>
+                <h3 class="text-lg font-bold">
+                    Nouvel administrateur
+                </h3>
 
-                        <button
-                            class="px-3 py-2
-                                   border border-slate-200
-                                   rounded-lg text-sm">
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    Créer un compte administrateur pour une école.
+                </p>
 
-                            Suivant
+            </div>
 
-                        </button>
 
-                    </div>
+            <button
+                id="closeCreateModal"
+                type="button"
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-slate-400
+                    hover:bg-slate-100
+                "
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="createAdminForm"
+            class="p-6"
+        >
+
+            <div
+                id="createFormError"
+                class="
+                    mb-5
+                    hidden
+                    rounded-xl
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-700
+                "
+            ></div>
+
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-5
+                    md:grid-cols-2
+                "
+            >
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="create_ecoleId"
+                        class="form-label"
+                    >
+                        École *
+                    </label>
+
+
+                    <select
+                        id="create_ecoleId"
+                        name="ecoleId"
+                        required
+                        class="form-input"
+                    >
+
+                        <option value="">
+                            Chargement des écoles...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_prenom"
+                        class="form-label"
+                    >
+                        Prénom *
+                    </label>
+
+                    <input
+                        id="create_prenom"
+                        name="prenom"
+                        required
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_nom"
+                        class="form-label"
+                    >
+                        Nom *
+                    </label>
+
+                    <input
+                        id="create_nom"
+                        name="nom"
+                        required
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_postnom"
+                        class="form-label"
+                    >
+                        Postnom
+                    </label>
+
+                    <input
+                        id="create_postnom"
+                        name="postnom"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_pseudo"
+                        class="form-label"
+                    >
+                        Pseudo
+                    </label>
+
+                    <input
+                        id="create_pseudo"
+                        name="pseudo"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_email"
+                        class="form-label"
+                    >
+                        Email *
+                    </label>
+
+                    <input
+                        id="create_email"
+                        name="email"
+                        type="email"
+                        required
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_telephone"
+                        class="form-label"
+                    >
+                        Téléphone
+                    </label>
+
+                    <input
+                        id="create_telephone"
+                        name="telephone"
+                        type="tel"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_sexe"
+                        class="form-label"
+                    >
+                        Sexe
+                    </label>
+
+                    <select
+                        id="create_sexe"
+                        name="sexe"
+                        class="form-input"
+                    >
+
+                        <option value="">
+                            Sélectionner
+                        </option>
+
+                        <option value="HOMME">
+                            Homme
+                        </option>
+
+                        <option value="FEMME">
+                            Femme
+                        </option>
+
+                        <option value="AUTRE">
+                            Autre
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_password"
+                        class="form-label"
+                    >
+                        Mot de passe *
+                    </label>
+
+                    <input
+                        id="create_password"
+                        name="password"
+                        type="password"
+                        minlength="8"
+                        required
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="create_password_confirmation"
+                        class="form-label"
+                    >
+                        Confirmation *
+                    </label>
+
+                    <input
+                        id="create_password_confirmation"
+                        name="password_confirmation"
+                        type="password"
+                        minlength="8"
+                        required
+                        class="form-input"
+                    >
 
                 </div>
 
             </div>
 
-        </main>
+
+            <div
+                class="
+                    mt-7
+                    flex
+                    flex-col-reverse
+                    gap-3
+                    border-t
+                    border-slate-100
+                    pt-5
+                    sm:flex-row
+                    sm:justify-end
+                "
+            >
+
+                <button
+                    id="cancelCreateButton"
+                    type="button"
+                    class="
+                        rounded-xl
+                        border
+                        border-slate-200
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-slate-600
+                        hover:bg-slate-50
+                    "
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="submitCreateButton"
+                    type="submit"
+                    class="
+                        rounded-xl
+                        bg-primary-600
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-white
+                        hover:bg-primary-700
+                    "
+                >
+                    Créer
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
 </div>
 
-<script>
 
-    const menuButton =
-        document.getElementById('menuButton');
+<!-- =========================================================
+     DETAILS MODAL
+========================================================= -->
 
-    const sidebar =
-        document.getElementById('sidebar');
+<div
+    id="detailsModal"
+    class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
+>
 
-    const overlay =
-        document.getElementById('sidebarOverlay');
+    <div
+        class="
+            max-h-[92vh]
+            w-full
+            max-w-3xl
+            overflow-y-auto
+            rounded-2xl
+            bg-white
+            shadow-2xl
+        "
+    >
 
-    menuButton?.addEventListener('click', () => {
+        <div
+            class="
+                sticky
+                top-0
+                z-10
+                flex
+                items-center
+                justify-between
+                border-b
+                border-slate-100
+                bg-white
+                px-6
+                py-5
+            "
+        >
 
-        sidebar.classList.remove('-translate-x-full');
+            <div>
 
-        overlay.classList.remove('hidden');
+                <h3
+                    id="detailsName"
+                    class="text-lg font-bold"
+                >
+                    Administrateur
+                </h3>
 
-    });
+                <p
+                    id="detailsEmail"
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    —
+                </p>
 
-    overlay?.addEventListener('click', () => {
+            </div>
 
-        sidebar.classList.add('-translate-x-full');
 
-        overlay.classList.add('hidden');
+            <button
+                id="closeDetailsModal"
+                type="button"
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-slate-400
+                    hover:bg-slate-100
+                "
+            >
 
-    });
+                <i class="fa-solid fa-xmark"></i>
 
-    /* SEARCH */
+            </button>
 
-    const search =
-        document.getElementById('searchUser');
+        </div>
 
-    search?.addEventListener('input', function () {
 
-        const value =
-            this.value.toLowerCase().trim();
+        <div class="p-6">
 
-        document
-            .querySelectorAll('#userTable tr')
-            .forEach(row => {
+            <div
+                id="detailsStats"
+                class="
+                    grid
+                    grid-cols-1
+                    gap-4
+                    sm:grid-cols-3
+                "
+            ></div>
 
-                row.style.display =
-                    row.textContent
-                        .toLowerCase()
-                        .includes(value)
-                        ? ''
-                        : 'none';
 
-            });
+            <div class="mt-7">
 
-    });
+                <h4
+                    class="
+                        mb-3
+                        font-semibold
+                    "
+                >
+                    Écoles associées
+                </h4>
 
-</script>
 
-<script src="/assets/js/smart-school-api.js"></script>
+                <div
+                    id="detailsSchools"
+                    class="space-y-3"
+                ></div>
+
+            </div>
+
+
+            <div class="mt-7">
+
+                <h4
+                    class="
+                        mb-3
+                        font-semibold
+                    "
+                >
+                    Informations du compte
+                </h4>
+
+
+                <div
+                    class="
+                        grid
+                        grid-cols-1
+                        gap-4
+                        sm:grid-cols-2
+                    "
+                >
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-slate-50
+                            p-4
+                        "
+                    >
+
+                        <p class="text-xs text-slate-400">
+                            Téléphone
+                        </p>
+
+                        <p
+                            id="detailsPhone"
+                            class="
+                                mt-1
+                                text-sm
+                                font-semibold
+                                text-slate-700
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-slate-50
+                            p-4
+                        "
+                    >
+
+                        <p class="text-xs text-slate-400">
+                            Pseudo
+                        </p>
+
+                        <p
+                            id="detailsPseudo"
+                            class="
+                                mt-1
+                                text-sm
+                                font-semibold
+                                text-slate-700
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-slate-50
+                            p-4
+                        "
+                    >
+
+                        <p class="text-xs text-slate-400">
+                            Création
+                        </p>
+
+                        <p
+                            id="detailsCreatedAt"
+                            class="
+                                mt-1
+                                text-sm
+                                font-semibold
+                                text-slate-700
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-xl
+                            bg-slate-50
+                            p-4
+                        "
+                    >
+
+                        <p class="text-xs text-slate-400">
+                            Dernière connexion
+                        </p>
+
+                        <p
+                            id="detailsLastLogin"
+                            class="
+                                mt-1
+                                text-sm
+                                font-semibold
+                                text-slate-700
+                            "
+                        >
+                            —
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     EDIT MODAL
+========================================================= -->
+
+<div
+    id="editModal"
+    class="
+        fixed
+        inset-0
+        z-[105]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
+>
+
+    <div
+        class="
+            max-h-[92vh]
+            w-full
+            max-w-2xl
+            overflow-y-auto
+            rounded-2xl
+            bg-white
+            shadow-2xl
+        "
+    >
+
+        <div
+            class="
+                sticky
+                top-0
+                z-10
+                flex
+                items-center
+                justify-between
+                border-b
+                border-slate-100
+                bg-white
+                px-6
+                py-5
+            "
+        >
+
+            <div>
+
+                <h3 class="text-lg font-bold">
+                    Modifier l'administrateur
+                </h3>
+
+                <p
+                    id="editSubtitle"
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    —
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeEditModal"
+                type="button"
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-slate-400
+                    hover:bg-slate-100
+                "
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="editAdminForm"
+            class="p-6"
+        >
+
+            <input
+                id="edit_id"
+                type="hidden"
+                name="id"
+            >
+
+
+            <div
+                id="editFormError"
+                class="
+                    mb-5
+                    hidden
+                    rounded-xl
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-700
+                "
+            ></div>
+
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-5
+                    md:grid-cols-2
+                "
+            >
+
+                <div>
+
+                    <label
+                        for="edit_prenom"
+                        class="form-label"
+                    >
+                        Prénom
+                    </label>
+
+                    <input
+                        id="edit_prenom"
+                        name="prenom"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_nom"
+                        class="form-label"
+                    >
+                        Nom
+                    </label>
+
+                    <input
+                        id="edit_nom"
+                        name="nom"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_postnom"
+                        class="form-label"
+                    >
+                        Postnom
+                    </label>
+
+                    <input
+                        id="edit_postnom"
+                        name="postnom"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_pseudo"
+                        class="form-label"
+                    >
+                        Pseudo
+                    </label>
+
+                    <input
+                        id="edit_pseudo"
+                        name="pseudo"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_email"
+                        class="form-label"
+                    >
+                        Email
+                    </label>
+
+                    <input
+                        id="edit_email"
+                        name="email"
+                        type="email"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_telephone"
+                        class="form-label"
+                    >
+                        Téléphone
+                    </label>
+
+                    <input
+                        id="edit_telephone"
+                        name="telephone"
+                        class="form-input"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_sexe"
+                        class="form-label"
+                    >
+                        Sexe
+                    </label>
+
+                    <select
+                        id="edit_sexe"
+                        name="sexe"
+                        class="form-input"
+                    >
+
+                        <option value="">
+                            Sélectionner
+                        </option>
+
+                        <option value="HOMME">
+                            Homme
+                        </option>
+
+                        <option value="FEMME">
+                            Femme
+                        </option>
+
+                        <option value="AUTRE">
+                            Autre
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="edit_statut"
+                        class="form-label"
+                    >
+                        Statut
+                    </label>
+
+                    <select
+                        id="edit_statut"
+                        name="statut"
+                        class="form-input"
+                    >
+
+                        <option value="ACTIF">
+                            Actif
+                        </option>
+
+                        <option value="INACTIF">
+                            Suspendu
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="edit_password"
+                        class="form-label"
+                    >
+                        Nouveau mot de passe
+                    </label>
+
+                    <input
+                        id="edit_password"
+                        name="password"
+                        type="password"
+                        minlength="8"
+                        placeholder="Laisser vide pour conserver l'actuel"
+                        class="form-input"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="
+                    mt-7
+                    flex
+                    justify-end
+                    gap-3
+                    border-t
+                    border-slate-100
+                    pt-5
+                "
+            >
+
+                <button
+                    id="cancelEditButton"
+                    type="button"
+                    class="
+                        rounded-xl
+                        border
+                        border-slate-200
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-slate-600
+                        hover:bg-slate-50
+                    "
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="submitEditButton"
+                    type="submit"
+                    class="
+                        rounded-xl
+                        bg-indigo-600
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-white
+                        hover:bg-indigo-700
+                    "
+                >
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CONFIRM MODAL
+========================================================= -->
+
+<div
+    id="confirmModal"
+    class="
+        fixed
+        inset-0
+        z-[110]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
+>
+
+    <div
+        class="
+            w-full
+            max-w-md
+            rounded-2xl
+            bg-white
+            shadow-2xl
+        "
+    >
+
+        <div class="p-6">
+
+            <div
+                id="confirmIcon"
+                class="
+                    mx-auto
+                    flex
+                    h-14
+                    w-14
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-amber-50
+                    text-amber-500
+                "
+            >
+
+                <i
+                    class="fa-solid fa-triangle-exclamation"
+                ></i>
+
+            </div>
+
+
+            <h3
+                id="confirmTitle"
+                class="
+                    mt-5
+                    text-center
+                    text-lg
+                    font-bold
+                "
+            >
+                Confirmation
+            </h3>
+
+
+            <p
+                id="confirmMessage"
+                class="
+                    mt-2
+                    text-center
+                    text-sm
+                    leading-6
+                    text-slate-500
+                "
+            >
+                —
+            </p>
+
+
+            <div
+                class="
+                    mt-7
+                    flex
+                    gap-3
+                "
+            >
+
+                <button
+                    id="cancelConfirmButton"
+                    type="button"
+                    class="
+                        flex-1
+                        rounded-xl
+                        border
+                        border-slate-200
+                        px-4
+                        py-3
+                        text-sm
+                        font-semibold
+                        text-slate-600
+                    "
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="confirmActionButton"
+                    type="button"
+                    class="
+                        flex-1
+                        rounded-xl
+                        bg-amber-500
+                        px-4
+                        py-3
+                        text-sm
+                        font-semibold
+                        text-white
+                    "
+                >
+                    Confirmer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/assets/js/super-admin/auth.js"></script>
+<script src="/assets/js/super-admin/user.js"></script>
+
 </body>
+
 </html>

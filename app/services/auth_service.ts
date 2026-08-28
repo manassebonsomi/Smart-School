@@ -111,9 +111,7 @@ export default class AuthService {
 
         sexe: payload.sexe ?? null,
 
-        password: await hash.make(
-          payload.password
-        ),
+        password: payload.password,
 
         statut: 'EN ATTENTE',
 
@@ -879,10 +877,7 @@ export default class AuthService {
 
 
       user.password =
-        await hash.make(
           payload.password
-        )
-
 
       user.resetPasswordToken = null
 
@@ -933,7 +928,8 @@ export default class AuthService {
    */
   async verifyEmail(token: string) {
 
-    const user = await User
+  const user =
+    await User
       .query()
       .where(
         'token_verification',
@@ -942,58 +938,65 @@ export default class AuthService {
       .first()
 
 
-    if (!user) {
+  if (!user) {
 
-      throw new Error(
-        'Lien de vérification invalide.'
-      )
-
-    }
-
-
-    if (
-      !user.tokenVerificationExpiresAt ||
-      user.tokenVerificationExpiresAt < DateTime.now()
-    ) {
-
-      throw new Error(
-        'Le lien de vérification a expiré.'
-      )
-
-    }
-
-
-    user.isVerified = true
-
-    user.token_verification = null
-
-    user.tokenVerificationExpiresAt = null
-
-
-    /**
-     * Un compte en attente devient actif
-     * après vérification de l'adresse email.
-     */
-    if (user.statut === 'EN ATTENTE') {
-
-      user.statut = 'ACTIF'
-
-    }
-
-
-    await user.save()
-
-
-    return {
-
-      success: true,
-
-      message:
-        'Votre adresse email a été vérifiée avec succès.',
-
-    }
+    throw new Error(
+      'Lien de vérification invalide ou déjà utilisé.'
+    )
 
   }
+
+
+  if (
+    !user.tokenVerificationExpiresAt ||
+    user.tokenVerificationExpiresAt <
+      DateTime.now()
+  ) {
+
+    throw new Error(
+      'Le lien de vérification a expiré.'
+    )
+
+  }
+
+
+  user.isVerified =
+    true
+
+
+  user.token_verification =
+    null
+
+
+  user.tokenVerificationExpiresAt =
+    null
+
+
+  if (
+    user.statut ===
+    'EN ATTENTE'
+  ) {
+
+    user.statut =
+      'ACTIF'
+
+  }
+
+
+  await user.save()
+
+
+  return {
+
+    success:
+      true,
+
+    message:
+      'Votre adresse email est maintenant vérifiée.',
+
+  }
+
+}
 
 
   /**
@@ -1031,10 +1034,8 @@ export default class AuthService {
     }
 
 
-    user.password =
-      await hash.make(
-        payload.password
-      )
+    user.password = payload.password
+
 
 
     await user.save()

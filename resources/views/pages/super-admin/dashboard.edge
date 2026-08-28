@@ -171,7 +171,10 @@
     "
 >
 
-    <!-- BRAND -->
+
+    <!-- =====================================================
+         SIDEBAR HEADER
+    ====================================================== -->
 
     <div
         class="
@@ -190,6 +193,7 @@
                 flex
                 h-11
                 w-11
+                shrink-0
                 items-center
                 justify-center
                 rounded-xl
@@ -201,31 +205,82 @@
         >
 
             <i
-                data-lucide="graduation-cap"
-                class="h-6 w-6"
+                class="
+                    fa-solid
+                    fa-graduation-cap
+                    text-lg
+                "
             ></i>
 
         </div>
 
 
-        <div>
+        <div class="min-w-0">
 
-            <h1 class="font-extrabold text-slate-900">
+            <h1
+                class="
+                    truncate
+                    text-base
+                    font-extrabold
+                    tracking-tight
+                    text-slate-900
+                "
+            >
                 SMART SCHOOL
             </h1>
 
-            <p class="text-xs text-slate-400">
+
+            <p
+                class="
+                    truncate
+                    text-xs
+                    text-slate-400
+                "
+            >
                 Administration Platform
             </p>
 
         </div>
 
+
+        <button
+            id="closeSidebar"
+            type="button"
+            class="
+                ml-auto
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-lg
+                text-slate-400
+                hover:bg-slate-100
+                hover:text-slate-700
+                lg:hidden
+            "
+            aria-label="Fermer le menu"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
     </div>
 
 
-    <!-- NAVIGATION -->
+    <!-- =====================================================
+         SIDEBAR NAVIGATION
+    ====================================================== -->
 
-    <div class="flex-1 overflow-y-auto px-4 py-6">
+    <div
+        class="
+            flex-1
+            overflow-y-auto
+            px-4
+            py-6
+        "
+    >
 
         <p
             class="
@@ -234,7 +289,7 @@
                 text-[10px]
                 font-bold
                 uppercase
-                tracking-widest
+                tracking-[0.18em]
                 text-slate-400
             "
         >
@@ -244,8 +299,140 @@
 
         <nav class="space-y-1">
 
+
+            <!-- Dashboard -->
+
             <a
                 href="/super-admin/dashboard"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-pie
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Tableau de bord
+                </span>
+
+            </a>
+
+
+            <!-- Écoles -->
+
+            <a
+                href="/super-admin/ecoles"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-school
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Écoles
+                </span>
+
+            </a>
+
+
+            <!-- Utilisateurs -->
+
+            <a
+                href="/super-admin/utilisateurs"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-users
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Utilisateurs
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Supervision
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Statistiques ACTIVE -->
+
+            <a
+                href="/super-admin/statistiques"
                 class="
                     flex
                     items-center
@@ -261,112 +448,22 @@
             >
 
                 <i
-                    data-lucide="layout-dashboard"
-                    class="h-5 w-5"
+                    class="
+                        fa-solid
+                        fa-chart-line
+                        w-5
+                        text-center
+                    "
                 ></i>
 
-                Tableau de bord
+                <span>
+                    Statistiques
+                </span>
 
             </a>
 
 
-            <a
-                href="/super-admin/ecoles"
-                class="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-xl
-                    px-4
-                    py-3
-                    text-sm
-                    font-medium
-                    text-slate-600
-                    hover:bg-slate-50
-                "
-            >
-
-                <i
-                    data-lucide="school"
-                    class="h-5 w-5"
-                ></i>
-
-                Écoles
-
-            </a>
-
-
-            <a
-                href="/super-admin/utilisateurs"
-                class="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-xl
-                    px-4
-                    py-3
-                    text-sm
-                    font-medium
-                    text-slate-600
-                    hover:bg-slate-50
-                "
-            >
-
-                <i
-                    data-lucide="users"
-                    class="h-5 w-5"
-                ></i>
-
-                Utilisateurs
-
-            </a>
-
-        </nav>
-
-
-        <p
-            class="
-                mb-3
-                mt-8
-                px-3
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-widest
-                text-slate-400
-            "
-        >
-            Supervision
-        </p>
-
-
-        <nav class="space-y-1">
-
-            <a
-                href="/super-admin/statistiques"
-                class="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-xl
-                    px-4
-                    py-3
-                    text-sm
-                    font-medium
-                    text-slate-600
-                    hover:bg-slate-50
-                "
-            >
-
-                <i
-                    data-lucide="bar-chart-3"
-                    class="h-5 w-5"
-                ></i>
-
-                Statistiques
-
-            </a>
-
+            <!-- Rapports -->
 
             <a
                 href="/super-admin/rapports"
@@ -380,16 +477,24 @@
                     text-sm
                     font-medium
                     text-slate-600
+                    transition
                     hover:bg-slate-50
+                    hover:text-slate-900
                 "
             >
 
                 <i
-                    data-lucide="file-text"
-                    class="h-5 w-5"
+                    class="
+                        fa-solid
+                        fa-file-lines
+                        w-5
+                        text-center
+                    "
                 ></i>
 
-                Rapports
+                <span>
+                    Rapports
+                </span>
 
             </a>
 
@@ -404,7 +509,7 @@
                 text-[10px]
                 font-bold
                 uppercase
-                tracking-widest
+                tracking-[0.18em]
                 text-slate-400
             "
         >
@@ -414,6 +519,32 @@
 
         <nav class="space-y-1">
 
+
+            <a
+                href="/super-admin/profil"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i class="fa-solid fa-user-gear w-5 text-center"></i>
+
+                Mon profil
+
+            </a>
+
+
+            <!-- Notifications -->
+
             <a
                 href="#"
                 class="
@@ -426,19 +557,29 @@
                     text-sm
                     font-medium
                     text-slate-600
+                    transition
                     hover:bg-slate-50
+                    hover:text-slate-900
                 "
             >
 
                 <i
-                    data-lucide="bell"
-                    class="h-5 w-5"
+                    class="
+                        fa-solid
+                        fa-bell
+                        w-5
+                        text-center
+                    "
                 ></i>
 
-                Notifications
+                <span>
+                    Notifications
+                </span>
 
             </a>
 
+
+            <!-- Paramètres -->
 
             <a
                 href="#"
@@ -452,19 +593,29 @@
                     text-sm
                     font-medium
                     text-slate-600
+                    transition
                     hover:bg-slate-50
+                    hover:text-slate-900
                 "
             >
 
                 <i
-                    data-lucide="settings"
-                    class="h-5 w-5"
+                    class="
+                        fa-solid
+                        fa-gear
+                        w-5
+                        text-center
+                    "
                 ></i>
 
-                Paramètres
+                <span>
+                    Paramètres
+                </span>
 
             </a>
 
+
+            <!-- Déconnexion -->
 
             <button
                 type="button"
@@ -477,6 +628,7 @@
                     rounded-xl
                     px-4
                     py-3
+                    text-sm
                     text-red-500
                     transition
                     hover:bg-red-50
@@ -484,7 +636,12 @@
             >
 
                 <i
-                    class="fa-solid fa-right-from-bracket w-5"
+                    class="
+                        fa-solid
+                        fa-right-from-bracket
+                        w-5
+                        text-center
+                    "
                 ></i>
 
                 <span>
@@ -498,9 +655,17 @@
     </div>
 
 
-    <!-- USER -->
+    <!-- =====================================================
+         SIDEBAR USER
+    ====================================================== -->
 
-    <div class="border-t border-slate-100 p-4">
+    <div
+        class="
+            border-t
+            border-slate-100
+            p-4
+        "
+    >
 
         <div
             class="
@@ -519,10 +684,12 @@
                     flex
                     h-10
                     w-10
+                    shrink-0
                     items-center
                     justify-center
                     rounded-full
                     bg-primary-100
+                    text-sm
                     font-bold
                     text-primary-700
                 "
@@ -539,6 +706,7 @@
                         truncate
                         text-sm
                         font-bold
+                        text-slate-800
                     "
                 >
                     Super Administrateur

@@ -1,42 +1,684 @@
 import db from '@adonisjs/lucid/services/db'
+
 import DashboardService from '#services/super_admin/dashboard_service'
 import Ecole from '#models/ecole'
+
+
+type ReportType =
+  | 'schools'
+  | 'users'
+  | 'students'
+  | 'platform'
+
+
+interface ReportDefinition {
+  id: string
+  type: ReportType
+  name: string
+  description: string
+  format: 'csv'
+  icon: string
+  color: string
+}
+
+
 export default class ReportService {
-  private dashboard = new DashboardService()
-  async list(filters: any = {}) {
-    const types = ['schools', 'users', 'students', 'platform']
-    const requested = filters.type && types.includes(filters.type) ? filters.type : null
-    const reports = [
-      { id: 'schools-overview', type: 'schools', name: 'Synthèse des écoles', description: 'Situation et évolution des établissements.', format: 'csv' },
-      { id: 'users-overview', type: 'users', name: 'Synthèse des utilisateurs', description: 'Administrateurs, enseignants, élèves et parents.', format: 'csv' },
-      { id: 'students-overview', type: 'students', name: 'Synthèse des élèves', description: 'Répartition globale des élèves.', format: 'csv' },
-      { id: 'platform-overview', type: 'platform', name: 'Rapport global de la plateforme', description: 'Indicateurs principaux de Smart School.', format: 'csv' },
-    ]
-    return { success: true, data: requested ? reports.filter(report => report.type === requested) : reports }
-  }
-  async generate(type: string) {
-    if (!['schools', 'users', 'students', 'platform'].includes(type)) throw new Error('Type de rapport invalide.')
-    return { success: true, data: { id: `${type}-${Date.now()}`, type, name: this.label(type), generatedAt: new Date().toISOString(), status: 'READY', format: 'csv' }, message: 'Rapport généré avec succès.' }
-  }
-  async download(type: string) {
-    let rows: string[][] = []
-    if (type === 'schools') {
-      const schools = await Ecole.query().orderBy('nom', 'asc')
-      rows = [['ID', 'Nom', 'Code', 'Province', 'Ville', 'Statut', 'Créée le']]
-      schools.forEach(item => rows.push([String(item.id), item.nom, item.code, item.province ?? '', item.ville ?? '', item.statut, item.createdAt.toISO() ?? '']))
-    } else if (type === 'users') {
-      const users = await db.from('users').whereNull('deleted_at').orderBy('created_at', 'asc').select(['id', 'prenom', 'nom', 'email', 'telephone', 'statut', 'system_role', 'created_at'])
-      rows = [['ID', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Statut', 'Rôle système', 'Créé le']]
-      users.forEach(item => rows.push([String(item.id), item.prenom, item.nom, item.email, item.telephone ?? '', item.statut, item.system_role, new Date(item.created_at).toISOString()]))
-    } else if (type === 'students') {
-      const students = await db.from('eleves').select(['id', 'matricule', 'nom', 'prenom', 'statut', 'created_at']).orderBy('created_at', 'asc')
-      rows = [['ID', 'Matricule', 'Nom', 'Prénom', 'Statut', 'Créé le']]
-      students.forEach(item => rows.push([String(item.id), item.matricule, item.nom, item.prenom, item.statut, new Date(item.created_at).toISOString()]))
-    } else {
-      const statistics = await this.dashboard.getStatistics()
-      rows = [['Indicateur', 'Valeur'], ['Écoles', String(statistics.totalSchools)], ['Écoles actives', String(statistics.activeSchools)], ['Écoles suspendues', String(statistics.suspendedSchools)], ['Utilisateurs', String(statistics.totalUsers)], ['Élèves', String(statistics.totalStudents)], ['Administrateurs actifs', String(statistics.activeAdministrators)]]
+  private dashboard =
+    new DashboardService()
+
+
+  /**
+   * ==========================================================================
+   * DÉFINITIONS DES RAPPORTS
+   * ==========================================================================
+   */
+  private readonly definitions: ReportDefinition[] = [
+
+    {
+      id: 'schools-overview',
+      type: 'schools',
+      name: 'Rapport des écoles',
+      description:
+        'Liste et état des établissements enregistrés dans Smart School.',
+      format: 'csv',
+      icon: 'fa-school',
+      color: 'sky',
+    },
+
+    {
+      id: 'users-overview',
+      type: 'users',
+      name: 'Rapport des utilisateurs',
+      description:
+        'Utilisateurs enregistrés avec leur statut et leur rôle système.',
+      format: 'csv',
+      icon: 'fa-users',
+      color: 'indigo',
+    },
+
+    {
+      id: 'students-overview',
+      type: 'students',
+      name: 'Rapport des élèves',
+      description:
+        'Liste des élèves enregistrés avec leur matricule et leur statut.',
+      format: 'csv',
+      icon: 'fa-user-graduate',
+      color: 'emerald',
+    },
+
+    {
+      id: 'platform-overview',
+      type: 'platform',
+      name: 'Rapport global de la plateforme',
+      description:
+        'Synthèse des principaux indicateurs de Smart School.',
+      format: 'csv',
+      icon: 'fa-chart-column',
+      color: 'violet',
+    },
+
+  ]
+
+
+  /**
+   * ==========================================================================
+   * LISTE DES RAPPORTS
+   * ==========================================================================
+   */
+  async list(
+    filters: {
+      type?: string | null
+    } = {}
+  ) {
+
+    const requestedType =
+      this.normalizeType(
+        filters.type
+      )
+
+
+    let reports =
+      [...this.definitions]
+
+
+    if (requestedType) {
+
+      reports =
+        reports.filter(
+          report =>
+            report.type === requestedType
+        )
+
     }
-    return rows.map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n')
+
+
+    return {
+
+      success: true,
+
+      data: reports,
+
+    }
+
   }
-  private label(type: string) { return { schools: 'Synthèse des écoles', users: 'Synthèse des utilisateurs', students: 'Synthèse des élèves', platform: 'Rapport global de la plateforme' }[type as 'schools' | 'users' | 'students' | 'platform'] }
+
+
+  /**
+   * ==========================================================================
+   * GÉNÉRATION
+   * ==========================================================================
+   *
+   * Le système actuel génère directement un rapport prêt
+   * à être téléchargé.
+   */
+  async generate(
+    type: string
+  ) {
+
+    const normalizedType =
+      this.normalizeType(type)
+
+
+    if (!normalizedType) {
+
+      throw new Error(
+        'Type de rapport invalide.'
+      )
+
+    }
+
+
+    const definition =
+      this.getDefinition(
+        normalizedType
+      )
+
+
+    /*
+     * On vérifie réellement que le rapport
+     * peut être généré.
+     */
+    await this.download(
+      normalizedType
+    )
+
+
+    return {
+
+      success: true,
+
+      message:
+        'Rapport généré avec succès.',
+
+      data: {
+
+        id:
+          `${normalizedType}-${Date.now()}`,
+
+        type:
+          definition.type,
+
+        name:
+          definition.name,
+
+        format:
+          definition.format,
+
+        status:
+          'READY',
+
+        generatedAt:
+          new Date().toISOString(),
+
+      },
+
+    }
+
+  }
+
+
+  /**
+   * ==========================================================================
+   * TÉLÉCHARGEMENT / CONSTRUCTION DU CSV
+   * ==========================================================================
+   */
+  async download(
+    type: string
+  ): Promise<string> {
+
+    const normalizedType =
+      this.normalizeType(type)
+
+
+    if (!normalizedType) {
+
+      throw new Error(
+        'Type de rapport invalide.'
+      )
+
+    }
+
+
+    let rows: string[][] = []
+
+
+    /*
+     * ------------------------------------------------------------------------
+     * ÉCOLES
+     * ------------------------------------------------------------------------
+     */
+
+    if (
+      normalizedType ===
+      'schools'
+    ) {
+
+      const schools =
+        await Ecole
+          .query()
+          .orderBy(
+            'nom',
+            'asc'
+          )
+
+
+      rows = [
+
+        [
+          'ID',
+          'Nom',
+          'Code',
+          'Email',
+          'Téléphone',
+          'Adresse',
+          'Province',
+          'Ville',
+          'Pays',
+          'Type',
+          'Statut',
+          'Année de création',
+          'Créée le',
+        ],
+
+      ]
+
+
+      for (
+        const school
+        of schools
+      ) {
+
+        rows.push([
+
+          String(school.id),
+
+          school.nom ?? '',
+
+          school.code ?? '',
+
+          school.email ?? '',
+
+          school.telephone ?? '',
+
+          school.adresse ?? '',
+
+          school.province ?? '',
+
+          school.ville ?? '',
+
+          school.pays ?? '',
+
+          school.type ?? '',
+
+          school.statut ?? '',
+
+          school.anneeCreation != null
+            ? String(
+                school.anneeCreation
+              )
+            : '',
+
+          school.createdAt
+            ?.toISO() ?? '',
+
+        ])
+
+      }
+
+    }
+
+
+    /*
+     * ------------------------------------------------------------------------
+     * UTILISATEURS
+     * ------------------------------------------------------------------------
+     */
+
+    else if (
+      normalizedType ===
+      'users'
+    ) {
+
+      const users =
+        await db
+          .from('users')
+          .whereNull('deleted_at')
+          .orderBy(
+            'created_at',
+            'asc'
+          )
+          .select([
+
+            'id',
+
+            'prenom',
+
+            'nom',
+
+            'postnom',
+
+            'pseudo',
+
+            'email',
+
+            'telephone',
+
+            'statut',
+
+            'system_role',
+
+            'is_verified',
+
+            'created_at',
+
+            'last_login_at',
+
+          ])
+
+
+      rows = [
+
+        [
+          'ID',
+          'Prénom',
+          'Nom',
+          'Postnom',
+          'Pseudo',
+          'Email',
+          'Téléphone',
+          'Statut',
+          'Rôle système',
+          'Email vérifié',
+          'Créé le',
+          'Dernière connexion',
+        ],
+
+      ]
+
+
+      for (
+        const user
+        of users
+      ) {
+
+        rows.push([
+
+          String(
+            user.id
+          ),
+
+          user.prenom ?? '',
+
+          user.nom ?? '',
+
+          user.postnom ?? '',
+
+          user.pseudo ?? '',
+
+          user.email ?? '',
+
+          user.telephone ?? '',
+
+          user.statut ?? '',
+
+          user.system_role ?? '',
+
+          user.is_verified
+            ? 'Oui'
+            : 'Non',
+
+          user.created_at
+            ? new Date(
+                user.created_at
+              ).toISOString()
+            : '',
+
+          user.last_login_at
+            ? new Date(
+                user.last_login_at
+              ).toISOString()
+            : '',
+
+        ])
+
+      }
+
+    }
+
+
+    /*
+     * ------------------------------------------------------------------------
+     * ÉLÈVES
+     * ------------------------------------------------------------------------
+     */
+
+    else if (
+      normalizedType ===
+      'students'
+    ) {
+
+      const students =
+        await db
+          .from('eleves')
+          .orderBy(
+            'created_at',
+            'asc'
+          )
+          .select([
+
+            'id',
+
+            'matricule',
+
+            'nom',
+
+            'prenom',
+
+            'statut',
+
+            'created_at',
+
+          ])
+
+
+      rows = [
+
+        [
+          'ID',
+          'Matricule',
+          'Nom',
+          'Prénom',
+          'Statut',
+          'Créé le',
+        ],
+
+      ]
+
+
+      for (
+        const student
+        of students
+      ) {
+
+        rows.push([
+
+          String(
+            student.id
+          ),
+
+          student.matricule ?? '',
+
+          student.nom ?? '',
+
+          student.prenom ?? '',
+
+          student.statut ?? '',
+
+          student.created_at
+            ? new Date(
+                student.created_at
+              ).toISOString()
+            : '',
+
+        ])
+
+      }
+
+    }
+
+
+    /*
+     * ------------------------------------------------------------------------
+     * PLATEFORME
+     * ------------------------------------------------------------------------
+     */
+
+    else {
+
+      const statistics =
+        await this.dashboard
+          .getStatistics()
+
+
+      rows = [
+
+        [
+          'Indicateur',
+          'Valeur',
+        ],
+
+        [
+          'Écoles',
+          String(
+            statistics.totalSchools
+          ),
+        ],
+
+        [
+          'Écoles actives',
+          String(
+            statistics.activeSchools
+          ),
+        ],
+
+        [
+          'Écoles suspendues',
+          String(
+            statistics.suspendedSchools
+          ),
+        ],
+
+        [
+          'Écoles archivées',
+          String(
+            Math.max(
+              statistics.totalSchools -
+              statistics.activeSchools -
+              statistics.suspendedSchools,
+              0
+            )
+          ),
+        ],
+
+        [
+          'Utilisateurs',
+          String(
+            statistics.totalUsers
+          ),
+        ],
+
+        [
+          'Élèves',
+          String(
+            statistics.totalStudents
+          ),
+        ],
+
+        [
+          'Administrateurs actifs',
+          String(
+            statistics.activeAdministrators
+          ),
+        ],
+
+      ]
+
+    }
+
+
+    return this.buildCsv(
+      rows
+    )
+
+  }
+
+
+  /**
+   * ==========================================================================
+   * HELPERS
+   * ==========================================================================
+   */
+
+  private normalizeType(
+    type?: string | null
+  ): ReportType | null {
+
+    const value =
+      String(
+        type ?? ''
+      )
+        .trim()
+        .toLowerCase()
+
+
+    const allowed: ReportType[] = [
+
+      'schools',
+      'users',
+      'students',
+      'platform',
+
+    ]
+
+
+    return allowed.includes(
+      value as ReportType
+    )
+      ? value as ReportType
+      : null
+
+  }
+
+
+  private getDefinition(
+    type: ReportType
+  ) {
+
+    const definition =
+      this.definitions.find(
+        report =>
+          report.type === type
+      )
+
+
+    if (!definition) {
+
+      throw new Error(
+        'Définition du rapport introuvable.'
+      )
+
+    }
+
+
+    return definition
+
+  }
+
+
+  private buildCsv(
+    rows: string[][]
+  ) {
+
+    return rows
+
+      .map(
+        row =>
+          row
+            .map(
+              value =>
+                `"${String(
+                  value ?? ''
+                ).replaceAll(
+                  '"',
+                  '""'
+                )}"`
+            )
+            .join(',')
+      )
+
+      .join('\n')
+
+  }
+
 }

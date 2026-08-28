@@ -1,0 +1,4543 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mon profil | Smart School</title>
+
+
+    <!-- =========================================================
+         TAILWIND CSS
+    ========================================================== -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <!-- =========================================================
+         FONT AWESOME
+    ========================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- =========================================================
+         TAILWIND CONFIG
+    ========================================================== -->
+
+    <script>
+
+        tailwind.config = {
+
+            theme: {
+
+                extend: {
+
+                    colors: {
+
+                        primary: {
+
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+
+    <!-- =========================================================
+         STYLES
+    ========================================================== -->
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+        }
+
+
+        .sidebar-transition {
+
+            transition:
+                transform .3s ease-in-out;
+
+        }
+
+
+        .tab-transition {
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .avatar-ring {
+
+            box-shadow:
+                0 0 0 5px #e0f2fe,
+                0 12px 30px rgba(14,165,233,.12);
+
+        }
+
+
+        .form-input {
+
+            width: 100%;
+
+            padding:
+                .75rem
+                1rem;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius:
+                .75rem;
+
+            background:
+                white;
+
+            outline:
+                none;
+
+            font-size:
+                .875rem;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .form-input:focus {
+
+            border-color:
+                #38bdf8;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(56,189,248,.15);
+
+        }
+
+
+        .loader {
+
+            width: 20px;
+            height: 20px;
+
+            border:
+                3px solid #bae6fd;
+
+            border-top-color:
+                #0284c7;
+
+            border-radius:
+                999px;
+
+            animation:
+                spin .7s linear infinite;
+
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        ::-webkit-scrollbar {
+
+            width: 7px;
+            height: 7px;
+
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background:
+                #bae6fd;
+
+            border-radius:
+                999px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body
+    class="
+        bg-slate-50
+        text-slate-800
+    "
+>
+
+
+<!-- =========================================================
+     MOBILE OVERLAY
+========================================================= -->
+
+<div
+    id="sidebarOverlay"
+    class="
+        fixed
+        inset-0
+        z-40
+        hidden
+        bg-slate-900/50
+    "
+></div>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    id="sidebar"
+    class="
+        sidebar-transition
+        fixed
+        inset-y-0
+        left-0
+        z-50
+        flex
+        w-72
+        -translate-x-full
+        flex-col
+        border-r
+        border-slate-200
+        bg-white
+        lg:translate-x-0
+    "
+>
+
+
+    <!-- =====================================================
+         SIDEBAR HEADER
+    ====================================================== -->
+
+    <div
+        class="
+            flex
+            h-20
+            items-center
+            gap-3
+            border-b
+            border-slate-100
+            px-6
+        "
+    >
+
+        <div
+            class="
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-primary-600
+                text-white
+                shadow-lg
+                shadow-primary-600/20
+            "
+        >
+
+            <i
+                class="
+                    fa-solid
+                    fa-graduation-cap
+                    text-lg
+                "
+            ></i>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+            <h1
+                class="
+                    truncate
+                    text-base
+                    font-extrabold
+                    tracking-tight
+                    text-slate-900
+                "
+            >
+                SMART SCHOOL
+            </h1>
+
+
+            <p
+                class="
+                    truncate
+                    text-xs
+                    text-slate-400
+                "
+            >
+                Administration Platform
+            </p>
+
+        </div>
+
+
+        <button
+            id="closeSidebar"
+            type="button"
+            class="
+                ml-auto
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-lg
+                text-slate-400
+                hover:bg-slate-100
+                hover:text-slate-700
+                lg:hidden
+            "
+            aria-label="Fermer le menu"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR NAVIGATION
+    ====================================================== -->
+
+    <div
+        class="
+            flex-1
+            overflow-y-auto
+            px-4
+            py-6
+        "
+    >
+
+        <p
+            class="
+                mb-3
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Principal
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Dashboard -->
+
+            <a
+                href="/super-admin/dashboard"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-pie
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Tableau de bord
+                </span>
+
+            </a>
+
+
+            <!-- Écoles -->
+
+            <a
+                href="/super-admin/ecoles"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-school
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Écoles
+                </span>
+
+            </a>
+
+
+            <!-- Utilisateurs -->
+
+            <a
+                href="/super-admin/utilisateurs"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-users
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Utilisateurs
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Supervision
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Statistiques ACTIVE -->
+
+            <a
+                href="/super-admin/statistiques"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-line
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Statistiques
+                </span>
+
+            </a>
+
+
+            <!-- Rapports -->
+
+            <a
+                href="/super-admin/rapports"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-file-lines
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Rapports
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Système
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <a
+                href="/super-admin/profil"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i class="fa-solid fa-user-gear w-5 text-center"></i>
+
+                Mon profil
+
+            </a>
+
+
+            <!-- Notifications -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-bell
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Notifications
+                </span>
+
+            </a>
+
+
+            <!-- Paramètres -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-gear
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Paramètres
+                </span>
+
+            </a>
+
+
+            <!-- Déconnexion -->
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-500
+                    transition
+                    hover:bg-red-50
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-right-from-bracket
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Déconnexion
+                </span>
+
+            </button>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR USER
+    ====================================================== -->
+
+    <div
+        class="
+            border-t
+            border-slate-100
+            p-4
+        "
+    >
+
+        <div
+            class="
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-slate-50
+                p-3
+            "
+        >
+
+            <div
+                id="sidebarAvatar"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-primary-100
+                    text-sm
+                    font-bold
+                    text-primary-700
+                "
+            >
+                SA
+            </div>
+
+
+            <div class="min-w-0 flex-1">
+
+                <p
+                    id="sidebarUserName"
+                    class="
+                        truncate
+                        text-sm
+                        font-bold
+                        text-slate-800
+                    "
+                >
+                    Super Administrateur
+                </p>
+
+
+                <p
+                    id="sidebarUserEmail"
+                    class="
+                        truncate
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Chargement...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="min-h-screen lg:ml-72">
+
+
+    <!-- HEADER -->
+
+    <header
+        class="
+            sticky
+            top-0
+            z-30
+            flex
+            h-20
+            items-center
+            justify-between
+            border-b
+            border-slate-200
+            bg-white/95
+            px-4
+            backdrop-blur
+            sm:px-6
+            lg:px-8
+        "
+    >
+
+        <div class="flex items-center gap-4">
+
+            <button
+                id="openSidebar"
+                type="button"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    text-slate-600
+                    hover:bg-slate-100
+                    lg:hidden
+                "
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+
+            <div>
+
+                <h2
+                    class="
+                        text-lg
+                        font-bold
+                        sm:text-xl
+                    "
+                >
+                    Mon profil
+                </h2>
+
+
+                <p
+                    class="
+                        hidden
+                        text-sm
+                        text-slate-400
+                        sm:block
+                    "
+                >
+                    Gestion de votre compte Super Admin
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            onclick="logout()"
+            class="
+                hidden
+                rounded-xl
+                border
+                border-red-100
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                text-red-500
+                hover:bg-red-50
+                sm:block
+            "
+        >
+            Déconnexion
+        </button>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <main
+        class="
+            p-4
+            sm:p-6
+            lg:p-8
+        "
+    >
+
+
+        <!-- INTRO -->
+
+        <section class="mb-8">
+
+            <div
+                class="
+                    mb-3
+                    flex
+                    flex-wrap
+                    gap-2
+                "
+            >
+
+                <span
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        rounded-full
+                        bg-primary-50
+                        px-3
+                        py-1.5
+                        text-xs
+                        font-semibold
+                        text-primary-700
+                    "
+                >
+
+                    <i class="fa-solid fa-user-shield"></i>
+
+                    Super Administrateur
+
+                </span>
+
+
+                <span
+                    id="verificationBadge"
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        rounded-full
+                        bg-slate-100
+                        px-3
+                        py-1.5
+                        text-xs
+                        font-semibold
+                        text-slate-600
+                    "
+                >
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    Vérification...
+
+                </span>
+
+            </div>
+
+
+            <h1
+                class="
+                    text-2xl
+                    font-bold
+                    text-slate-900
+                    sm:text-3xl
+                "
+            >
+                Mon profil
+            </h1>
+
+
+            <p
+                class="
+                    mt-2
+                    max-w-3xl
+                    text-sm
+                    leading-6
+                    text-slate-500
+                "
+            >
+                Gérez vos informations personnelles
+                et la sécurité de votre compte
+                d'administration.
+            </p>
+
+        </section>
+
+
+        <!-- PROFILE HERO -->
+
+        <section
+            class="
+                mb-6
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div
+                class="
+                    h-28
+                    bg-gradient-to-r
+                    from-primary-600
+                    via-primary-500
+                    to-cyan-400
+                "
+            ></div>
+
+
+            <div class="px-5 pb-7 sm:px-8">
+
+                <div
+                    class="
+                        -mt-10
+                        flex
+                        flex-col
+                        gap-5
+                        md:flex-row
+                        md:items-end
+                        md:justify-between
+                    "
+                >
+
+                    <div
+                        class="
+                            flex
+                            flex-col
+                            gap-4
+                            sm:flex-row
+                            sm:items-end
+                        "
+                    >
+
+                        <div
+                            id="profileAvatar"
+                            class="
+                                avatar-ring
+                                flex
+                                h-24
+                                w-24
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-full
+                                border-4
+                                border-white
+                                bg-primary-100
+                                text-2xl
+                                font-bold
+                                text-primary-700
+                            "
+                        >
+                            SA
+                        </div>
+
+
+                        <div class="pb-1">
+
+                            <div
+                                class="
+                                    flex
+                                    flex-wrap
+                                    items-center
+                                    gap-2
+                                "
+                            >
+
+                                <h2
+                                    id="profileName"
+                                    class="
+                                        text-2xl
+                                        font-bold
+                                        text-slate-900
+                                    "
+                                >
+                                    Chargement...
+                                </h2>
+
+
+                                <span
+                                    id="statusBadge"
+                                    class="
+                                        rounded-full
+                                        bg-emerald-50
+                                        px-2.5
+                                        py-1
+                                        text-[10px]
+                                        font-semibold
+                                        text-emerald-700
+                                    "
+                                >
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-sm
+                                    text-slate-500
+                                "
+                            >
+                                Administrateur système
+                            </p>
+
+
+                            <div
+                                class="
+                                    mt-3
+                                    flex
+                                    flex-wrap
+                                    gap-x-4
+                                    gap-y-2
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
+
+                                <span>
+
+                                    <i
+                                        class="
+                                            fa-solid
+                                            fa-envelope
+                                            mr-1
+                                        "
+                                    ></i>
+
+                                    <span id="profileEmail">
+                                        —
+                                    </span>
+
+                                </span>
+
+
+                                <span>
+
+                                    <i
+                                        class="
+                                            fa-solid
+                                            fa-phone
+                                            mr-1
+                                        "
+                                    ></i>
+
+                                    <span id="profilePhone">
+                                        —
+                                    </span>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        onclick="switchTab('personal')"
+                        class="
+                            inline-flex
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-xl
+                            bg-primary-600
+                            px-4
+                            py-2.5
+                            text-xs
+                            font-semibold
+                            text-white
+                            hover:bg-primary-700
+                        "
+                    >
+
+                        <i class="fa-solid fa-pen"></i>
+
+                        Modifier le profil
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TABS -->
+
+        <div
+            class="
+                mb-6
+                flex
+                gap-2
+                overflow-x-auto
+                pb-2
+            "
+        >
+
+            <button
+                type="button"
+                data-tab-button="personal"
+                onclick="switchTab('personal')"
+                class="
+                    shrink-0
+                    rounded-xl
+                    bg-primary-600
+                    px-4
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-white
+                "
+            >
+
+                <i class="fa-solid fa-user mr-1"></i>
+
+                Informations
+
+            </button>
+
+
+            <button
+                type="button"
+                data-tab-button="security"
+                onclick="switchTab('security')"
+                class="
+                    shrink-0
+                    rounded-xl
+                    bg-slate-100
+                    px-4
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-slate-600
+                "
+            >
+
+                <i class="fa-solid fa-shield-halved mr-1"></i>
+
+                Sécurité
+
+            </button>
+
+
+            <button
+                type="button"
+                data-tab-button="account"
+                onclick="switchTab('account')"
+                class="
+                    shrink-0
+                    rounded-xl
+                    bg-slate-100
+                    px-4
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-slate-600
+                "
+            >
+
+                <i class="fa-solid fa-gear mr-1"></i>
+
+                Compte
+
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             PERSONAL
+        ====================================================== -->
+
+        <section id="personalTab">
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-6
+                    xl:grid-cols-3
+                "
+            >
+
+                <div
+                    class="
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        shadow-sm
+                        xl:col-span-2
+                    "
+                >
+
+                    <div
+                        class="
+                            border-b
+                            border-slate-100
+                            px-5
+                            py-5
+                            sm:px-6
+                        "
+                    >
+
+                        <div class="flex items-center gap-3">
+
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-primary-50
+                                    text-primary-600
+                                "
+                            >
+
+                                <i class="fa-solid fa-user-pen"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2 class="font-bold">
+                                    Informations personnelles
+                                </h2>
+
+
+                                <p
+                                    class="
+                                        mt-1
+                                        text-sm
+                                        text-slate-400
+                                    "
+                                >
+                                    Modifiez les informations
+                                    associées à votre compte.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        id="profileForm"
+                        onsubmit="saveProfile(event)"
+                        class="p-5 sm:p-6"
+                    >
+
+                        <div
+                            class="
+                                grid
+                                grid-cols-1
+                                gap-5
+                                md:grid-cols-2
+                            "
+                        >
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Prénom
+                                </label>
+
+
+                                <input
+                                    id="prenom"
+                                    type="text"
+                                    class="form-input"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Nom
+                                </label>
+
+
+                                <input
+                                    id="nom"
+                                    type="text"
+                                    class="form-input"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Postnom
+                                </label>
+
+
+                                <input
+                                    id="postnom"
+                                    type="text"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Pseudo
+                                </label>
+
+
+                                <input
+                                    id="pseudo"
+                                    type="text"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Adresse e-mail
+                                </label>
+
+
+                                <input
+                                    id="email"
+                                    type="email"
+                                    class="form-input"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Téléphone
+                                </label>
+
+
+                                <input
+                                    id="telephone"
+                                    type="tel"
+                                    class="form-input"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Sexe
+                                </label>
+
+
+                                <select
+                                    id="sexe"
+                                    class="form-input"
+                                >
+
+                                    <option value="">
+                                        Non renseigné
+                                    </option>
+
+                                    <option value="HOMME">
+                                        Homme
+                                    </option>
+
+                                    <option value="FEMME">
+                                        Femme
+                                    </option>
+
+                                    <option value="AUTRE">
+                                        Autre
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Statut
+                                </label>
+
+
+                                <input
+                                    id="statut"
+                                    type="text"
+                                    class="form-input bg-slate-50"
+                                    readonly
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="profileFormError"
+                            class="
+                                mt-5
+                                hidden
+                                rounded-xl
+                                border
+                                border-red-200
+                                bg-red-50
+                                px-4
+                                py-3
+                                text-sm
+                                text-red-700
+                            "
+                        ></div>
+
+
+                        <div
+                            class="
+                                mt-6
+                                flex
+                                flex-col-reverse
+                                gap-3
+                                border-t
+                                border-slate-100
+                                pt-5
+                                sm:flex-row
+                                sm:justify-end
+                            "
+                        >
+
+                            <button
+                                type="button"
+                                onclick="loadProfile()"
+                                class="
+                                    rounded-xl
+                                    bg-slate-100
+                                    px-5
+                                    py-2.5
+                                    text-sm
+                                    font-semibold
+                                    text-slate-600
+                                    hover:bg-slate-200
+                                "
+                            >
+                                Annuler
+                            </button>
+
+
+                            <button
+                                id="saveProfileButton"
+                                type="submit"
+                                class="
+                                    inline-flex
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                    rounded-xl
+                                    bg-primary-600
+                                    px-5
+                                    py-2.5
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    hover:bg-primary-700
+                                "
+                            >
+
+                                <i
+                                    id="saveProfileIcon"
+                                    class="fa-solid fa-floppy-disk"
+                                ></i>
+
+
+                                <span id="saveProfileText">
+                                    Enregistrer
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- ACCOUNT SUMMARY -->
+
+                <div class="space-y-6">
+
+                    <div
+                        class="
+                            overflow-hidden
+                            rounded-2xl
+                            border
+                            border-slate-200
+                            bg-white
+                            shadow-sm
+                        "
+                    >
+
+                        <div
+                            class="
+                                border-b
+                                border-slate-100
+                                px-5
+                                py-5
+                            "
+                        >
+
+                            <h2 class="font-bold">
+                                État du compte
+                            </h2>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-sm
+                                    text-slate-400
+                                "
+                            >
+                                Informations actuelles.
+                            </p>
+
+                        </div>
+
+
+                        <div class="space-y-3 p-5">
+
+                            <div
+                                class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    rounded-xl
+                                    bg-slate-50
+                                    p-4
+                                "
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Identifiant
+                                    </p>
+
+
+                                    <p
+                                        id="accountId"
+                                        class="
+                                            mt-1
+                                            text-sm
+                                            font-semibold
+                                        "
+                                    >
+                                        —
+                                    </p>
+
+                                </div>
+
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-id-card
+                                        text-slate-300
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    rounded-xl
+                                    bg-slate-50
+                                    p-4
+                                "
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Rôle système
+                                    </p>
+
+
+                                    <p
+                                        id="accountRole"
+                                        class="
+                                            mt-1
+                                            text-sm
+                                            font-semibold
+                                        "
+                                    >
+                                        SUPER_ADMIN
+                                    </p>
+
+                                </div>
+
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-user-shield
+                                        text-slate-300
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    rounded-xl
+                                    bg-slate-50
+                                    p-4
+                                "
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Compte créé le
+                                    </p>
+
+
+                                    <p
+                                        id="accountCreatedAt"
+                                        class="
+                                            mt-1
+                                            text-sm
+                                            font-semibold
+                                        "
+                                    >
+                                        —
+                                    </p>
+
+                                </div>
+
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-calendar-plus
+                                        text-slate-300
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    rounded-xl
+                                    bg-slate-50
+                                    p-4
+                                "
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Dernière connexion
+                                    </p>
+
+
+                                    <p
+                                        id="accountLastLogin"
+                                        class="
+                                            mt-1
+                                            text-sm
+                                            font-semibold
+                                        "
+                                    >
+                                        —
+                                    </p>
+
+                                </div>
+
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-clock-rotate-left
+                                        text-slate-300
+                                    "
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-2xl
+                            border
+                            border-primary-100
+                            bg-primary-50
+                            p-5
+                        "
+                    >
+
+                        <div class="flex items-start gap-3">
+
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-white
+                                    text-primary-600
+                                "
+                            >
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <p
+                                    class="
+                                        text-sm
+                                        font-semibold
+                                        text-primary-800
+                                    "
+                                >
+                                    Compte Super Admin
+                                </p>
+
+
+                                <p
+                                    class="
+                                        mt-1
+                                        text-xs
+                                        leading-5
+                                        text-primary-700
+                                    "
+                                >
+                                    Votre rôle système et votre
+                                    statut sont gérés par la plateforme
+                                    et ne peuvent pas être modifiés ici.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SECURITY
+        ====================================================== -->
+
+        <section
+            id="securityTab"
+            class="hidden"
+        >
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-6
+                    xl:grid-cols-3
+                "
+            >
+
+                <!-- PASSWORD -->
+
+                <div
+                    class="
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        shadow-sm
+                        xl:col-span-2
+                    "
+                >
+
+                    <div
+                        class="
+                            border-b
+                            border-slate-100
+                            px-5
+                            py-5
+                            sm:px-6
+                        "
+                    >
+
+                        <div class="flex items-center gap-3">
+
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-emerald-50
+                                    text-emerald-600
+                                "
+                            >
+
+                                <i class="fa-solid fa-lock"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2 class="font-bold">
+                                    Modifier le mot de passe
+                                </h2>
+
+
+                                <p
+                                    class="
+                                        mt-1
+                                        text-sm
+                                        text-slate-400
+                                    "
+                                >
+                                    Sécurisez votre compte
+                                    avec un mot de passe fort.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        onsubmit="changePassword(event)"
+                        class="p-5 sm:p-6"
+                    >
+
+                        <div class="space-y-5">
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Mot de passe actuel
+                                </label>
+
+
+                                <div class="relative">
+
+                                    <input
+                                        id="currentPassword"
+                                        type="password"
+                                        required
+                                        class="form-input pr-12"
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        onclick="togglePassword('currentPassword', this)"
+                                        class="
+                                            absolute
+                                            right-3
+                                            top-1/2
+                                            -translate-y-1/2
+                                            text-slate-400
+                                        "
+                                    >
+
+                                        <i
+                                            class="
+                                                fa-regular
+                                                fa-eye
+                                            "
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Nouveau mot de passe
+                                </label>
+
+
+                                <div class="relative">
+
+                                    <input
+                                        id="newPassword"
+                                        type="password"
+                                        minlength="8"
+                                        required
+                                        oninput="updatePasswordStrength()"
+                                        class="form-input pr-12"
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        onclick="togglePassword('newPassword', this)"
+                                        class="
+                                            absolute
+                                            right-3
+                                            top-1/2
+                                            -translate-y-1/2
+                                            text-slate-400
+                                        "
+                                    >
+
+                                        <i
+                                            class="
+                                                fa-regular
+                                                fa-eye
+                                            "
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+
+                                <div
+                                    class="
+                                        mt-3
+                                        h-1.5
+                                        overflow-hidden
+                                        rounded-full
+                                        bg-slate-100
+                                    "
+                                >
+
+                                    <div
+                                        id="passwordStrength"
+                                        class="
+                                            h-full
+                                            w-0
+                                            rounded-full
+                                            transition-all
+                                        "
+                                    ></div>
+
+                                </div>
+
+
+                                <p
+                                    id="passwordStrengthText"
+                                    class="
+                                        mt-1
+                                        text-[10px]
+                                        text-slate-400
+                                    "
+                                >
+                                    Minimum 8 caractères
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    class="
+                                        mb-2
+                                        block
+                                        text-xs
+                                        font-semibold
+                                        text-slate-500
+                                    "
+                                >
+                                    Confirmer le nouveau mot de passe
+                                </label>
+
+
+                                <div class="relative">
+
+                                    <input
+                                        id="confirmPassword"
+                                        type="password"
+                                        required
+                                        class="form-input pr-12"
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        onclick="togglePassword('confirmPassword', this)"
+                                        class="
+                                            absolute
+                                            right-3
+                                            top-1/2
+                                            -translate-y-1/2
+                                            text-slate-400
+                                        "
+                                    >
+
+                                        <i
+                                            class="
+                                                fa-regular
+                                                fa-eye
+                                            "
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="passwordError"
+                            class="
+                                mt-5
+                                hidden
+                                rounded-xl
+                                border
+                                border-red-200
+                                bg-red-50
+                                px-4
+                                py-3
+                                text-sm
+                                text-red-700
+                            "
+                        ></div>
+
+
+                        <div
+                            class="
+                                mt-6
+                                flex
+                                justify-end
+                                border-t
+                                border-slate-100
+                                pt-5
+                            "
+                        >
+
+                            <button
+                                id="changePasswordButton"
+                                type="submit"
+                                class="
+                                    inline-flex
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                    rounded-xl
+                                    bg-emerald-600
+                                    px-5
+                                    py-2.5
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    hover:bg-emerald-700
+                                "
+                            >
+
+                                <i
+                                    id="changePasswordIcon"
+                                    class="fa-solid fa-key"
+                                ></i>
+
+
+                                <span
+                                    id="changePasswordText"
+                                >
+                                    Modifier le mot de passe
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- SECURITY STATUS -->
+
+                <div
+                    class="
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        shadow-sm
+                    "
+                >
+
+                    <div
+                        class="
+                            border-b
+                            border-slate-100
+                            px-5
+                            py-5
+                        "
+                    >
+
+                        <h2 class="font-bold">
+                            Sécurité du compte
+                        </h2>
+
+
+                        <p
+                            class="
+                                mt-1
+                                text-sm
+                                text-slate-400
+                            "
+                        >
+                            État des protections.
+                        </p>
+
+                    </div>
+
+
+                    <div class="space-y-3 p-5">
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-slate-200
+                                p-4
+                            "
+                        >
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="
+                                        flex
+                                        h-9
+                                        w-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        bg-emerald-50
+                                        text-emerald-600
+                                    "
+                                >
+
+                                    <i class="fa-solid fa-lock"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-sm font-semibold">
+                                        Mot de passe
+                                    </p>
+
+
+                                    <p
+                                        class="
+                                            mt-1
+                                            text-[10px]
+                                            text-emerald-600
+                                        "
+                                    >
+                                        Protégé
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-slate-200
+                                p-4
+                            "
+                        >
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="
+                                        flex
+                                        h-9
+                                        w-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        bg-emerald-50
+                                        text-emerald-600
+                                    "
+                                >
+
+                                    <i
+                                        class="
+                                            fa-solid
+                                            fa-envelope-circle-check
+                                        "
+                                    ></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-sm font-semibold">
+                                        Adresse e-mail
+                                    </p>
+
+
+                                    <p
+                                        id="securityEmailStatus"
+                                        class="
+                                            mt-1
+                                            text-[10px]
+                                            text-slate-400
+                                        "
+                                    >
+                                        Vérification...
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-slate-200
+                                p-4
+                            "
+                        >
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="
+                                        flex
+                                        h-9
+                                        w-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        bg-primary-50
+                                        text-primary-600
+                                    "
+                                >
+
+                                    <i class="fa-solid fa-user-shield"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-sm font-semibold">
+                                        Rôle système
+                                    </p>
+
+
+                                    <p
+                                        class="
+                                            mt-1
+                                            text-[10px]
+                                            text-primary-600
+                                        "
+                                    >
+                                        SUPER_ADMIN
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-amber-200
+                                bg-amber-50
+                                p-4
+                            "
+                        >
+
+                            <div class="flex items-start gap-3">
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-circle-info
+                                        mt-0.5
+                                        text-amber-600
+                                    "
+                                ></i>
+
+
+                                <p
+                                    class="
+                                        text-xs
+                                        leading-5
+                                        text-amber-700
+                                    "
+                                >
+                                    La double authentification
+                                    n'est pas encore connectée
+                                    au backend actuel.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ACCOUNT
+        ====================================================== -->
+
+        <section
+            id="accountTab"
+            class="hidden"
+        >
+
+            <div
+                class="
+                    grid
+                    grid-cols-1
+                    gap-6
+                    xl:grid-cols-2
+                "
+            >
+
+                <div
+                    class="
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        p-6
+                        shadow-sm
+                    "
+                >
+
+                    <div class="flex items-center gap-3">
+
+                        <div
+                            class="
+                                flex
+                                h-11
+                                w-11
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-primary-50
+                                text-primary-600
+                            "
+                        >
+
+                            <i class="fa-solid fa-user-shield"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 class="font-bold">
+                                Compte Super Admin
+                            </h2>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-sm
+                                    text-slate-400
+                                "
+                            >
+                                Informations techniques.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-6 space-y-3">
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                justify-between
+                                rounded-xl
+                                bg-slate-50
+                                p-4
+                            "
+                        >
+
+                            <span
+                                class="
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
+                                Identifiant
+                            </span>
+
+
+                            <strong
+                                id="accountId2"
+                                class="text-sm"
+                            >
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                justify-between
+                                rounded-xl
+                                bg-slate-50
+                                p-4
+                            "
+                        >
+
+                            <span
+                                class="
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
+                                Rôle système
+                            </span>
+
+
+                            <strong
+                                id="accountRole2"
+                                class="text-sm"
+                            >
+                                SUPER_ADMIN
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                justify-between
+                                rounded-xl
+                                bg-slate-50
+                                p-4
+                            "
+                        >
+
+                            <span
+                                class="
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
+                                Statut
+                            </span>
+
+
+                            <strong
+                                id="accountStatus2"
+                                class="
+                                    text-sm
+                                    text-emerald-600
+                                "
+                            >
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="
+                        rounded-2xl
+                        border
+                        border-red-200
+                        bg-white
+                        shadow-sm
+                    "
+                >
+
+                    <div
+                        class="
+                            border-b
+                            border-red-100
+                            bg-red-50
+                            p-6
+                        "
+                    >
+
+                        <div class="flex items-center gap-3">
+
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-white
+                                    text-red-600
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-triangle-exclamation
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2
+                                    class="
+                                        font-bold
+                                        text-red-800
+                                    "
+                                >
+                                    Zone sensible
+                                </h2>
+
+
+                                <p
+                                    class="
+                                        mt-1
+                                        text-sm
+                                        text-red-600
+                                    "
+                                >
+                                    Actions importantes.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-4 p-6">
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-slate-200
+                                p-4
+                            "
+                        >
+
+                            <p class="text-sm font-semibold">
+                                Déconnexion
+                            </p>
+
+
+                            <p
+                                class="
+                                    mt-1
+                                    text-xs
+                                    leading-5
+                                    text-slate-400
+                                "
+                            >
+                                Fermez votre session actuelle.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                onclick="logout()"
+                                class="
+                                    mt-4
+                                    rounded-xl
+                                    bg-slate-100
+                                    px-4
+                                    py-2.5
+                                    text-xs
+                                    font-semibold
+                                    text-slate-700
+                                    hover:bg-slate-200
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-right-from-bracket
+                                        mr-1
+                                    "
+                                ></i>
+
+                                Se déconnecter
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                border-amber-200
+                                bg-amber-50
+                                p-4
+                            "
+                        >
+
+                            <div class="flex items-start gap-3">
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-shield-halved
+                                        mt-0.5
+                                        text-amber-600
+                                    "
+                                ></i>
+
+
+                                <p
+                                    class="
+                                        text-xs
+                                        leading-5
+                                        text-amber-700
+                                    "
+                                >
+                                    La désactivation ou suppression
+                                    du compte Super Admin n'est pas
+                                    proposée dans cette interface.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="mt-10 text-center">
+
+            <p
+                class="
+                    text-xs
+                    text-slate-400
+                "
+            >
+                © 2026 Smart School.
+                Tous droits réservés.
+            </p>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+/*
+|--------------------------------------------------------------------------
+| API
+|--------------------------------------------------------------------------
+*/
+
+const PROFILE_API =
+    '/api/super-admin/profile'
+
+const PASSWORD_API =
+    '/api/auth/change-password'
+
+
+/*
+|--------------------------------------------------------------------------
+| TOKEN
+|--------------------------------------------------------------------------
+*/
+
+function getToken() {
+
+    return sessionStorage.getItem(
+        'smart_school_access_token'
+    )
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| API REQUEST
+|--------------------------------------------------------------------------
+*/
+
+async function apiRequest(
+    url,
+    options = {}
+) {
+
+    const token =
+        getToken()
+
+
+    if (!token) {
+
+        sessionStorage.clear()
+
+        window.location.replace('/')
+
+        throw new Error(
+            'Votre session a expiré.'
+        )
+
+    }
+
+
+    const response =
+        await fetch(
+            url,
+            {
+
+                ...options,
+
+                headers: {
+
+                    ...(options.headers || {}),
+
+                    Authorization:
+                        `Bearer ${token}`,
+
+                    Accept:
+                        'application/json',
+
+                },
+
+            }
+        )
+
+
+    if (
+        response.status ===
+        401
+    ) {
+
+        sessionStorage.clear()
+
+        window.location.replace('/')
+
+        throw new Error(
+            'Votre session a expiré.'
+        )
+
+    }
+
+
+    return response
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| FORMATAGE
+|--------------------------------------------------------------------------
+*/
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+
+        return '—'
+
+    }
+
+
+    const date =
+        new Date(value)
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return '—'
+
+    }
+
+
+    return date.toLocaleString(
+        'fr-FR',
+        {
+            dateStyle:
+                'medium',
+            timeStyle:
+                'short',
+        }
+    )
+
+}
+
+
+function initials(
+    prenom,
+    nom
+) {
+
+    const first =
+        String(
+            prenom || ''
+        )
+            .trim()
+            .charAt(0)
+
+
+    const last =
+        String(
+            nom || ''
+        )
+            .trim()
+            .charAt(0)
+
+
+    return (
+        `${first}${last}` ||
+        'SA'
+    ).toUpperCase()
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TOAST
+|--------------------------------------------------------------------------
+*/
+
+function showToast(
+    message,
+    type = 'success'
+) {
+
+    document
+        .getElementById(
+            'smartSchoolToast'
+        )
+        ?.remove()
+
+
+    const toast =
+        document.createElement(
+            'div'
+        )
+
+
+    const icon =
+        type === 'error'
+            ? 'fa-circle-exclamation'
+            : 'fa-circle-check'
+
+
+    const iconClass =
+        type === 'error'
+            ? 'text-red-600 bg-red-50'
+            : 'text-emerald-600 bg-emerald-50'
+
+
+    toast.id =
+        'smartSchoolToast'
+
+
+    toast.className =
+        `
+            fixed
+            bottom-5
+            right-5
+            z-[200]
+            flex
+            max-w-sm
+            items-center
+            gap-3
+            rounded-2xl
+            border
+            border-slate-200
+            bg-white
+            px-4
+            py-3
+            shadow-2xl
+        `
+
+
+    toast.innerHTML =
+        `
+            <div
+                class="
+                    flex
+                    h-9
+                    w-9
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    ${iconClass}
+                "
+            >
+                <i class="fa-solid ${icon}"></i>
+            </div>
+
+            <p class="text-sm font-medium text-slate-700">
+                ${String(message)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')}
+            </p>
+        `
+
+
+    document.body.appendChild(
+        toast
+    )
+
+
+    setTimeout(
+        () => toast.remove(),
+        3500
+    )
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CHARGEMENT PROFIL
+|--------------------------------------------------------------------------
+*/
+
+async function loadProfile() {
+
+    try {
+
+        const response =
+            await apiRequest(
+                PROFILE_API
+            )
+
+
+        const result =
+            await response.json()
+
+
+        if (
+            !response.ok ||
+            !result?.success
+        ) {
+
+            throw new Error(
+                result?.message ||
+                'Impossible de récupérer votre profil.'
+            )
+
+        }
+
+
+        const user =
+            result.data
+
+
+        /*
+         * FORMULAIRE
+         */
+
+        document
+            .getElementById(
+                'prenom'
+            )
+            .value =
+            user.prenom ?? ''
+
+
+        document
+            .getElementById(
+                'nom'
+            )
+            .value =
+            user.nom ?? ''
+
+
+        document
+            .getElementById(
+                'postnom'
+            )
+            .value =
+            user.postnom ?? ''
+
+
+        document
+            .getElementById(
+                'pseudo'
+            )
+            .value =
+            user.pseudo ?? ''
+
+
+        document
+            .getElementById(
+                'email'
+            )
+            .value =
+            user.email ?? ''
+
+
+        document
+            .getElementById(
+                'telephone'
+            )
+            .value =
+            user.telephone ?? ''
+
+
+        document
+            .getElementById(
+                'sexe'
+            )
+            .value =
+            user.sexe ?? ''
+
+
+        document
+            .getElementById(
+                'statut'
+            )
+            .value =
+            user.statut ?? '—'
+
+
+        /*
+         * NOM
+         */
+
+        const fullName =
+            [
+                user.prenom,
+                user.postnom,
+                user.nom
+            ]
+                .filter(Boolean)
+                .join(' ')
+
+
+        const avatar =
+            initials(
+                user.prenom,
+                user.nom
+            )
+
+
+        document
+            .getElementById(
+                'profileName'
+            )
+            .textContent =
+            fullName ||
+            'Super Administrateur'
+
+
+        document
+            .getElementById(
+                'profileAvatar'
+            )
+            .textContent =
+            avatar
+
+
+        document
+            .getElementById(
+                'sidebarAvatar'
+            )
+            .textContent =
+            avatar
+
+
+        document
+            .getElementById(
+                'sidebarUserName'
+            )
+            .textContent =
+            fullName ||
+            'Super Administrateur'
+
+
+        document
+            .getElementById(
+                'sidebarUserEmail'
+            )
+            .textContent =
+            user.email ||
+            '—'
+
+
+        document
+            .getElementById(
+                'profileEmail'
+            )
+            .textContent =
+            user.email ||
+            '—'
+
+
+        document
+            .getElementById(
+                'profilePhone'
+            )
+            .textContent =
+            user.telephone ||
+            'Non renseigné'
+
+
+        /*
+         * STATUT
+         */
+
+        const status =
+            String(
+                user.statut ||
+                ''
+            ).toUpperCase()
+
+
+        const statusBadge =
+            document.getElementById(
+                'statusBadge'
+            )
+
+
+        if (
+            status ===
+            'ACTIF'
+        ) {
+
+            statusBadge.textContent =
+                'Compte actif'
+
+            statusBadge.className =
+                `
+                    rounded-full
+                    bg-emerald-50
+                    px-2.5
+                    py-1
+                    text-[10px]
+                    font-semibold
+                    text-emerald-700
+                `
+
+        } else {
+
+            statusBadge.textContent =
+                user.statut ||
+                'Statut inconnu'
+
+            statusBadge.className =
+                `
+                    rounded-full
+                    bg-amber-50
+                    px-2.5
+                    py-1
+                    text-[10px]
+                    font-semibold
+                    text-amber-700
+                `
+
+        }
+
+
+        /*
+         * VÉRIFICATION E-MAIL
+         */
+
+        const verificationBadge =
+            document.getElementById(
+                'verificationBadge'
+            )
+
+
+        const securityEmailStatus =
+            document.getElementById(
+                'securityEmailStatus'
+            )
+
+
+        if (
+            user.isVerified
+        ) {
+
+            verificationBadge.innerHTML =
+                `
+                    <i class="fa-solid fa-circle-check"></i>
+                    E-mail vérifié
+                `
+
+
+            verificationBadge.className =
+                `
+                    inline-flex
+                    items-center
+                    gap-2
+                    rounded-full
+                    bg-emerald-50
+                    px-3
+                    py-1.5
+                    text-xs
+                    font-semibold
+                    text-emerald-700
+                `
+
+
+            securityEmailStatus.textContent =
+                'Adresse confirmée'
+
+            securityEmailStatus.className =
+                `
+                    mt-1
+                    text-[10px]
+                    text-emerald-600
+                `
+
+        } else {
+
+            verificationBadge.innerHTML =
+                `
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    E-mail non vérifié
+                `
+
+
+            verificationBadge.className =
+                `
+                    inline-flex
+                    items-center
+                    gap-2
+                    rounded-full
+                    bg-amber-50
+                    px-3
+                    py-1.5
+                    text-xs
+                    font-semibold
+                    text-amber-700
+                `
+
+
+            securityEmailStatus.textContent =
+                'Adresse non confirmée'
+
+            securityEmailStatus.className =
+                `
+                    mt-1
+                    text-[10px]
+                    text-amber-600
+                `
+
+        }
+
+
+        /*
+         * COMPTE
+         */
+
+        document
+            .getElementById(
+                'accountId'
+            )
+            .textContent =
+            `#${user.id}`
+
+
+        document
+            .getElementById(
+                'accountId2'
+            )
+            .textContent =
+            `#${user.id}`
+
+
+        document
+            .getElementById(
+                'accountRole'
+            )
+            .textContent =
+            user.systemRole ||
+            'SUPER_ADMIN'
+
+
+        document
+            .getElementById(
+                'accountRole2'
+            )
+            .textContent =
+            user.systemRole ||
+            'SUPER_ADMIN'
+
+
+        document
+            .getElementById(
+                'accountStatus2'
+            )
+            .textContent =
+            user.statut ||
+            '—'
+
+
+        document
+            .getElementById(
+                'accountCreatedAt'
+            )
+            .textContent =
+            formatDate(
+                user.createdAt
+            )
+
+
+        document
+            .getElementById(
+                'accountLastLogin'
+            )
+            .textContent =
+            formatDate(
+                user.lastLoginAt
+            )
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            'Profile:',
+            error
+        )
+
+
+        showToast(
+            error.message ||
+            'Impossible de charger votre profil.',
+            'error'
+        )
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MODIFICATION PROFIL
+|--------------------------------------------------------------------------
+*/
+
+async function saveProfile(
+    event
+) {
+
+    event.preventDefault()
+
+
+    const errorElement =
+        document.getElementById(
+            'profileFormError'
+        )
+
+
+    errorElement.classList.add(
+        'hidden'
+    )
+
+
+    const button =
+        document.getElementById(
+            'saveProfileButton'
+        )
+
+
+    const icon =
+        document.getElementById(
+            'saveProfileIcon'
+        )
+
+
+    const text =
+        document.getElementById(
+            'saveProfileText'
+        )
+
+
+    const payload = {
+
+        prenom:
+            document
+                .getElementById(
+                    'prenom'
+                )
+                .value
+                .trim(),
+
+        nom:
+            document
+                .getElementById(
+                    'nom'
+                )
+                .value
+                .trim(),
+
+        postnom:
+            document
+                .getElementById(
+                    'postnom'
+                )
+                .value
+                .trim(),
+
+        pseudo:
+            document
+                .getElementById(
+                    'pseudo'
+                )
+                .value
+                .trim(),
+
+        email:
+            document
+                .getElementById(
+                    'email'
+                )
+                .value
+                .trim(),
+
+        telephone:
+            document
+                .getElementById(
+                    'telephone'
+                )
+                .value
+                .trim(),
+
+        sexe:
+            document
+                .getElementById(
+                    'sexe'
+                )
+                .value,
+
+    }
+
+
+    button.disabled =
+        true
+
+
+    icon.className =
+        'fa-solid fa-spinner fa-spin'
+
+
+    text.textContent =
+        'Enregistrement...'
+
+
+    try {
+
+        const response =
+            await apiRequest(
+                PROFILE_API,
+                {
+
+                    method:
+                        'PUT',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/json',
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        ),
+
+                }
+            )
+
+
+        const result =
+            await response.json()
+
+
+        if (
+            !response.ok ||
+            !result?.success
+        ) {
+
+            throw new Error(
+                result?.message ||
+                'Impossible de modifier le profil.'
+            )
+
+        }
+
+
+        showToast(
+            result.message ||
+            'Profil mis à jour avec succès.'
+        )
+
+
+        await loadProfile()
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            'Update profile:',
+            error
+        )
+
+
+        errorElement.textContent =
+            error.message
+
+
+        errorElement.classList.remove(
+            'hidden'
+        )
+
+    } finally {
+
+        button.disabled =
+            false
+
+        icon.className =
+            'fa-solid fa-floppy-disk'
+
+        text.textContent =
+            'Enregistrer'
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TABS
+|--------------------------------------------------------------------------
+*/
+
+function switchTab(
+    tab
+) {
+
+    const tabs = [
+        'personal',
+        'security',
+        'account'
+    ]
+
+
+    tabs.forEach(
+        name => {
+
+            const section =
+                document.getElementById(
+                    `${name}Tab`
+                )
+
+
+            const button =
+                document.querySelector(
+                    `[data-tab-button="${name}"]`
+                )
+
+
+            if (
+                name === tab
+            ) {
+
+                section.classList.remove(
+                    'hidden'
+                )
+
+
+                button.className =
+                    `
+                        shrink-0
+                        rounded-xl
+                        bg-primary-600
+                        px-4
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-white
+                    `
+
+            } else {
+
+                section.classList.add(
+                    'hidden'
+                )
+
+
+                button.className =
+                    `
+                        shrink-0
+                        rounded-xl
+                        bg-slate-100
+                        px-4
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-slate-600
+                    `
+
+            }
+
+        }
+    )
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    })
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| PASSWORD VISIBILITY
+|--------------------------------------------------------------------------
+*/
+
+function togglePassword(
+    inputId,
+    button
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        )
+
+
+    const icon =
+        button.querySelector(
+            'i'
+        )
+
+
+    const show =
+        input.type ===
+        'password'
+
+
+    input.type =
+        show
+            ? 'text'
+            : 'password'
+
+
+    icon.classList.toggle(
+        'fa-eye',
+        !show
+    )
+
+
+    icon.classList.toggle(
+        'fa-eye-slash',
+        show
+    )
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| PASSWORD STRENGTH
+|--------------------------------------------------------------------------
+*/
+
+function updatePasswordStrength() {
+
+    const password =
+        document
+            .getElementById(
+                'newPassword'
+            )
+            .value
+
+
+    const bar =
+        document.getElementById(
+            'passwordStrength'
+        )
+
+
+    const text =
+        document.getElementById(
+            'passwordStrengthText'
+        )
+
+
+    let score = 0
+
+
+    if (
+        password.length >= 8
+    ) score++
+
+
+    if (
+        /[A-Z]/.test(
+            password
+        )
+    ) score++
+
+
+    if (
+        /[a-z]/.test(
+            password
+        )
+    ) score++
+
+
+    if (
+        /[0-9]/.test(
+            password
+        )
+    ) score++
+
+
+    if (
+        /[^A-Za-z0-9]/.test(
+            password
+        )
+    ) score++
+
+
+    bar.style.width =
+        `${score * 20}%`
+
+
+    if (
+        score <= 1
+    ) {
+
+        bar.style.backgroundColor =
+            '#ef4444'
+
+        text.textContent =
+            'Mot de passe faible'
+
+    } else if (
+        score <= 3
+    ) {
+
+        bar.style.backgroundColor =
+            '#f59e0b'
+
+        text.textContent =
+            'Mot de passe moyen'
+
+    } else {
+
+        bar.style.backgroundColor =
+            '#10b981'
+
+        text.textContent =
+            'Mot de passe fort'
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CHANGEMENT MOT DE PASSE
+|--------------------------------------------------------------------------
+*/
+
+async function changePassword(
+    event
+) {
+
+    event.preventDefault()
+
+
+    const current =
+        document
+            .getElementById(
+                'currentPassword'
+            )
+            .value
+
+
+    const next =
+        document
+            .getElementById(
+                'newPassword'
+            )
+            .value
+
+
+    const confirmation =
+        document
+            .getElementById(
+                'confirmPassword'
+            )
+            .value
+
+
+    const errorElement =
+        document.getElementById(
+            'passwordError'
+        )
+
+
+    errorElement.classList.add(
+        'hidden'
+    )
+
+
+    if (
+        next.length < 8
+    ) {
+
+        errorElement.textContent =
+            'Le nouveau mot de passe doit contenir au moins 8 caractères.'
+
+        errorElement.classList.remove(
+            'hidden'
+        )
+
+        return
+
+    }
+
+
+    if (
+        next !== confirmation
+    ) {
+
+        errorElement.textContent =
+            'Les mots de passe ne correspondent pas.'
+
+        errorElement.classList.remove(
+            'hidden'
+        )
+
+        return
+
+    }
+
+
+    const button =
+        document.getElementById(
+            'changePasswordButton'
+        )
+
+
+    const icon =
+        document.getElementById(
+            'changePasswordIcon'
+        )
+
+
+    const text =
+        document.getElementById(
+            'changePasswordText'
+        )
+
+
+    button.disabled =
+        true
+
+
+    icon.className =
+        'fa-solid fa-spinner fa-spin'
+
+
+    text.textContent =
+        'Modification...'
+
+
+    try {
+
+        const response =
+            await apiRequest(
+                PASSWORD_API,
+                {
+
+                    method:
+                        'PATCH',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/json',
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            current_password:
+                                current,
+
+                            new_password:
+                                next,
+
+                            new_password_confirmation:
+                                confirmation,
+
+                        }),
+
+                }
+            )
+
+
+        const result =
+            await response.json()
+
+
+        if (
+            !response.ok ||
+            !result?.success
+        ) {
+
+            throw new Error(
+                result?.message ||
+                'Impossible de modifier le mot de passe.'
+            )
+
+        }
+
+
+        document
+            .getElementById(
+                'currentPassword'
+            )
+            .value =
+            ''
+
+
+        document
+            .getElementById(
+                'newPassword'
+            )
+            .value =
+            ''
+
+
+        document
+            .getElementById(
+                'confirmPassword'
+            )
+            .value =
+            ''
+
+
+        document
+            .getElementById(
+                'passwordStrength'
+            )
+            .style.width =
+            '0'
+
+
+        document
+            .getElementById(
+                'passwordStrengthText'
+            )
+            .textContent =
+            'Minimum 8 caractères'
+
+
+        showToast(
+            result.message ||
+            'Mot de passe modifié avec succès.'
+        )
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            'Change password:',
+            error
+        )
+
+
+        errorElement.textContent =
+            error.message
+
+
+        errorElement.classList.remove(
+            'hidden'
+        )
+
+    } finally {
+
+        button.disabled =
+            false
+
+        icon.className =
+            'fa-solid fa-key'
+
+        text.textContent =
+            'Modifier le mot de passe'
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| SIDEBAR
+|--------------------------------------------------------------------------
+*/
+
+const sidebar =
+    document.getElementById(
+        'sidebar'
+    )
+
+
+const overlay =
+    document.getElementById(
+        'sidebarOverlay'
+    )
+
+
+document
+    .getElementById(
+        'openSidebar'
+    )
+    ?.addEventListener(
+        'click',
+        () => {
+
+            sidebar.classList.remove(
+                '-translate-x-full'
+            )
+
+            overlay.classList.remove(
+                'hidden'
+            )
+
+        }
+    )
+
+
+document
+    .getElementById(
+        'closeSidebar'
+    )
+    ?.addEventListener(
+        'click',
+        hideSidebar
+    )
+
+
+overlay
+    ?.addEventListener(
+        'click',
+        hideSidebar
+    )
+
+
+function hideSidebar() {
+
+    sidebar.classList.add(
+        '-translate-x-full'
+    )
+
+    overlay.classList.add(
+        'hidden'
+    )
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+async function logout() {
+
+    if (
+        !window.confirm(
+            'Voulez-vous vraiment vous déconnecter ?'
+        )
+    ) {
+
+        return
+
+    }
+
+
+    const token =
+        getToken()
+
+
+    try {
+
+        if (token) {
+
+            await fetch(
+                '/api/auth/logout',
+                {
+
+                    method:
+                        'POST',
+
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`,
+
+                        Accept:
+                            'application/json',
+
+                    },
+
+                }
+            )
+
+        }
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            'Logout:',
+            error
+        )
+
+    } finally {
+
+        sessionStorage.clear()
+
+        window.location.replace(
+            '/'
+        )
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| INITIALISATION
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        loadProfile()
+
+        switchTab(
+            'personal'
+        )
+
+    }
+)
+
+</script>
+
+</body>
+
+</html>

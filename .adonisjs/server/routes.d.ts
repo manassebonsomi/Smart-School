@@ -4,6 +4,7 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
+    'home': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -25,11 +26,13 @@ export type ScannedRoutes = {
     'api.auth.switchSchool': { paramsTuple?: []; params?: {} }
     'api.auth.changePassword': { paramsTuple?: []; params?: {} }
     'login': { paramsTuple?: []; params?: {} }
+    'verify-email': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'super-admin.ecoles.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'super-admin.profil': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.create': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -48,8 +51,6 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
-    'profile': { paramsTuple?: []; params?: {} }
-    'checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.store': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
@@ -75,11 +76,20 @@ export type ScannedRoutes = {
     'administrateurs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'statistics.index': { paramsTuple?: []; params?: {} }
+    'statistics.overview': { paramsTuple?: []; params?: {} }
+    'statistics.schools': { paramsTuple?: []; params?: {} }
+    'statistics.users': { paramsTuple?: []; params?: {} }
+    'statistics.monthly': { paramsTuple?: []; params?: {} }
+    'statistics.activities': { paramsTuple?: []; params?: {} }
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.store': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
   }
   GET: {
+    'home': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -89,11 +99,13 @@ export type ScannedRoutes = {
     'api.auth.verifyEmail': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'api.auth.me': { paramsTuple?: []; params?: {} }
     'login': { paramsTuple?: []; params?: {} }
+    'verify-email': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'super-admin.ecoles.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'super-admin.profil': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.create': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -112,8 +124,6 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
-    'profile': { paramsTuple?: []; params?: {} }
-    'checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
     'ecoles.statistics': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -126,10 +136,18 @@ export type ScannedRoutes = {
     'administrateurs.belongsToSchool': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'ecoleId': ParamValue} }
     'administrateurs.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'statistics.index': { paramsTuple?: []; params?: {} }
+    'statistics.overview': { paramsTuple?: []; params?: {} }
+    'statistics.schools': { paramsTuple?: []; params?: {} }
+    'statistics.users': { paramsTuple?: []; params?: {} }
+    'statistics.monthly': { paramsTuple?: []; params?: {} }
+    'statistics.activities': { paramsTuple?: []; params?: {} }
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
+    'home': { paramsTuple?: []; params?: {} }
     'google.redirect': { paramsTuple?: []; params?: {} }
     'google.callback': { paramsTuple?: []; params?: {} }
     'password.reset.step1': { paramsTuple?: []; params?: {} }
@@ -139,11 +157,13 @@ export type ScannedRoutes = {
     'api.auth.verifyEmail': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'api.auth.me': { paramsTuple?: []; params?: {} }
     'login': { paramsTuple?: []; params?: {} }
+    'verify-email': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'super-admin.dashboard': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.create': { paramsTuple?: []; params?: {} }
     'super-admin.ecoles.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'super-admin.ecoles.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'super-admin.profil': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.create': { paramsTuple?: []; params?: {} }
     'super-admin.utilisateurs.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -162,8 +182,6 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
-    'profile': { paramsTuple?: []; params?: {} }
-    'checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
     'ecoles.statistics': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -176,8 +194,15 @@ export type ScannedRoutes = {
     'administrateurs.belongsToSchool': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'ecoleId': ParamValue} }
     'administrateurs.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'statistics.index': { paramsTuple?: []; params?: {} }
+    'statistics.overview': { paramsTuple?: []; params?: {} }
+    'statistics.schools': { paramsTuple?: []; params?: {} }
+    'statistics.users': { paramsTuple?: []; params?: {} }
+    'statistics.monthly': { paramsTuple?: []; params?: {} }
+    'statistics.activities': { paramsTuple?: []; params?: {} }
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'password.reset.step1.submit': { paramsTuple?: []; params?: {} }
@@ -207,6 +232,7 @@ export type ScannedRoutes = {
   PUT: {
     'ecoles.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
   }
   DELETE: {
     'ecoles.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

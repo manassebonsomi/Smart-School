@@ -1,888 +1,1657 @@
-```html
 <!DOCTYPE html>
+
 <html lang="fr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gestion des rapports Smart School"
+    >
 
     <title>Rapports | Smart School</title>
 
-    <!-- Tailwind CSS -->
+
+    <!-- =========================================================
+         TAILWIND
+    ========================================================== -->
+
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
+
+    <!-- =========================================================
+         FONT AWESOME
+    ========================================================== -->
+
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+
+    <!-- =========================================================
+         TAILWIND CONFIG
+    ========================================================== -->
+
     <script>
+
         tailwind.config = {
+
             theme: {
+
                 extend: {
+
                     colors: {
-                        primary: '#38BDF8',
-                        primaryDark: '#0284C7',
-                        primaryLight: '#E0F2FE',
-                        darkBlue: '#0F172A'
+
+                        primary: {
+
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+
+                        }
+
                     }
+
                 }
+
             }
+
         }
+
     </script>
 
+
     <style>
-        body {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-                         BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        * {
+            box-sizing: border-box;
         }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+        }
+
+
+        ::-webkit-scrollbar {
+
+            width: 7px;
+            height: 7px;
+
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background: #cbd5e1;
+
+            border-radius: 999px;
+
+        }
+
 
         .sidebar-transition {
-            transition: transform 0.3s ease-in-out;
+
+            transition:
+                transform .3s ease-in-out;
+
         }
+
 
         .overlay-transition {
-            transition: opacity 0.3s ease-in-out;
+
+            transition:
+                opacity .25s ease;
+
         }
+
 
         .modal-transition {
-            transition: opacity 0.2s ease, transform 0.2s ease;
+
+            transition:
+                opacity .2s ease,
+                transform .2s ease;
+
         }
 
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+
+        .loader {
+
+            width: 21px;
+            height: 21px;
+
+            border:
+                3px solid #bae6fd;
+
+            border-top-color:
+                #0284c7;
+
+            border-radius:
+                999px;
+
+            animation:
+                spin .7s linear infinite;
+
         }
 
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
         }
+
+
+        .report-card {
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                border-color .2s ease;
+
+        }
+
+
+        .report-card:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 14px 30px
+                rgba(15, 23, 42, .06);
+
+        }
+
+
+        .action-button {
+
+            transition:
+                background-color .2s ease,
+                color .2s ease,
+                transform .2s ease;
+
+        }
+
+
+        .action-button:hover {
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .csv-preview {
+
+            font-family:
+                Consolas,
+                Monaco,
+                monospace;
+
+            white-space: pre;
+
+            overflow:
+                auto;
+
+            font-size:
+                12px;
+
+        }
+
     </style>
+
 </head>
+
 
 <body class="bg-slate-50 text-slate-800">
 
-<!-- ========================================================= -->
-<!-- MOBILE OVERLAY -->
-<!-- ========================================================= -->
+
+<!-- =========================================================
+     MOBILE OVERLAY
+========================================================= -->
 
 <div
     id="sidebarOverlay"
-    class="fixed inset-0 bg-slate-900/50 z-40 hidden opacity-0 overlay-transition lg:hidden"
+    class="
+        overlay-transition
+        fixed
+        inset-0
+        z-40
+        hidden
+        bg-slate-900/50
+    "
 ></div>
 
-<!-- ========================================================= -->
-<!-- SIDEBAR -->
-<!-- ========================================================= -->
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
 
 <aside
     id="sidebar"
-    class="fixed top-0 left-0 z-50 h-screen w-72 bg-white border-r border-slate-200
-           sidebar-transition -translate-x-full lg:translate-x-0"
+    class="
+        sidebar-transition
+        fixed
+        inset-y-0
+        left-0
+        z-50
+        flex
+        w-72
+        -translate-x-full
+        flex-col
+        border-r
+        border-slate-200
+        bg-white
+        lg:translate-x-0
+    "
 >
 
-    <!-- Logo -->
 
-    <div class="h-20 flex items-center px-6 border-b border-slate-100">
+    <!-- =====================================================
+         SIDEBAR HEADER
+    ====================================================== -->
 
-        <div class="flex items-center gap-3">
+    <div
+        class="
+            flex
+            h-20
+            items-center
+            gap-3
+            border-b
+            border-slate-100
+            px-6
+        "
+    >
+
+        <div
+            class="
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-primary-600
+                text-white
+                shadow-lg
+                shadow-primary-600/20
+            "
+        >
+
+            <i
+                class="
+                    fa-solid
+                    fa-graduation-cap
+                    text-lg
+                "
+            ></i>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+            <h1
+                class="
+                    truncate
+                    text-base
+                    font-extrabold
+                    tracking-tight
+                    text-slate-900
+                "
+            >
+                SMART SCHOOL
+            </h1>
+
+
+            <p
+                class="
+                    truncate
+                    text-xs
+                    text-slate-400
+                "
+            >
+                Administration Platform
+            </p>
+
+        </div>
+
+
+        <button
+            id="closeSidebar"
+            type="button"
+            class="
+                ml-auto
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-lg
+                text-slate-400
+                hover:bg-slate-100
+                hover:text-slate-700
+                lg:hidden
+            "
+            aria-label="Fermer le menu"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR NAVIGATION
+    ====================================================== -->
+
+    <div
+        class="
+            flex-1
+            overflow-y-auto
+            px-4
+            py-6
+        "
+    >
+
+        <p
+            class="
+                mb-3
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Principal
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Dashboard -->
+
+            <a
+                href="/super-admin/dashboard"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-pie
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Tableau de bord
+                </span>
+
+            </a>
+
+
+            <!-- Écoles -->
+
+            <a
+                href="/super-admin/ecoles"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-school
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Écoles
+                </span>
+
+            </a>
+
+
+            <!-- Utilisateurs -->
+
+            <a
+                href="/super-admin/utilisateurs"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-users
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Utilisateurs
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Supervision
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <!-- Statistiques ACTIVE -->
+
+            <a
+                href="/super-admin/statistiques"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-chart-line
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Statistiques
+                </span>
+
+            </a>
+
+
+            <!-- Rapports -->
+
+            <a
+                href="/super-admin/rapports"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-file-lines
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Rapports
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <p
+            class="
+                mb-3
+                mt-8
+                px-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-slate-400
+            "
+        >
+            Système
+        </p>
+
+
+        <nav class="space-y-1">
+
+
+            <a
+                href="/super-admin/profil"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    bg-primary-50
+                    px-4
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-primary-700
+                "
+            >
+
+                <i class="fa-solid fa-user-gear w-5 text-center"></i>
+
+                Mon profil
+
+            </a>
+
+
+            <!-- Notifications -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-bell
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Notifications
+                </span>
+
+            </a>
+
+
+            <!-- Paramètres -->
+
+            <a
+                href="#"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    font-medium
+                    text-slate-600
+                    transition
+                    hover:bg-slate-50
+                    hover:text-slate-900
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-gear
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Paramètres
+                </span>
+
+            </a>
+
+
+            <!-- Déconnexion -->
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-500
+                    transition
+                    hover:bg-red-50
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        fa-right-from-bracket
+                        w-5
+                        text-center
+                    "
+                ></i>
+
+                <span>
+                    Déconnexion
+                </span>
+
+            </button>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIDEBAR USER
+    ====================================================== -->
+
+    <div
+        class="
+            border-t
+            border-slate-100
+            p-4
+        "
+    >
+
+        <div
+            class="
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-slate-50
+                p-3
+            "
+        >
 
             <div
-                class="w-11 h-11 rounded-xl bg-sky-500 flex items-center justify-center
-                       text-white shadow-sm"
+                id="sidebarAvatar"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-primary-100
+                    text-sm
+                    font-bold
+                    text-primary-700
+                "
             >
-                <i class="fa-solid fa-graduation-cap text-xl"></i>
+                SA
             </div>
 
-            <div>
 
-                <h1 class="text-lg font-bold text-slate-800">
-                    Smart School
-                </h1>
+            <div class="min-w-0 flex-1">
 
-                <p class="text-xs text-slate-400">
-                    Administration
+                <p
+                    id="sidebarUserName"
+                    class="
+                        truncate
+                        text-sm
+                        font-bold
+                        text-slate-800
+                    "
+                >
+                    Super Administrateur
+                </p>
+
+
+                <p
+                    id="sidebarUserEmail"
+                    class="
+                        truncate
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Chargement...
                 </p>
 
             </div>
 
         </div>
-
-        <button
-            id="closeSidebar"
-            class="ml-auto lg:hidden text-slate-400 hover:text-slate-700"
-        >
-            <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
-
-    </div>
-
-    <!-- Navigation -->
-
-    <nav class="px-4 py-6 space-y-2">
-
-        <p class="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Administration
-        </p>
-
-        <!-- Dashboard -->
-
-        <a
-            href="/super-admin/dashboard"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
-        >
-            <i class="fa-solid fa-chart-pie w-5"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <!-- Ecoles -->
-
-        <a
-            href="/super-admin/ecoles"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
-        >
-            <i class="fa-solid fa-school w-5"></i>
-            <span>Écoles</span>
-        </a>
-
-        <!-- Utilisateurs -->
-
-        <a
-            href="/super-admin/utilisateurs"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
-        >
-            <i class="fa-solid fa-users w-5"></i>
-            <span>Utilisateurs</span>
-        </a>
-
-        <!-- Statistiques -->
-
-        <a
-            href="/super-admin/statistiques"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition"
-        >
-            <i class="fa-solid fa-chart-line w-5"></i>
-            <span>Statistiques</span>
-        </a>
-
-        <!-- Rapports ACTIVE -->
-
-        <a
-            href="/super-admin/rapports"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl
-                   bg-sky-50 text-sky-600 font-semibold"
-        >
-            <i class="fa-solid fa-file-lines w-5"></i>
-            <span>Rapports</span>
-        </a>
-
-    </nav>
-
-    <!-- Sidebar bottom -->
-
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100">
-
-        <button
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-slate-500 hover:bg-slate-50 transition"
-        >
-            <i class="fa-solid fa-gear w-5"></i>
-            <span>Paramètres</span>
-        </button>
-
-        <button
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl
-                   text-red-500 hover:bg-red-50 transition"
-        >
-            <i class="fa-solid fa-right-from-bracket w-5"></i>
-            <span>Déconnexion</span>
-        </button>
 
     </div>
 
 </aside>
 
-<!-- ========================================================= -->
-<!-- MAIN -->
-<!-- ========================================================= -->
 
-<div class="lg:ml-72 min-h-screen">
+<!-- =========================================================
+     MAIN
+========================================================= -->
 
-    <!-- ===================================================== -->
+<div class="min-h-screen lg:ml-72">
+
+
     <!-- HEADER -->
-    <!-- ===================================================== -->
 
     <header
-        class="h-20 bg-white border-b border-slate-200 sticky top-0 z-30"
+        class="
+            sticky
+            top-0
+            z-30
+            flex
+            h-20
+            items-center
+            justify-between
+            border-b
+            border-slate-200
+            bg-white/95
+            px-4
+            backdrop-blur
+            sm:px-6
+            lg:px-8
+        "
     >
 
-        <div
-            class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between"
-        >
+        <div class="flex items-center gap-4">
 
-            <!-- Left -->
+            <button
+                id="openSidebar"
+                type="button"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    text-slate-600
+                    hover:bg-slate-100
+                    lg:hidden
+                "
+            >
 
-            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-bars"></i>
 
-                <button
-                    id="openSidebar"
-                    class="lg:hidden w-10 h-10 rounded-lg hover:bg-slate-100
-                           flex items-center justify-center text-slate-600"
+            </button>
+
+
+            <div>
+
+                <p
+                    class="
+                        hidden
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-wider
+                        text-primary-600
+                        sm:block
+                    "
                 >
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+                    Supervision
+                </p>
 
-                <div>
 
-                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">
-                        Rapports
-                    </h2>
-
-                    <p class="text-xs sm:text-sm text-slate-400 hidden sm:block">
-                        Gestion et génération des rapports
-                    </p>
-
-                </div>
-
-            </div>
-
-            <!-- Right -->
-
-            <div class="flex items-center gap-3">
-
-                <!-- Notification -->
-
-                <button
-                    class="relative w-10 h-10 rounded-xl hover:bg-slate-100
-                           flex items-center justify-center text-slate-500"
+                <h2
+                    class="
+                        text-lg
+                        font-bold
+                        text-slate-900
+                        sm:text-xl
+                    "
                 >
+                    Rapports
+                </h2>
 
-                    <i class="fa-regular fa-bell text-lg"></i>
 
-                    <span
-                        class="absolute top-2 right-2 w-2 h-2 bg-red-500
-                               rounded-full border-2 border-white"
-                    ></span>
-
-                </button>
-
-                <!-- Profile -->
-
-                <div
-                    class="hidden sm:flex items-center gap-3 pl-3
-                           border-l border-slate-200"
+                <p
+                    class="
+                        hidden
+                        text-sm
+                        text-slate-400
+                        sm:block
+                    "
                 >
-
-                    <div
-                        class="w-10 h-10 rounded-full bg-sky-100 text-sky-600
-                               flex items-center justify-center font-bold"
-                    >
-                        BM
-                    </div>
-
-                    <div class="hidden md:block">
-
-                        <p class="text-sm font-semibold text-slate-700">
-                            Super Admin
-                        </p>
-
-                        <p class="text-xs text-slate-400">
-                            Administrateur système
-                        </p>
-
-                    </div>
-
-                    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
-
-                </div>
+                    Génération et export des données
+                </p>
 
             </div>
 
         </div>
 
-    </header>
 
-    <!-- ===================================================== -->
-    <!-- CONTENT -->
-    <!-- ===================================================== -->
-
-    <main class="p-4 sm:p-6 lg:p-8">
-
-        <!-- ================================================= -->
-        <!-- PAGE INTRO -->
-        <!-- ================================================= -->
-
-        <div
-            class="flex flex-col lg:flex-row lg:items-center
-                   lg:justify-between gap-4 mb-8"
-        >
-
-            <div>
-
-                <h1 class="text-2xl font-bold text-slate-800">
-                    Rapports
-                </h1>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Consultez, générez et exportez les rapports de la plateforme.
-                </p>
-
-            </div>
-
-            <!-- Generate -->
+        <div class="flex items-center gap-2 sm:gap-3">
 
             <button
-                onclick="openGenerateModal()"
-                class="inline-flex items-center justify-center gap-2
-                       px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600
-                       text-white text-sm font-semibold transition shadow-sm"
+                id="refreshReports"
+                type="button"
+                title="Actualiser"
+                class="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    text-slate-500
+                    hover:bg-slate-100
+                    hover:text-primary-600
+                "
             >
 
-                <i class="fa-solid fa-plus"></i>
+                <i class="fa-solid fa-rotate"></i>
 
-                Générer un rapport
+            </button>
+
+
+            <button
+                type="button"
+                title="Notifications"
+                class="
+                    relative
+                    hidden
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    text-slate-500
+                    hover:bg-slate-100
+                    sm:flex
+                "
+            >
+
+                <i class="fa-solid fa-bell"></i>
+
+
+                <span
+                    class="
+                        absolute
+                        right-2
+                        top-2
+                        h-2
+                        w-2
+                        rounded-full
+                        bg-red-500
+                        ring-2
+                        ring-white
+                    "
+                ></span>
 
             </button>
 
         </div>
 
-        <!-- ================================================= -->
-        <!-- REPORT SUMMARY -->
-        <!-- ================================================= -->
+    </header>
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
 
-            <!-- Total -->
+    <!-- CONTENT -->
 
-            <div
-                class="bg-white rounded-2xl border border-slate-200
-                       p-5 shadow-sm"
-            >
+    <main
+        class="
+            p-4
+            sm:p-6
+            lg:p-8
+        "
+    >
 
-                <div class="flex items-start justify-between">
 
-                    <div>
-
-                        <p class="text-sm text-slate-500">
-                            Rapports générés
-                        </p>
-
-                        <h3 class="mt-2 text-3xl font-bold text-slate-800">
-                            248
-                        </h3>
-
-                    </div>
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-sky-50 text-sky-500
-                               flex items-center justify-center"
-                    >
-
-                        <i class="fa-solid fa-file-lines text-xl"></i>
-
-                    </div>
-
-                </div>
-
-                <p class="mt-4 text-xs text-slate-400">
-                    Depuis le début de l'année
-                </p>
-
-            </div>
-
-            <!-- Monthly -->
-
-            <div
-                class="bg-white rounded-2xl border border-slate-200
-                       p-5 shadow-sm"
-            >
-
-                <div class="flex items-start justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-slate-500">
-                            Ce mois
-                        </p>
-
-                        <h3 class="mt-2 text-3xl font-bold text-slate-800">
-                            32
-                        </h3>
-
-                    </div>
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500
-                               flex items-center justify-center"
-                    >
-
-                        <i class="fa-solid fa-calendar-days text-xl"></i>
-
-                    </div>
-
-                </div>
-
-                <p class="mt-4 text-xs text-emerald-500 font-medium">
-                    +14.3% par rapport au mois précédent
-                </p>
-
-            </div>
-
-            <!-- Downloads -->
-
-            <div
-                class="bg-white rounded-2xl border border-slate-200
-                       p-5 shadow-sm"
-            >
-
-                <div class="flex items-start justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-slate-500">
-                            Téléchargements
-                        </p>
-
-                        <h3 class="mt-2 text-3xl font-bold text-slate-800">
-                            1,426
-                        </h3>
-
-                    </div>
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500
-                               flex items-center justify-center"
-                    >
-
-                        <i class="fa-solid fa-download text-xl"></i>
-
-                    </div>
-
-                </div>
-
-                <p class="mt-4 text-xs text-slate-400">
-                    Tous formats confondus
-                </p>
-
-            </div>
-
-            <!-- Scheduled -->
-
-            <div
-                class="bg-white rounded-2xl border border-slate-200
-                       p-5 shadow-sm"
-            >
-
-                <div class="flex items-start justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-slate-500">
-                            Rapports planifiés
-                        </p>
-
-                        <h3 class="mt-2 text-3xl font-bold text-slate-800">
-                            8
-                        </h3>
-
-                    </div>
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500
-                               flex items-center justify-center"
-                    >
-
-                        <i class="fa-solid fa-clock text-xl"></i>
-
-                    </div>
-
-                </div>
-
-                <p class="mt-4 text-xs text-slate-400">
-                    Génération automatique
-                </p>
-
-            </div>
-
-        </section>
-
-        <!-- ================================================= -->
-        <!-- AVAILABLE REPORTS -->
-        <!-- ================================================= -->
-
-        <section class="mb-8">
-
-            <div class="mb-5">
-
-                <h2 class="text-lg font-bold text-slate-800">
-                    Types de rapports
-                </h2>
-
-                <p class="text-sm text-slate-400 mt-1">
-                    Sélectionnez un type de rapport à générer.
-                </p>
-
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-
-                <!-- School report -->
-
-                <div
-                    class="bg-white rounded-2xl border border-slate-200
-                           p-5 shadow-sm hover:shadow-md hover:border-sky-200
-                           transition group"
-                >
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-sky-50 text-sky-500
-                               flex items-center justify-center mb-4
-                               group-hover:bg-sky-500 group-hover:text-white
-                               transition"
-                    >
-
-                        <i class="fa-solid fa-school text-xl"></i>
-
-                    </div>
-
-                    <h3 class="font-bold text-slate-800">
-                        Rapport des écoles
-                    </h3>
-
-                    <p class="text-sm text-slate-400 mt-2 leading-6">
-                        Informations et statistiques générales sur les écoles.
-                    </p>
-
-                    <button
-                        onclick="selectReport('schools')"
-                        class="mt-5 text-sm font-semibold text-sky-500
-                               hover:text-sky-600"
-                    >
-                        Générer
-                        <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-
-                </div>
-
-                <!-- Users report -->
-
-                <div
-                    class="bg-white rounded-2xl border border-slate-200
-                           p-5 shadow-sm hover:shadow-md hover:border-indigo-200
-                           transition group"
-                >
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500
-                               flex items-center justify-center mb-4
-                               group-hover:bg-indigo-500 group-hover:text-white
-                               transition"
-                    >
-
-                        <i class="fa-solid fa-users text-xl"></i>
-
-                    </div>
-
-                    <h3 class="font-bold text-slate-800">
-                        Rapport des utilisateurs
-                    </h3>
-
-                    <p class="text-sm text-slate-400 mt-2 leading-6">
-                        Synthèse des administrateurs, enseignants, élèves et parents.
-                    </p>
-
-                    <button
-                        onclick="selectReport('users')"
-                        class="mt-5 text-sm font-semibold text-indigo-500
-                               hover:text-indigo-600"
-                    >
-                        Générer
-                        <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-
-                </div>
-
-                <!-- Academic report -->
-
-                <div
-                    class="bg-white rounded-2xl border border-slate-200
-                           p-5 shadow-sm hover:shadow-md hover:border-emerald-200
-                           transition group"
-                >
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500
-                               flex items-center justify-center mb-4
-                               group-hover:bg-emerald-500 group-hover:text-white
-                               transition"
-                    >
-
-                        <i class="fa-solid fa-graduation-cap text-xl"></i>
-
-                    </div>
-
-                    <h3 class="font-bold text-slate-800">
-                        Rapport pédagogique
-                    </h3>
-
-                    <p class="text-sm text-slate-400 mt-2 leading-6">
-                        Résultats, présence et performances académiques.
-                    </p>
-
-                    <button
-                        onclick="selectReport('academic')"
-                        class="mt-5 text-sm font-semibold text-emerald-500
-                               hover:text-emerald-600"
-                    >
-                        Générer
-                        <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-
-                </div>
-
-                <!-- Platform report -->
-
-                <div
-                    class="bg-white rounded-2xl border border-slate-200
-                           p-5 shadow-sm hover:shadow-md hover:border-violet-200
-                           transition group"
-                >
-
-                    <div
-                        class="w-12 h-12 rounded-xl bg-violet-50 text-violet-500
-                               flex items-center justify-center mb-4
-                               group-hover:bg-violet-500 group-hover:text-white
-                               transition"
-                    >
-
-                        <i class="fa-solid fa-chart-column text-xl"></i>
-
-                    </div>
-
-                    <h3 class="font-bold text-slate-800">
-                        Rapport plateforme
-                    </h3>
-
-                    <p class="text-sm text-slate-400 mt-2 leading-6">
-                        Activité, utilisation et performances globales du système.
-                    </p>
-
-                    <button
-                        onclick="selectReport('platform')"
-                        class="mt-5 text-sm font-semibold text-violet-500
-                               hover:text-violet-600"
-                    >
-                        Générer
-                        <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- ================================================= -->
-        <!-- FILTERS -->
-        <!-- ================================================= -->
+        <!-- INTRO -->
 
         <section
-            class="bg-white rounded-2xl border border-slate-200
-                   shadow-sm mb-6"
+            class="
+                mb-8
+                flex
+                flex-col
+                gap-4
+                lg:flex-row
+                lg:items-end
+                lg:justify-between
+            "
+        >
+
+            <div>
+
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                        text-primary-600
+                    "
+                >
+                    Centre documentaire
+                </p>
+
+
+                <h1
+                    class="
+                        mt-1
+                        text-2xl
+                        font-extrabold
+                        tracking-tight
+                        text-slate-900
+                        sm:text-3xl
+                    "
+                >
+                    Rapports
+                </h1>
+
+
+                <p
+                    class="
+                        mt-2
+                        max-w-2xl
+                        text-sm
+                        leading-6
+                        text-slate-500
+                    "
+                >
+                    Générez et téléchargez les rapports réels
+                    produits à partir des données de Smart School.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                onclick="openGenerateModal()"
+                class="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    bg-primary-600
+                    px-5
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-white
+                    shadow-sm
+                    transition
+                    hover:bg-primary-700
+                "
+            >
+
+                <i class="fa-solid fa-file-circle-plus"></i>
+
+                Générer un rapport
+
+            </button>
+
+        </section>
+
+
+        <!-- GLOBAL ERROR -->
+
+        <div
+            id="reportsError"
+            class="
+                mb-6
+                hidden
+                items-start
+                gap-3
+                rounded-2xl
+                border
+                border-red-200
+                bg-red-50
+                px-4
+                py-4
+                text-sm
+                text-red-700
+            "
+            role="alert"
+        >
+
+            <i
+                class="
+                    fa-solid
+                    fa-circle-exclamation
+                    mt-0.5
+                "
+            ></i>
+
+
+            <span id="reportsErrorText"></span>
+
+        </div>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="reportsLoading"
+            class="
+                mb-6
+                flex
+                items-center
+                gap-3
+                rounded-2xl
+                border
+                border-primary-100
+                bg-primary-50
+                px-4
+                py-4
+                text-sm
+                font-medium
+                text-primary-700
+            "
+        >
+
+            <span class="loader"></span>
+
+            Chargement des rapports...
+
+        </div>
+
+
+        <!-- =====================================================
+             SUMMARY
+        ====================================================== -->
+
+        <section
+            class="
+                mb-8
+                grid
+                grid-cols-1
+                gap-5
+                sm:grid-cols-2
+                xl:grid-cols-4
+            "
+        >
+
+
+            <!-- TYPES -->
+
+            <article
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                    "
+                >
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Types disponibles
+                        </p>
+
+
+                        <h3
+                            id="totalReportTypes"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-extrabold
+                            "
+                        >
+                            —
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-sky-50
+                            text-sky-600
+                        "
+                    >
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                    </div>
+
+                </div>
+
+
+                <p class="mt-4 text-xs text-slate-400">
+                    Rapports pris en charge par la plateforme
+                </p>
+
+            </article>
+
+
+            <!-- FORMAT -->
+
+            <article
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                    "
+                >
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Format disponible
+                        </p>
+
+
+                        <h3
+                            id="availableFormat"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-extrabold
+                            "
+                        >
+                            CSV
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-emerald-50
+                            text-emerald-600
+                        "
+                    >
+
+                        <i class="fa-solid fa-file-csv"></i>
+
+                    </div>
+
+                </div>
+
+
+                <p class="mt-4 text-xs text-slate-400">
+                    Export compatible avec Excel
+                </p>
+
+            </article>
+
+
+            <!-- SESSION -->
+
+            <article
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                    "
+                >
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Générations de cette session
+                        </p>
+
+
+                        <h3
+                            id="generatedCount"
+                            class="
+                                mt-2
+                                text-3xl
+                                font-extrabold
+                            "
+                        >
+                            0
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-indigo-50
+                            text-indigo-600
+                        "
+                    >
+
+                        <i class="fa-solid fa-arrows-rotate"></i>
+
+                    </div>
+
+                </div>
+
+
+                <p class="mt-4 text-xs text-slate-400">
+                    Depuis l'ouverture de cette page
+                </p>
+
+            </article>
+
+
+            <!-- STATUS -->
+
+            <article
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                    "
+                >
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            État du service
+                        </p>
+
+
+                        <h3
+                            id="reportsServiceStatus"
+                            class="
+                                mt-2
+                                text-2xl
+                                font-extrabold
+                                text-emerald-600
+                            "
+                        >
+                            Opérationnel
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-amber-50
+                            text-amber-600
+                        "
+                    >
+
+                        <i class="fa-solid fa-server"></i>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    id="lastGeneratedInfo"
+                    class="
+                        mt-4
+                        text-xs
+                        text-slate-400
+                    "
+                >
+                    Aucun rapport généré
+                </p>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             FILTERS
+        ====================================================== -->
+
+        <section
+            class="
+                mb-8
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                shadow-sm
+            "
         >
 
             <div
-                class="p-5 sm:p-6 border-b border-slate-100"
+                class="
+                    flex
+                    items-center
+                    gap-3
+                    border-b
+                    border-slate-100
+                    p-5
+                    sm:p-6
+                "
             >
 
-                <div class="flex items-center gap-3">
+                <div
+                    class="
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-primary-50
+                        text-primary-600
+                    "
+                >
 
-                    <div
-                        class="w-10 h-10 rounded-xl bg-sky-50 text-sky-500
-                               flex items-center justify-center"
+                    <i class="fa-solid fa-filter"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2
+                        class="
+                            font-bold
+                            text-slate-900
+                        "
                     >
+                        Filtrer les rapports
+                    </h2>
 
-                        <i class="fa-solid fa-filter"></i>
 
-                    </div>
-
-                    <div>
-
-                        <h3 class="font-bold text-slate-800">
-                            Filtrer les rapports
-                        </h3>
-
-                        <p class="text-xs text-slate-400 mt-1">
-                            Recherchez rapidement un rapport.
-                        </p>
-
-                    </div>
+                    <p
+                        class="
+                            mt-1
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        Recherchez et filtrez les types disponibles.
+                    </p>
 
                 </div>
 
             </div>
 
+
             <div class="p-5 sm:p-6">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div
+                    class="
+                        grid
+                        grid-cols-1
+                        gap-4
+                        md:grid-cols-2
+                    "
+                >
 
-                    <!-- Search -->
+                    <!-- SEARCH -->
 
                     <div>
 
                         <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
+                            for="searchInput"
+                            class="
+                                mb-2
+                                block
+                                text-xs
+                                font-semibold
+                                text-slate-500
+                            "
                         >
                             Recherche
                         </label>
 
+
                         <div class="relative">
 
                             <i
-                                class="fa-solid fa-magnifying-glass absolute left-3
-                                       top-1/2 -translate-y-1/2 text-slate-400"
+                                class="
+                                    fa-solid
+                                    fa-magnifying-glass
+                                    absolute
+                                    left-3
+                                    top-1/2
+                                    -translate-y-1/2
+                                    text-slate-400
+                                "
                             ></i>
+
 
                             <input
                                 id="searchInput"
                                 type="text"
-                                placeholder="Nom du rapport..."
-                                class="w-full pl-10 pr-4 py-2.5 rounded-xl
-                                       border border-slate-200 bg-slate-50
-                                       text-sm outline-none
-                                       focus:ring-2 focus:ring-sky-200
-                                       focus:border-sky-400"
+                                placeholder="Rechercher un rapport..."
+                                class="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    py-3
+                                    pl-10
+                                    pr-4
+                                    text-sm
+                                    outline-none
+                                    transition
+                                    focus:border-primary-400
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-primary-100
+                                "
                             >
 
                         </div>
 
                     </div>
 
-                    <!-- Type -->
+
+                    <!-- TYPE -->
 
                     <div>
 
                         <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
+                            for="typeFilter"
+                            class="
+                                mb-2
+                                block
+                                text-xs
+                                font-semibold
+                                text-slate-500
+                            "
                         >
                             Type
                         </label>
 
+
                         <select
                             id="typeFilter"
-                            class="w-full px-4 py-2.5 rounded-xl
-                                   border border-slate-200 bg-slate-50
-                                   text-sm outline-none
-                                   focus:ring-2 focus:ring-sky-200
-                                   focus:border-sky-400"
+                            class="
+                                w-full
+                                rounded-xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                px-4
+                                py-3
+                                text-sm
+                                outline-none
+                                transition
+                                focus:border-primary-400
+                                focus:bg-white
+                                focus:ring-4
+                                focus:ring-primary-100
+                            "
                         >
 
                             <option value="">
                                 Tous les types
                             </option>
 
-                            <option value="schools">
-                                Écoles
-                            </option>
-
-                            <option value="users">
-                                Utilisateurs
-                            </option>
-
-                            <option value="academic">
-                                Pédagogique
-                            </option>
-
-                            <option value="platform">
-                                Plateforme
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <!-- Status -->
-
-                    <div>
-
-                        <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
-                        >
-                            Statut
-                        </label>
-
-                        <select
-                            id="statusFilter"
-                            class="w-full px-4 py-2.5 rounded-xl
-                                   border border-slate-200 bg-slate-50
-                                   text-sm outline-none
-                                   focus:ring-2 focus:ring-sky-200
-                                   focus:border-sky-400"
-                        >
-
-                            <option value="">
-                                Tous les statuts
-                            </option>
-
-                            <option value="ready">
-                                Disponible
-                            </option>
-
-                            <option value="processing">
-                                En traitement
-                            </option>
-
-                            <option value="scheduled">
-                                Planifié
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <!-- Date -->
-
-                    <div>
-
-                        <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
-                        >
-                            Période
-                        </label>
-
-                        <select
-                            id="dateFilter"
-                            class="w-full px-4 py-2.5 rounded-xl
-                                   border border-slate-200 bg-slate-50
-                                   text-sm outline-none
-                                   focus:ring-2 focus:ring-sky-200
-                                   focus:border-sky-400"
-                        >
-
-                            <option value="">
-                                Toutes les périodes
-                            </option>
-
-                            <option value="today">
-                                Aujourd'hui
-                            </option>
-
-                            <option value="week">
-                                Cette semaine
-                            </option>
-
-                            <option value="month">
-                                Ce mois
-                            </option>
-
-                            <option value="year">
-                                Cette année
-                            </option>
-
                         </select>
 
                     </div>
@@ -893,865 +1662,160 @@
 
         </section>
 
-        <!-- ================================================= -->
-        <!-- REPORT TABLE -->
-        <!-- ================================================= -->
 
-        <section
-            class="bg-white rounded-2xl border border-slate-200
-                   shadow-sm overflow-hidden"
-        >
+        <!-- =====================================================
+             REPORT TYPES
+        ====================================================== -->
 
-            <!-- Table header -->
+        <section>
 
             <div
-                class="p-5 sm:p-6 border-b border-slate-100
-                       flex flex-col sm:flex-row sm:items-center
-                       sm:justify-between gap-3"
+                class="
+                    mb-5
+                    flex
+                    items-end
+                    justify-between
+                    gap-3
+                "
             >
 
                 <div>
 
-                    <h3 class="font-bold text-slate-800">
-                        Rapports générés
-                    </h3>
+                    <h2
+                        class="
+                            text-lg
+                            font-bold
+                            text-slate-900
+                        "
+                    >
+                        Types de rapports
+                    </h2>
 
-                    <p class="text-sm text-slate-400 mt-1">
-                        Historique des rapports disponibles.
+
+                    <p
+                        class="
+                            mt-1
+                            text-sm
+                            text-slate-400
+                        "
+                    >
+                        Les rapports sont générés directement
+                        depuis les données de la plateforme.
                     </p>
 
                 </div>
 
+
                 <span
-                    id="reportCount"
-                    class="text-xs font-semibold text-slate-500
-                           bg-slate-100 px-3 py-1.5 rounded-full"
+                    id="filteredCount"
+                    class="
+                        rounded-full
+                        bg-slate-100
+                        px-3
+                        py-1.5
+                        text-xs
+                        font-semibold
+                        text-slate-500
+                    "
                 >
-                    6 rapports
+                    0 rapport
                 </span>
 
             </div>
 
-            <!-- Responsive table -->
 
-            <div class="overflow-x-auto scrollbar-hide">
-
-                <table class="w-full min-w-[850px]">
-
-                    <thead class="bg-slate-50 border-b border-slate-100">
-
-                        <tr>
-
-                            <th
-                                class="text-left px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Rapport
-                            </th>
-
-                            <th
-                                class="text-left px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Type
-                            </th>
-
-                            <th
-                                class="text-left px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Période
-                            </th>
-
-                            <th
-                                class="text-left px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Généré le
-                            </th>
-
-                            <th
-                                class="text-left px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Statut
-                            </th>
-
-                            <th
-                                class="text-right px-6 py-4 text-xs font-semibold
-                                       uppercase tracking-wider text-slate-400"
-                            >
-                                Actions
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody
-                        id="reportsTable"
-                        class="divide-y divide-slate-100"
-                    >
-
-                        <!-- REPORT 1 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport global des écoles"
-                            data-type="schools"
-                            data-status="ready"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-sky-50
-                                               text-sky-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-school"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport global des écoles
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            PDF • 2.4 MB
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-sky-50 text-sky-600 text-xs font-medium"
-                                >
-                                    Écoles
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Juillet 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                05 Août 2026
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-emerald-50
-                                           text-emerald-600 text-xs font-medium"
-                                >
-
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-
-                                    Disponible
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end items-center gap-2">
-
-                                    <button
-                                        onclick="viewReport('Rapport global des écoles')"
-                                        title="Afficher"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-sky-50
-                                               hover:text-sky-600 transition"
-                                    >
-
-                                        <i class="fa-regular fa-eye"></i>
-
-                                    </button>
-
-                                    <button
-                                        onclick="downloadReport('Rapport global des écoles')"
-                                        title="Télécharger"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-emerald-50
-                                               hover:text-emerald-600 transition"
-                                    >
-
-                                        <i class="fa-solid fa-download"></i>
-
-                                    </button>
-
-                                    <button
-                                        onclick="deleteReport('Rapport global des écoles')"
-                                        title="Supprimer"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-red-50
-                                               hover:text-red-600 transition"
-                                    >
-
-                                        <i class="fa-regular fa-trash-can"></i>
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- REPORT 2 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport des utilisateurs"
-                            data-type="users"
-                            data-status="ready"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-indigo-50
-                                               text-indigo-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-users"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport des utilisateurs
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            Excel • 1.8 MB
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-indigo-50 text-indigo-600
-                                           text-xs font-medium"
-                                >
-                                    Utilisateurs
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Juillet 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                04 Août 2026
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-emerald-50
-                                           text-emerald-600 text-xs font-medium"
-                                >
-
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-
-                                    Disponible
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end items-center gap-2">
-
-                                    <button
-                                        onclick="viewReport('Rapport des utilisateurs')"
-                                        title="Afficher"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-sky-50
-                                               hover:text-sky-600 transition"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="downloadReport('Rapport des utilisateurs')"
-                                        title="Télécharger"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-emerald-50
-                                               hover:text-emerald-600 transition"
-                                    >
-                                        <i class="fa-solid fa-download"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="deleteReport('Rapport des utilisateurs')"
-                                        title="Supprimer"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-red-50
-                                               hover:text-red-600 transition"
-                                    >
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- REPORT 3 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport pédagogique mensuel"
-                            data-type="academic"
-                            data-status="ready"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-emerald-50
-                                               text-emerald-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-graduation-cap"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport pédagogique mensuel
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            PDF • 3.1 MB
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-emerald-50 text-emerald-600
-                                           text-xs font-medium"
-                                >
-                                    Pédagogique
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Juillet 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                02 Août 2026
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-emerald-50
-                                           text-emerald-600 text-xs font-medium"
-                                >
-
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-
-                                    Disponible
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end items-center gap-2">
-
-                                    <button
-                                        onclick="viewReport('Rapport pédagogique mensuel')"
-                                        title="Afficher"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-sky-50
-                                               hover:text-sky-600 transition"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="downloadReport('Rapport pédagogique mensuel')"
-                                        title="Télécharger"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-emerald-50
-                                               hover:text-emerald-600 transition"
-                                    >
-                                        <i class="fa-solid fa-download"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="deleteReport('Rapport pédagogique mensuel')"
-                                        title="Supprimer"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-red-50
-                                               hover:text-red-600 transition"
-                                    >
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- REPORT 4 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport activité plateforme"
-                            data-type="platform"
-                            data-status="processing"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-violet-50
-                                               text-violet-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-chart-column"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport activité plateforme
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            PDF • Génération en cours
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-violet-50 text-violet-600
-                                           text-xs font-medium"
-                                >
-                                    Plateforme
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Août 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                Aujourd'hui
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-amber-50
-                                           text-amber-600 text-xs font-medium"
-                                >
-
-                                    <i class="fa-solid fa-spinner fa-spin text-[10px]"></i>
-
-                                    En traitement
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end">
-
-                                    <button
-                                        disabled
-                                        class="w-9 h-9 rounded-lg bg-slate-100
-                                               text-slate-300 cursor-not-allowed"
-                                    >
-
-                                        <i class="fa-solid fa-download"></i>
-
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- REPORT 5 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport mensuel des écoles"
-                            data-type="schools"
-                            data-status="ready"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-sky-50
-                                               text-sky-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-school"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport mensuel des écoles
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            Excel • 1.2 MB
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-sky-50 text-sky-600 text-xs font-medium"
-                                >
-                                    Écoles
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Juin 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                03 Juillet 2026
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-emerald-50
-                                           text-emerald-600 text-xs font-medium"
-                                >
-
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-
-                                    Disponible
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end items-center gap-2">
-
-                                    <button
-                                        onclick="viewReport('Rapport mensuel des écoles')"
-                                        title="Afficher"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-sky-50
-                                               hover:text-sky-600 transition"
-                                    >
-                                        <i class="fa-regular fa-eye"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="downloadReport('Rapport mensuel des écoles')"
-                                        title="Télécharger"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-emerald-50
-                                               hover:text-emerald-600 transition"
-                                    >
-                                        <i class="fa-solid fa-download"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="deleteReport('Rapport mensuel des écoles')"
-                                        title="Supprimer"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-red-50
-                                               hover:text-red-600 transition"
-                                    >
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        <!-- REPORT 6 -->
-
-                        <tr
-                            class="report-row hover:bg-slate-50 transition"
-                            data-name="Rapport d'activité utilisateurs"
-                            data-type="users"
-                            data-status="scheduled"
-                        >
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center gap-3">
-
-                                    <div
-                                        class="w-10 h-10 rounded-xl bg-indigo-50
-                                               text-indigo-500 flex items-center
-                                               justify-center shrink-0"
-                                    >
-
-                                        <i class="fa-solid fa-users"></i>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-slate-700">
-                                            Rapport d'activité utilisateurs
-                                        </p>
-
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            PDF • Planifié
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full
-                                           bg-indigo-50 text-indigo-600
-                                           text-xs font-medium"
-                                >
-                                    Utilisateurs
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-600">
-                                Août 2026
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                31 Août 2026
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <span
-                                    class="inline-flex items-center gap-1.5
-                                           px-2.5 py-1 rounded-full bg-slate-100
-                                           text-slate-600 text-xs font-medium"
-                                >
-
-                                    <i class="fa-solid fa-clock text-[10px]"></i>
-
-                                    Planifié
-
-                                </span>
-
-                            </td>
-
-                            <td class="px-6 py-4">
-
-                                <div class="flex justify-end items-center gap-2">
-
-                                    <button
-                                        onclick="editScheduledReport()"
-                                        title="Modifier"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-sky-50
-                                               hover:text-sky-600 transition"
-                                    >
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-
-                                    <button
-                                        onclick="cancelScheduledReport()"
-                                        title="Annuler"
-                                        class="w-9 h-9 rounded-lg bg-slate-50
-                                               text-slate-500 hover:bg-red-50
-                                               hover:text-red-600 transition"
-                                    >
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <!-- Empty state -->
+            <div
+                id="reportsGrid"
+                class="
+                    grid
+                    grid-cols-1
+                    gap-5
+                    md:grid-cols-2
+                    xl:grid-cols-4
+                "
+            ></div>
+
+
+            <!-- EMPTY -->
 
             <div
                 id="emptyState"
-                class="hidden px-6 py-16 text-center"
+                class="
+                    hidden
+                    rounded-2xl
+                    border
+                    border-dashed
+                    border-slate-300
+                    bg-white
+                    px-6
+                    py-16
+                    text-center
+                "
             >
 
                 <div
-                    class="mx-auto w-16 h-16 rounded-2xl bg-slate-100
-                           text-slate-400 flex items-center justify-center"
+                    class="
+                        mx-auto
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        bg-slate-100
+                        text-slate-400
+                    "
                 >
 
-                    <i class="fa-solid fa-file-circle-xmark text-2xl"></i>
+                    <i
+                        class="
+                            fa-solid
+                            fa-file-circle-xmark
+                            text-2xl
+                        "
+                    ></i>
 
                 </div>
 
-                <h3 class="mt-4 font-semibold text-slate-700">
+
+                <h3
+                    class="
+                        mt-4
+                        font-semibold
+                        text-slate-700
+                    "
+                >
                     Aucun rapport trouvé
                 </h3>
 
-                <p class="mt-1 text-sm text-slate-400">
-                    Essayez de modifier vos critères de recherche.
+
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    Modifiez votre recherche ou votre filtre.
                 </p>
-
-            </div>
-
-            <!-- Pagination -->
-
-            <div
-                class="px-5 sm:px-6 py-4 border-t border-slate-100
-                       flex flex-col sm:flex-row sm:items-center
-                       sm:justify-between gap-4"
-            >
-
-                <p class="text-xs text-slate-400">
-                    Affichage de
-                    <span class="font-semibold text-slate-600">
-                        1
-                    </span>
-                    à
-                    <span class="font-semibold text-slate-600">
-                        6
-                    </span>
-                    sur
-                    <span class="font-semibold text-slate-600">
-                        6
-                    </span>
-                    rapports
-                </p>
-
-                <div class="flex items-center gap-1">
-
-                    <button
-                        disabled
-                        class="w-9 h-9 rounded-lg border border-slate-200
-                               text-slate-300 cursor-not-allowed"
-                    >
-                        <i class="fa-solid fa-chevron-left text-xs"></i>
-                    </button>
-
-                    <button
-                        class="w-9 h-9 rounded-lg bg-sky-500 text-white
-                               text-sm font-semibold"
-                    >
-                        1
-                    </button>
-
-                    <button
-                        disabled
-                        class="w-9 h-9 rounded-lg border border-slate-200
-                               text-slate-300 cursor-not-allowed"
-                    >
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
-
-                </div>
 
             </div>
 
         </section>
 
-        <!-- ================================================= -->
+
         <!-- FOOTER -->
-        <!-- ================================================= -->
 
-        <footer class="mt-8 text-center">
+        <footer class="mt-10 text-center">
 
-            <p class="text-xs text-slate-400">
-                © 2026 Smart School. Tous droits réservés.
+            <p
+                class="
+                    text-xs
+                    text-slate-400
+                "
+            >
+                © 2026 Smart School.
+                Tous droits réservés.
             </p>
 
         </footer>
@@ -1760,45 +1824,93 @@
 
 </div>
 
-<!-- ========================================================= -->
-<!-- GENERATE REPORT MODAL -->
-<!-- ========================================================= -->
+
+<!-- =========================================================
+     GENERATE MODAL
+========================================================= -->
 
 <div
     id="generateModal"
-    class="fixed inset-0 z-[100] hidden items-center justify-center
-           bg-slate-900/50 p-4 opacity-0 modal-transition"
+    class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
 >
 
     <div
         id="generateModalContent"
-        class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl
-               scale-95 modal-transition overflow-hidden"
+        class="
+            w-full
+            max-w-xl
+            scale-95
+            overflow-hidden
+            rounded-2xl
+            bg-white
+            shadow-2xl
+            modal-transition
+        "
     >
 
-        <!-- Modal header -->
-
         <div
-            class="px-6 py-5 border-b border-slate-100
-                   flex items-center justify-between"
+            class="
+                flex
+                items-center
+                justify-between
+                border-b
+                border-slate-100
+                px-6
+                py-5
+            "
         >
 
             <div>
 
-                <h3 class="text-lg font-bold text-slate-800">
+                <h3
+                    class="
+                        text-lg
+                        font-bold
+                        text-slate-900
+                    "
+                >
                     Générer un rapport
                 </h3>
 
-                <p class="text-sm text-slate-400 mt-1">
-                    Configurez les paramètres du rapport.
+
+                <p
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    Sélectionnez les données à exporter.
                 </p>
 
             </div>
 
+
             <button
+                type="button"
                 onclick="closeGenerateModal()"
-                class="w-9 h-9 rounded-lg hover:bg-slate-100
-                       text-slate-400 hover:text-slate-700"
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-slate-400
+                    hover:bg-slate-100
+                    hover:text-slate-700
+                "
             >
 
                 <i class="fa-solid fa-xmark"></i>
@@ -1807,7 +1919,6 @@
 
         </div>
 
-        <!-- Form -->
 
         <form
             id="reportForm"
@@ -1815,216 +1926,108 @@
             class="p-6"
         >
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
 
-                <!-- Report type -->
-
-                <div>
-
-                    <label
-                        class="block text-sm font-semibold text-slate-600 mb-2"
-                    >
-                        Type de rapport
-                    </label>
-
-                    <select
-                        id="reportType"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200
-                               bg-slate-50 text-sm outline-none
-                               focus:ring-2 focus:ring-sky-200
-                               focus:border-sky-400"
-                    >
-
-                        <option value="">
-                            Sélectionner
-                        </option>
-
-                        <option value="schools">
-                            Rapport des écoles
-                        </option>
-
-                        <option value="users">
-                            Rapport des utilisateurs
-                        </option>
-
-                        <option value="academic">
-                            Rapport pédagogique
-                        </option>
-
-                        <option value="platform">
-                            Rapport plateforme
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <!-- Format -->
-
-                <div>
-
-                    <label
-                        class="block text-sm font-semibold text-slate-600 mb-2"
-                    >
-                        Format
-                    </label>
-
-                    <select
-                        id="reportFormat"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200
-                               bg-slate-50 text-sm outline-none
-                               focus:ring-2 focus:ring-sky-200
-                               focus:border-sky-400"
-                    >
-
-                        <option value="pdf">
-                            PDF
-                        </option>
-
-                        <option value="excel">
-                            Excel
-                        </option>
-
-                        <option value="csv">
-                            CSV
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <!-- Start date -->
-
-                <div>
-
-                    <label
-                        class="block text-sm font-semibold text-slate-600 mb-2"
-                    >
-                        Date de début
-                    </label>
-
-                    <input
-                        id="startDate"
-                        type="date"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200
-                               bg-slate-50 text-sm outline-none
-                               focus:ring-2 focus:ring-sky-200
-                               focus:border-sky-400"
-                    >
-
-                </div>
-
-                <!-- End date -->
-
-                <div>
-
-                    <label
-                        class="block text-sm font-semibold text-slate-600 mb-2"
-                    >
-                        Date de fin
-                    </label>
-
-                    <input
-                        id="endDate"
-                        type="date"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200
-                               bg-slate-50 text-sm outline-none
-                               focus:ring-2 focus:ring-sky-200
-                               focus:border-sky-400"
-                    >
-
-                </div>
-
-            </div>
-
-            <!-- Schedule -->
-
-            <div class="mt-6">
-
-                <label class="flex items-center gap-3 cursor-pointer">
-
-                    <input
-                        id="scheduleReport"
-                        type="checkbox"
-                        class="w-4 h-4 rounded border-slate-300
-                               text-sky-500 focus:ring-sky-400"
-                    >
-
-                    <span>
-
-                        <span class="block text-sm font-semibold text-slate-700">
-                            Planifier ce rapport
-                        </span>
-
-                        <span class="block text-xs text-slate-400 mt-0.5">
-                            Générer automatiquement ce rapport à une fréquence définie.
-                        </span>
-
-                    </span>
-
+                <label
+                    for="reportType"
+                    class="
+                        mb-2
+                        block
+                        text-sm
+                        font-semibold
+                        text-slate-700
+                    "
+                >
+                    Type de rapport
                 </label>
 
+
+                <select
+                    id="reportType"
+                    required
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-200
+                        bg-slate-50
+                        px-4
+                        py-3
+                        text-sm
+                        outline-none
+                        focus:border-primary-400
+                        focus:bg-white
+                        focus:ring-4
+                        focus:ring-primary-100
+                    "
+                >
+
+                    <option value="">
+                        Sélectionner un rapport
+                    </option>
+
+                </select>
+
             </div>
 
-            <!-- Schedule options -->
 
             <div
-                id="scheduleOptions"
-                class="hidden mt-4 p-4 rounded-xl bg-slate-50
-                       border border-slate-200"
+                class="
+                    mt-5
+                    rounded-xl
+                    border
+                    border-emerald-100
+                    bg-emerald-50
+                    p-4
+                "
             >
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
 
-                    <div>
+                    <div
+                        class="
+                            flex
+                            h-9
+                            w-9
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-white
+                            text-emerald-600
+                        "
+                    >
 
-                        <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
-                        >
-                            Fréquence
-                        </label>
-
-                        <select
-                            class="w-full px-3 py-2.5 rounded-lg
-                                   border border-slate-200 bg-white
-                                   text-sm"
-                        >
-
-                            <option>
-                                Chaque jour
-                            </option>
-
-                            <option selected>
-                                Chaque semaine
-                            </option>
-
-                            <option>
-                                Chaque mois
-                            </option>
-
-                        </select>
+                        <i class="fa-solid fa-file-csv"></i>
 
                     </div>
 
+
                     <div>
 
-                        <label
-                            class="block text-xs font-semibold text-slate-500 mb-2"
+                        <p
+                            class="
+                                text-sm
+                                font-semibold
+                                text-emerald-800
+                            "
                         >
-                            Heure
-                        </label>
+                            Format CSV
+                        </p>
 
-                        <input
-                            type="time"
-                            value="08:00"
-                            class="w-full px-3 py-2.5 rounded-lg
-                                   border border-slate-200 bg-white
-                                   text-sm"
+
+                        <p
+                            class="
+                                mt-1
+                                text-xs
+                                leading-5
+                                text-emerald-700
+                            "
                         >
+                            Le rapport sera généré au format CSV
+                            et pourra être ouvert avec Excel,
+                            LibreOffice ou Google Sheets.
+                        </p>
 
                     </div>
 
@@ -2032,34 +2035,85 @@
 
             </div>
 
-            <!-- Actions -->
 
             <div
-                class="mt-7 pt-5 border-t border-slate-100
-                       flex flex-col-reverse sm:flex-row
-                       sm:justify-end gap-3"
+                id="generateError"
+                class="
+                    mt-5
+                    hidden
+                    rounded-xl
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-700
+                "
+            ></div>
+
+
+            <div
+                class="
+                    mt-7
+                    flex
+                    flex-col-reverse
+                    gap-3
+                    border-t
+                    border-slate-100
+                    pt-5
+                    sm:flex-row
+                    sm:justify-end
+                "
             >
 
                 <button
                     type="button"
                     onclick="closeGenerateModal()"
-                    class="px-5 py-2.5 rounded-xl border border-slate-200
-                           text-sm font-semibold text-slate-600
-                           hover:bg-slate-50 transition"
+                    class="
+                        rounded-xl
+                        border
+                        border-slate-200
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-slate-600
+                        hover:bg-slate-50
+                    "
                 >
                     Annuler
                 </button>
 
+
                 <button
+                    id="generateButton"
                     type="submit"
-                    class="px-5 py-2.5 rounded-xl bg-sky-500
-                           hover:bg-sky-600 text-white text-sm
-                           font-semibold transition"
+                    class="
+                        inline-flex
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        bg-primary-600
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-semibold
+                        text-white
+                        hover:bg-primary-700
+                    "
                 >
 
-                    <i class="fa-solid fa-file-circle-plus mr-2"></i>
+                    <i
+                        id="generateButtonIcon"
+                        class="fa-solid fa-file-circle-plus"
+                    ></i>
 
-                    Générer le rapport
+
+                    <span id="generateButtonText">
+                        Générer
+                    </span>
 
                 </button>
 
@@ -2071,195 +2125,233 @@
 
 </div>
 
-<!-- ========================================================= -->
-<!-- REPORT VIEW MODAL -->
-<!-- ========================================================= -->
+
+<!-- =========================================================
+     PREVIEW MODAL
+========================================================= -->
 
 <div
-    id="viewModal"
-    class="fixed inset-0 z-[100] hidden items-center justify-center
-           bg-slate-900/50 p-4 opacity-0 modal-transition"
+    id="previewModal"
+    class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-900/50
+        p-4
+        opacity-0
+        modal-transition
+    "
 >
 
     <div
-        id="viewModalContent"
-        class="w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl
-               shadow-2xl scale-95 modal-transition overflow-hidden"
+        id="previewModalContent"
+        class="
+            flex
+            max-h-[90vh]
+            w-full
+            max-w-5xl
+            scale-95
+            flex-col
+            overflow-hidden
+            rounded-2xl
+            bg-white
+            shadow-2xl
+            modal-transition
+        "
     >
 
-        <!-- Header -->
-
         <div
-            class="px-6 py-5 border-b border-slate-100
-                   flex items-center justify-between"
+            class="
+                flex
+                items-center
+                justify-between
+                border-b
+                border-slate-100
+                px-6
+                py-5
+            "
         >
 
             <div>
 
                 <h3
-                    id="viewReportTitle"
-                    class="text-lg font-bold text-slate-800"
+                    id="previewTitle"
+                    class="
+                        text-lg
+                        font-bold
+                        text-slate-900
+                    "
                 >
-                    Rapport
+                    Prévisualisation
                 </h3>
 
-                <p class="text-sm text-slate-400 mt-1">
-                    Aperçu du rapport
+
+                <p
+                    id="previewSubtitle"
+                    class="
+                        mt-1
+                        text-sm
+                        text-slate-400
+                    "
+                >
+                    Contenu du rapport
                 </p>
 
             </div>
 
+
             <button
-                onclick="closeViewModal()"
-                class="w-9 h-9 rounded-lg hover:bg-slate-100
-                       text-slate-400"
+                type="button"
+                onclick="closePreviewModal()"
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-slate-400
+                    hover:bg-slate-100
+                "
             >
+
                 <i class="fa-solid fa-xmark"></i>
+
             </button>
 
         </div>
 
-        <!-- Preview -->
 
-        <div class="p-6 overflow-y-auto max-h-[65vh]">
+        <div
+            class="
+                flex-1
+                overflow-auto
+                p-6
+            "
+        >
 
             <div
-                class="rounded-xl border border-slate-200
-                       bg-slate-50 p-6"
+                id="previewLoading"
+                class="
+                    flex
+                    items-center
+                    justify-center
+                    gap-3
+                    py-16
+                    text-sm
+                    text-slate-500
+                "
             >
 
-                <div class="flex items-center justify-between mb-8">
+                <span class="loader"></span>
 
-                    <div>
+                Chargement de l'aperçu...
 
-                        <div
-                            class="w-12 h-12 rounded-xl bg-sky-500
-                                   text-white flex items-center justify-center
-                                   mb-3"
-                        >
+            </div>
 
-                            <i class="fa-solid fa-file-lines text-xl"></i>
 
-                        </div>
+            <div
+                id="previewError"
+                class="
+                    hidden
+                    rounded-xl
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-4
+                    py-3
+                    text-sm
+                    text-red-700
+                "
+            ></div>
 
-                        <h4
-                            id="previewTitle"
-                            class="text-xl font-bold text-slate-800"
-                        >
-                            Rapport
-                        </h4>
 
-                        <p class="text-sm text-slate-400 mt-1">
-                            Smart School • Super Administration
-                        </p>
+            <div
+                id="previewContent"
+                class="
+                    hidden
+                    overflow-hidden
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-slate-50
+                "
+            >
 
-                    </div>
-
-                    <span
-                        class="px-3 py-1.5 rounded-full bg-emerald-50
-                               text-emerald-600 text-xs font-semibold"
-                    >
-                        Disponible
-                    </span>
-
-                </div>
-
-                <!-- Fake report content -->
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-
-                    <div class="bg-white rounded-xl p-4 border border-slate-200">
-
-                        <p class="text-xs text-slate-400">
-                            Écoles
-                        </p>
-
-                        <p class="mt-2 text-2xl font-bold text-slate-800">
-                            128
-                        </p>
-
-                    </div>
-
-                    <div class="bg-white rounded-xl p-4 border border-slate-200">
-
-                        <p class="text-xs text-slate-400">
-                            Utilisateurs
-                        </p>
-
-                        <p class="mt-2 text-2xl font-bold text-slate-800">
-                            29,901
-                        </p>
-
-                    </div>
-
-                    <div class="bg-white rounded-xl p-4 border border-slate-200">
-
-                        <p class="text-xs text-slate-400">
-                            Activité
-                        </p>
-
-                        <p class="mt-2 text-2xl font-bold text-slate-800">
-                            82%
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-
-                    <div class="px-5 py-4 border-b border-slate-100">
-
-                        <p class="font-semibold text-slate-700">
-                            Résumé du rapport
-                        </p>
-
-                    </div>
-
-                    <div class="p-5 space-y-3">
-
-                        <div class="h-3 bg-slate-100 rounded-full w-full"></div>
-
-                        <div class="h-3 bg-slate-100 rounded-full w-11/12"></div>
-
-                        <div class="h-3 bg-slate-100 rounded-full w-10/12"></div>
-
-                        <div class="h-3 bg-slate-100 rounded-full w-8/12"></div>
-
-                    </div>
-
-                </div>
+                <pre
+                    id="previewCsv"
+                    class="
+                        csv-preview
+                        max-h-[55vh]
+                        overflow-auto
+                        p-5
+                        text-slate-700
+                    "
+                ></pre>
 
             </div>
 
         </div>
 
-        <!-- Footer -->
 
         <div
-            class="px-6 py-4 border-t border-slate-100
-                   flex justify-end gap-3"
+            class="
+                flex
+                flex-col-reverse
+                gap-3
+                border-t
+                border-slate-100
+                px-6
+                py-4
+                sm:flex-row
+                sm:justify-end
+            "
         >
 
             <button
-                onclick="closeViewModal()"
-                class="px-5 py-2.5 rounded-xl border border-slate-200
-                       text-sm font-semibold text-slate-600
-                       hover:bg-slate-50"
+                type="button"
+                onclick="closePreviewModal()"
+                class="
+                    rounded-xl
+                    border
+                    border-slate-200
+                    px-5
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-slate-600
+                    hover:bg-slate-50
+                "
             >
                 Fermer
             </button>
 
+
             <button
-                onclick="downloadCurrentReport()"
-                class="px-5 py-2.5 rounded-xl bg-sky-500
-                       hover:bg-sky-600 text-white text-sm
-                       font-semibold"
+                id="previewDownloadButton"
+                type="button"
+                class="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    bg-primary-600
+                    px-5
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-white
+                    hover:bg-primary-700
+                "
             >
 
-                <i class="fa-solid fa-download mr-2"></i>
+                <i class="fa-solid fa-download"></i>
 
-                Télécharger
+                Télécharger CSV
 
             </button>
 
@@ -2269,469 +2361,9 @@
 
 </div>
 
-<!-- ========================================================= -->
-<!-- JAVASCRIPT -->
-<!-- ========================================================= -->
+<script src="/assets/js/super-admin/auth.js"></script>
+<script src="/assets/js/super-admin/rapport.js"></script>
 
-<script>
-
-    /* =========================================================
-       SIDEBAR
-    ========================================================= */
-
-    const sidebar = document.getElementById("sidebar");
-    const sidebarOverlay = document.getElementById("sidebarOverlay");
-
-    document
-        .getElementById("openSidebar")
-        ?.addEventListener("click", () => {
-
-            sidebar.classList.remove("-translate-x-full");
-
-            sidebarOverlay.classList.remove("hidden");
-
-            setTimeout(() => {
-                sidebarOverlay.classList.remove("opacity-0");
-            }, 10);
-
-        });
-
-    function hideSidebar() {
-
-        sidebar.classList.add("-translate-x-full");
-
-        sidebarOverlay.classList.add("opacity-0");
-
-        setTimeout(() => {
-
-            sidebarOverlay.classList.add("hidden");
-
-        }, 300);
-
-    }
-
-    document
-        .getElementById("closeSidebar")
-        ?.addEventListener("click", hideSidebar);
-
-    sidebarOverlay?.addEventListener("click", hideSidebar);
-
-    /* =========================================================
-       GENERATE MODAL
-    ========================================================= */
-
-    const generateModal =
-        document.getElementById("generateModal");
-
-    const generateModalContent =
-        document.getElementById("generateModalContent");
-
-    function openGenerateModal() {
-
-        generateModal.classList.remove("hidden");
-
-        generateModal.classList.add("flex");
-
-        setTimeout(() => {
-
-            generateModal.classList.remove("opacity-0");
-
-            generateModalContent.classList.remove("scale-95");
-
-            generateModalContent.classList.add("scale-100");
-
-        }, 10);
-
-    }
-
-    function closeGenerateModal() {
-
-        generateModal.classList.add("opacity-0");
-
-        generateModalContent.classList.remove("scale-100");
-
-        generateModalContent.classList.add("scale-95");
-
-        setTimeout(() => {
-
-            generateModal.classList.remove("flex");
-
-            generateModal.classList.add("hidden");
-
-        }, 200);
-
-    }
-
-    /* =========================================================
-       SCHEDULE
-    ========================================================= */
-
-    const scheduleCheckbox =
-        document.getElementById("scheduleReport");
-
-    const scheduleOptions =
-        document.getElementById("scheduleOptions");
-
-    scheduleCheckbox.addEventListener(
-        "change",
-        function () {
-
-            if (this.checked) {
-
-                scheduleOptions.classList.remove("hidden");
-
-            } else {
-
-                scheduleOptions.classList.add("hidden");
-
-            }
-
-        }
-    );
-
-    /* =========================================================
-       QUICK REPORT SELECTION
-    ========================================================= */
-
-    function selectReport(type) {
-
-        openGenerateModal();
-
-        document.getElementById("reportType").value = type;
-
-    }
-
-    /* =========================================================
-       GENERATE REPORT
-    ========================================================= */
-
-    function generateReport(event) {
-
-        event.preventDefault();
-
-        const type =
-            document.getElementById("reportType").value;
-
-        const format =
-            document.getElementById("reportFormat").value;
-
-        console.log({
-            type,
-            format,
-            startDate: document.getElementById("startDate").value,
-            endDate: document.getElementById("endDate").value,
-            scheduled: scheduleCheckbox.checked
-        });
-
-        /*
-         * Plus tard :
-         *
-         * POST /super-admin/rapports
-         *
-         * Le backend AdonisJS recevra les paramètres
-         * et lancera la génération réelle du rapport.
-         */
-
-        closeGenerateModal();
-
-        setTimeout(() => {
-
-            alert(
-                "La génération du rapport sera connectée au backend AdonisJS."
-            );
-
-        }, 250);
-
-    }
-
-    /* =========================================================
-       VIEW REPORT
-    ========================================================= */
-
-    let currentReport = "";
-
-    const viewModal =
-        document.getElementById("viewModal");
-
-    const viewModalContent =
-        document.getElementById("viewModalContent");
-
-    function viewReport(name) {
-
-        currentReport = name;
-
-        document.getElementById("viewReportTitle").textContent = name;
-
-        document.getElementById("previewTitle").textContent = name;
-
-        viewModal.classList.remove("hidden");
-
-        viewModal.classList.add("flex");
-
-        setTimeout(() => {
-
-            viewModal.classList.remove("opacity-0");
-
-            viewModalContent.classList.remove("scale-95");
-
-            viewModalContent.classList.add("scale-100");
-
-        }, 10);
-
-    }
-
-    function closeViewModal() {
-
-        viewModal.classList.add("opacity-0");
-
-        viewModalContent.classList.remove("scale-100");
-
-        viewModalContent.classList.add("scale-95");
-
-        setTimeout(() => {
-
-            viewModal.classList.remove("flex");
-
-            viewModal.classList.add("hidden");
-
-        }, 200);
-
-    }
-
-    /* =========================================================
-       DOWNLOAD
-    ========================================================= */
-
-    function downloadReport(name) {
-
-        /*
-         * Plus tard :
-         *
-         * GET /super-admin/rapports/:id/download
-         */
-
-        alert(
-            "Téléchargement de : " + name
-        );
-
-    }
-
-    function downloadCurrentReport() {
-
-        downloadReport(currentReport);
-
-    }
-
-    /* =========================================================
-       DELETE
-    ========================================================= */
-
-    function deleteReport(name) {
-
-        const confirmed =
-            confirm(
-                "Voulez-vous vraiment supprimer le rapport :\n\n" +
-                name +
-                " ?"
-            );
-
-        if (!confirmed) {
-            return;
-        }
-
-        alert(
-            "Le rapport sera supprimé via le backend AdonisJS."
-        );
-
-    }
-
-    /* =========================================================
-       SCHEDULED REPORT
-    ========================================================= */
-
-    function editScheduledReport() {
-
-        alert(
-            "Modification du rapport planifié."
-        );
-
-    }
-
-    function cancelScheduledReport() {
-
-        const confirmed =
-            confirm(
-                "Voulez-vous annuler ce rapport planifié ?"
-            );
-
-        if (confirmed) {
-
-            alert(
-                "Le rapport planifié sera annulé via AdonisJS."
-            );
-
-        }
-
-    }
-
-    /* =========================================================
-       SEARCH + FILTER
-    ========================================================= */
-
-    const searchInput =
-        document.getElementById("searchInput");
-
-    const typeFilter =
-        document.getElementById("typeFilter");
-
-    const statusFilter =
-        document.getElementById("statusFilter");
-
-    const reportRows =
-        document.querySelectorAll(".report-row");
-
-    const emptyState =
-        document.getElementById("emptyState");
-
-    const reportCount =
-        document.getElementById("reportCount");
-
-    function filterReports() {
-
-        const search =
-            searchInput.value.toLowerCase().trim();
-
-        const type =
-            typeFilter.value;
-
-        const status =
-            statusFilter.value;
-
-        let visible = 0;
-
-        reportRows.forEach(row => {
-
-            const name =
-                row.dataset.name.toLowerCase();
-
-            const rowType =
-                row.dataset.type;
-
-            const rowStatus =
-                row.dataset.status;
-
-            const matchesSearch =
-                name.includes(search);
-
-            const matchesType =
-                !type || rowType === type;
-
-            const matchesStatus =
-                !status || rowStatus === status;
-
-            const show =
-                matchesSearch &&
-                matchesType &&
-                matchesStatus;
-
-            if (show) {
-
-                row.classList.remove("hidden");
-
-                visible++;
-
-            } else {
-
-                row.classList.add("hidden");
-
-            }
-
-        });
-
-        reportCount.textContent =
-            visible + (visible > 1 ? " rapports" : " rapport");
-
-        if (visible === 0) {
-
-            emptyState.classList.remove("hidden");
-
-        } else {
-
-            emptyState.classList.add("hidden");
-
-        }
-
-    }
-
-    searchInput.addEventListener(
-        "input",
-        filterReports
-    );
-
-    typeFilter.addEventListener(
-        "change",
-        filterReports
-    );
-
-    statusFilter.addEventListener(
-        "change",
-        filterReports
-    );
-
-    /* =========================================================
-       ESCAPE KEY
-    ========================================================= */
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (event.key === "Escape") {
-
-                closeGenerateModal();
-
-                closeViewModal();
-
-                hideSidebar();
-
-            }
-
-        }
-    );
-
-    /* =========================================================
-       CLICK OUTSIDE MODAL
-    ========================================================= */
-
-    generateModal.addEventListener(
-        "click",
-        event => {
-
-            if (event.target === generateModal) {
-
-                closeGenerateModal();
-
-            }
-
-        }
-    );
-
-    viewModal.addEventListener(
-        "click",
-        event => {
-
-            if (event.target === viewModal) {
-
-                closeViewModal();
-
-            }
-
-        }
-    );
-
-</script>
-
-<script src="/assets/js/smart-school-api.js"></script>
 </body>
+
 </html>
-```
