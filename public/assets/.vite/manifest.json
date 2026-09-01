@@ -1,0 +1,20 @@
+{
+  "resources/css/app.css": {
+    "file": "app-DRH8rxDP.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "app-ByoMxB84.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "app-DRH8rxDP.css"
+    ]
+  }
+}

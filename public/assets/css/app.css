@@ -1,0 +1,92 @@
+/*
+|--------------------------------------------------------------------------
+| Smart School - Application CSS
+|--------------------------------------------------------------------------
+*/
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Form validation
+|--------------------------------------------------------------------------
+*/
+
+.input-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.input-error:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 4px rgb(254 226 226);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Loading spinner
+|--------------------------------------------------------------------------
+*/
+
+.spinner {
+    width: 18px;
+    height: 18px;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: white;
+
+    border-radius: 50%;
+
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Selection
+|--------------------------------------------------------------------------
+*/
+
+::selection {
+    background: #bae6fd;
+    color: #075985;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Scrollbar
+|--------------------------------------------------------------------------
+*/
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
