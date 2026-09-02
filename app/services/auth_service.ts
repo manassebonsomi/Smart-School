@@ -836,89 +836,37 @@ export default class AuthService {
    * RÉINITIALISER LE MOT DE PASSE
    * ==========================================================================
    */
-  async resetPassword(payload: any) {
+  async resetPassword(payload: { token: string; password: string }) {
+  const user = await User.query()
+    .where('reset_password_token', payload.token)
+    .first()
 
-    const user = await User
-      .query()
-      .where(
-        'reset_password_token',
-        payload.token
-      )
-      .first()
-
-
-    if (!user) {
-
-      throw new Error(
-        'Token de réinitialisation invalide.'
-      )
-
-    }
-
-
-    if (
-      !user.resetPasswordExpiresAt ||
-      user.resetPasswordExpiresAt < DateTime.now()
-    ) {
-
-      throw new Error(
-        'La demande de réinitialisation a expiré.'
-      )
-
-    }
-
-
-    const trx = await db.transaction()
-
-
-    try {
-
-      user.useTransaction(trx)
-
-
-      user.password =
-          payload.password
-
-      user.resetPasswordToken = null
-
-      user.resetPasswordExpiresAt = null
-
-      user.twoFactorCode = null
-
-      user.twoFactorExpiresAt = null
-
-
-      await user.save()
-
-
-      /**
-       * Invalidation de tous les tokens existants.
-       */
-      await User.accessTokens
-        .deleteAll(user)
-
-
-      await trx.commit()
-
-
-      return {
-
-        success: true,
-
-        message:
-          'Votre mot de passe a été modifié avec succès.',
-
-      }
-
-    } catch (error) {
-
-      await trx.rollback()
-
-      throw error
-
-    }
-
+  if (!user) {
+    throw new Error('Token de réinitialisation invalide.')
   }
+
+  if (
+    !user.resetPasswordExpiresAt ||
+    user.resetPasswordExpiresAt < DateTime.now()
+  ) {
+    throw new Error('La demande de réinitialisation a expiré.')
+  }
+
+  // Le modèle User se charge du hash via son hook beforeSave.
+  user.password = payload.password
+
+  user.resetPasswordToken = null
+  user.resetPasswordExpiresAt = null
+  user.twoFactorCode = null
+  user.twoFactorExpiresAt = null
+
+  await user.save()
+
+  return {
+    success: true,
+    message: 'Votre mot de passe a été modifié avec succès.',
+  }
+}
 
 
   /**
