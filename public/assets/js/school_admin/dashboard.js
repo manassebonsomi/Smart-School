@@ -1,16 +1,20 @@
-const TOKEN_KEY = 'smart_school_access_token'
+const TOKEN_KEY =
+  'smart_school_access_token'
 
-const token = sessionStorage.getItem(TOKEN_KEY)
+const apiHeaders = () => {
+  const token =
+    sessionStorage.getItem(TOKEN_KEY)
 
-const apiHeaders = () => ({
-  Accept: 'application/json',
+  return {
+    Accept: 'application/json',
 
-  ...(token
-    ? {
-        Authorization: `Bearer ${token}`,
-      }
-    : {}),
-})
+    ...(token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {}),
+  }
+}
 
 const escapeHtml = (value) =>
   String(value ?? '').replace(
@@ -25,9 +29,10 @@ const escapeHtml = (value) =>
   )
 
 function showError(message) {
-  const box = document.getElementById(
-    'dashboardError'
-  )
+  const box =
+    document.getElementById(
+      'dashboardError'
+    )
 
   if (!box) return
 
@@ -37,23 +42,50 @@ function showError(message) {
 }
 
 function setText(id, value) {
-  const element = document.getElementById(id)
+  const element =
+    document.getElementById(id)
 
   if (element) {
-    element.textContent = value
+    element.textContent =
+      value ?? '—'
   }
 }
 
+/*
+|--------------------------------------------------------------------------
+| API
+|--------------------------------------------------------------------------
+*/
+
 async function apiGet(url) {
-  const response = await fetch(url, {
-    headers: apiHeaders(),
-  })
+  const response =
+    await fetch(url, {
+      headers: apiHeaders(),
+    })
 
-  const payload = await response
-    .json()
-    .catch(() => null)
+  const payload =
+    await response
+      .json()
+      .catch(() => null)
 
-  if (!response.ok || !payload?.success) {
+  if (
+    response.status === 401
+  ) {
+    sessionStorage.removeItem(
+      TOKEN_KEY
+    )
+
+    window.location.href = '/'
+
+    throw new Error(
+      'Session expirée.'
+    )
+  }
+
+  if (
+    !response.ok ||
+    !payload?.success
+  ) {
     throw new Error(
       payload?.message ||
         `Erreur ${response.status}`
@@ -63,89 +95,301 @@ async function apiGet(url) {
   return payload
 }
 
+/*
+|--------------------------------------------------------------------------
+| UTILISATEUR CONNECTÉ
+|--------------------------------------------------------------------------
+*/
+
+async function loadCurrentUser() {
+  const payload =
+    await apiGet(
+      '/api/auth/me'
+    )
+
+  const data =
+    payload.data || {}
+
+  const user =
+    data.user || data
+
+  /*
+   * Nom complet
+   */
+  const fullName =
+    [
+      user.prenom,
+      user.postnom,
+      user.nom,
+    ]
+      .filter(
+        Boolean
+      )
+      .join(' ')
+      .trim()
+
+  const displayName =
+    fullName ||
+    user.pseudo ||
+    user.email ||
+    'Administrateur'
+
+  /*
+   * Identité
+   */
+  setText(
+    'adminName',
+    displayName
+  )
+
+  setText(
+    'adminFullName',
+    displayName
+  )
+
+  setText(
+    'adminFirstName',
+    user.prenom ||
+      'Administrateur'
+  )
+
+  setText(
+    'adminLastName',
+    user.nom || '—'
+  )
+
+  setText(
+    'adminPostName',
+    user.postnom || '—'
+  )
+
+  setText(
+    'adminEmail',
+    user.email || '—'
+  )
+
+  setText(
+    'adminTelephone',
+    user.telephone || '—'
+  )
+
+  /*
+   * Initiales
+   */
+  const initials =
+    [
+      user.prenom?.charAt(0),
+      user.nom?.charAt(0),
+    ]
+      .filter(Boolean)
+      .join('')
+      .toUpperCase() ||
+    'AD'
+
+  setText(
+    'adminInitials',
+    initials
+  )
+
+  /*
+   * --------------------------------------------------------------------------
+   * ÉCOLE ACTIVE + RÔLE
+   * --------------------------------------------------------------------------
+   *
+   * On cherche l'école active parmi les memberships.
+   */
+  const schools =
+    Array.isArray(
+      data.ecoles
+    )
+      ? data.ecoles
+      : []
+
+  const activeSchool =
+    schools.find(
+      (school) =>
+        school.active === true
+    )
+
+  if (activeSchool) {
+    setText(
+      'contextSchool',
+      activeSchool.nom
+    )
+
+    setText(
+      'schoolStatus',
+      activeSchool.statut ||
+        activeSchool.membershipStatus ||
+        'ACTIF'
+    )
+
+    setText(
+      'contextRole',
+      formatRole(
+        activeSchool.role
+      )
+    )
+
+    setText(
+      'adminRole',
+      formatRole(
+        activeSchool.role
+      )
+    )
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| FORMATAGE DU RÔLE
+|--------------------------------------------------------------------------
+*/
+
+function formatRole(role) {
+  const roles = {
+    ADMIN_ECOLE:
+      'Administrateur de l’école',
+
+    ENSEIGNANT:
+      'Enseignant',
+
+    TEACHER:
+      'Enseignant',
+
+    PARENT:
+      'Parent',
+
+    ELEVE:
+      'Élève',
+
+    STUDENT:
+      'Élève',
+
+    SUPER_ADMIN:
+      'Super administrateur',
+  }
+
+  return (
+    roles[role] ||
+    role ||
+    '—'
+  )
+}
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
+
 async function loadDashboard() {
   try {
+    const token =
+      sessionStorage.getItem(
+        TOKEN_KEY
+      )
+
     if (!token) {
       throw new Error(
         'Session non authentifiée. Veuillez vous reconnecter.'
       )
     }
 
-    const payload = await apiGet(
-      '/api/school-admin/dashboard'
-    )
+    const payload =
+      await apiGet(
+        '/api/school-admin/dashboard'
+      )
 
-    const data = payload.data
-    const stats = data.statistiques
+    const data =
+      payload.data || {}
 
+    const stats =
+      data.statistiques || {}
+
+    /*
+     * ÉCOLE
+     */
     setText(
       'schoolTitle',
-      data.ecole.nom
+      data.ecole?.nom
     )
 
     setText(
       'schoolHeader',
-      data.ecole.nom
+      data.ecole?.nom
     )
 
     setText(
       'schoolNameSidebar',
-      data.ecole.nom
+      data.ecole?.nom
     )
 
     setText(
       'schoolLocationSidebar',
-      data.ecole.ville || '—'
+      data.ecole?.ville || '—'
     )
 
     setText(
       'contextSchool',
-      data.ecole.nom
+      data.ecole?.nom
     )
 
     setText(
       'schoolStatus',
-      data.ecole.statut || '—'
+      data.ecole?.statut ||
+        'ACTIF'
     )
 
+    /*
+     * STATISTIQUES
+     */
     setText(
       'studentsCount',
-      stats.eleves
+      stats.eleves ?? 0
     )
 
     setText(
       'teachersCount',
-      stats.enseignants
+      stats.enseignants ?? 0
     )
 
     setText(
       'teachersSecondary',
-      stats.enseignants
+      stats.enseignants ?? 0
     )
 
     setText(
       'classesCount',
-      stats.classes
+      stats.classes ?? 0
     )
 
     setText(
       'subjectsCount',
-      stats.matieres
+      stats.matieres ?? 0
     )
 
     setText(
       'parentsCount',
-      stats.parents
+      stats.parents ?? 0
     )
 
     setText(
       'usersCount',
-      stats.utilisateurs
+      stats.utilisateurs ?? 0
     )
   } catch (error) {
-    showError(error.message)
+    showError(
+      error.message
+    )
   }
 }
+
+/*
+|--------------------------------------------------------------------------
+| MES ÉCOLES
+|--------------------------------------------------------------------------
+*/
 
 async function loadSchools() {
   const list =
@@ -215,8 +459,9 @@ async function loadSchools() {
                   ·
 
                   ${escapeHtml(
-                    school.role ||
-                      ''
+                    formatRole(
+                      school.role
+                    )
                   )}
                 </span>
               </span>
@@ -259,7 +504,15 @@ async function loadSchools() {
   }
 }
 
-async function switchSchool(ecoleId) {
+/*
+|--------------------------------------------------------------------------
+| CHANGEMENT D'ÉCOLE
+|--------------------------------------------------------------------------
+*/
+
+async function switchSchool(
+  ecoleId
+) {
   try {
     const response =
       await fetch(
@@ -269,6 +522,7 @@ async function switchSchool(ecoleId) {
 
           headers: {
             ...apiHeaders(),
+
             'Content-Type':
               'application/json',
           },
@@ -285,6 +539,18 @@ async function switchSchool(ecoleId) {
         .catch(() => null)
 
     if (
+      response.status === 401
+    ) {
+      sessionStorage.removeItem(
+        TOKEN_KEY
+      )
+
+      window.location.href = '/'
+
+      return
+    }
+
+    if (
       !response.ok ||
       !payload?.success
     ) {
@@ -297,18 +563,33 @@ async function switchSchool(ecoleId) {
     window.location.href =
       '/school-admin/dashboard'
   } catch (error) {
-    showError(error.message)
+    showError(
+      error.message
+    )
   }
 }
 
+/*
+|--------------------------------------------------------------------------
+| DÉCONNEXION
+|--------------------------------------------------------------------------
+*/
+
 async function logout() {
+  const token =
+    sessionStorage.getItem(
+      TOKEN_KEY
+    )
+
   try {
     if (token) {
       await fetch(
         '/api/auth/logout',
         {
           method: 'POST',
-          headers: apiHeaders(),
+
+          headers:
+            apiHeaders(),
         }
       )
     }
@@ -317,9 +598,16 @@ async function logout() {
       TOKEN_KEY
     )
 
-    window.location.href = '/'
+    window.location.href =
+      '/'
   }
 }
+
+/*
+|--------------------------------------------------------------------------
+| MENU MOBILE
+|--------------------------------------------------------------------------
+*/
 
 function setupMobileMenu() {
   const sidebar =
@@ -364,6 +652,12 @@ function setupMobileMenu() {
   )
 }
 
+/*
+|--------------------------------------------------------------------------
+| INITIALISATION
+|--------------------------------------------------------------------------
+*/
+
 setupMobileMenu()
 
 document
@@ -375,5 +669,6 @@ document
     logout
   )
 
+loadCurrentUser()
 loadDashboard()
 loadSchools()
