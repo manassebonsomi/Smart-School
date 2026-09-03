@@ -1,201 +1,199 @@
 import vine from '@vinejs/vine'
 
+export const createEcoleValidator =
+  vine.compile(
+    vine.object({
+      /**
+       * =========================================================================
+       * INFORMATIONS DE L'ÉCOLE
+       * =========================================================================
+       */
+      nom:
+        vine
+          .string()
+          .trim(),
 
-export const createEcoleValidator = vine.compile(
+      code:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-  vine.object({
+      description:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    /**
-     * ==========================================================================
-     * INFORMATIONS ÉCOLE
-     * ==========================================================================
-     */
+      adresse:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    nom:
-      vine
-        .string()
-        .trim()
-        .minLength(3)
-        .maxLength(150),
+      telephone:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    code:
-      vine
-        .string()
-        .trim()
-        .minLength(2)
-        .maxLength(20)
-        .optional(),
+      email:
+        vine
+          .string()
+          .email()
+          .trim()
+          .optional(),
 
-    description:
-      vine
-        .string()
-        .trim()
-        .maxLength(5000)
-        .optional(),
+      ville:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    adresse:
-      vine
-        .string()
-        .trim()
-        .maxLength(255)
-        .optional(),
+      pays:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    telephone:
-      vine
-        .string()
-        .trim()
-        .maxLength(30)
-        .optional(),
+      province:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    email:
-      vine
-        .string()
-        .trim()
-        .email()
-        .optional(),
+      commune:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    ville:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      quartier:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    pays:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      siteWeb:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    province:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      type:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    commune:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      anneeCreation:
+        vine
+          .number()
+          .optional(),
 
-    quartier:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      logo:
+        vine
+          .string()
+          .trim()
+          .optional(),
 
-    siteWeb:
-      vine
-        .string()
-        .trim()
-        .url()
-        .maxLength(255)
-        .optional(),
+      statut:
+        vine
+          .enum([
+            'ACTIF',
+            'SUSPENDU',
+            'ARCHIVE',
+          ])
+          .optional(),
 
-    type:
-      vine
-        .string()
-        .trim()
-        .maxLength(100)
-        .optional(),
+      /**
+       * =========================================================================
+       * ADMINISTRATEUR DE L'ÉCOLE
+       * =========================================================================
+       *
+       * Deux possibilités :
+       *
+       * mode = "new"
+       *    Création d'un nouveau compte administrateur.
+       *
+       * mode = "existing"
+       *    Association d'un utilisateur déjà présent dans la plateforme.
+       *
+       * Tous les champs restent structurellement optionnels car leur
+       * obligation dépend du mode choisi.
+       */
+      admin:
+        vine
+          .object({
+            mode:
+              vine
+                .enum([
+                  'new',
+                  'existing',
+                ])
+                .optional(),
 
-    anneeCreation:
-      vine
-        .number()
-        .min(1800)
-        .max(2100)
-        .optional(),
+            userId:
+              vine
+                .number()
+                .positive()
+                .optional(),
 
-    logo:
-      vine
-        .string()
-        .trim()
-        .maxLength(500)
-        .optional(),
+            nom:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
-    statut:
-      vine
-        .enum([
-          'ACTIF',
-          'SUSPENDU',
-          'ARCHIVE',
-        ])
-        .optional(),
+            postnom:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
+            prenom:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
-    /**
-     * ==========================================================================
-     * ADMINISTRATEUR DE L'ÉCOLE
-     * ==========================================================================
-     */
+            pseudo:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
-    admin:
-      vine
-        .object({
+            email:
+              vine
+                .string()
+                .email()
+                .trim()
+                .optional(),
 
-          nom:
-            vine
-              .string()
-              .trim()
-              .minLength(2)
-              .maxLength(100),
+            telephone:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
-          prenom:
-            vine
-              .string()
-              .trim()
-              .minLength(2)
-              .maxLength(100),
+            sexe:
+              vine
+                .string()
+                .trim()
+                .optional(),
 
-          postnom:
-            vine
-              .string()
-              .trim()
-              .maxLength(100)
-              .optional(),
+            password:
+              vine
+                .string()
+                .minLength(8)
+                .optional(),
 
-          pseudo:
-            vine
-              .string()
-              .trim()
-              .maxLength(100)
-              .optional(),
-
-          email:
-            vine
-              .string()
-              .trim()
-              .email(),
-
-          telephone:
-            vine
-              .string()
-              .trim()
-              .maxLength(30)
-              .optional(),
-
-          sexe:
-            vine
-              .enum([
-                'HOMME',
-                'FEMME',
-                'AUTRE',
-              ])
-              .optional(),
-
-          password:
-            vine
-              .string()
-              .minLength(8),
-
-        })
-        .optional(),
-
-  })
-
-)
+            password_confirmation:
+              vine
+                .string()
+                .minLength(8)
+                .optional(),
+          })
+          .optional(),
+    })
+  )

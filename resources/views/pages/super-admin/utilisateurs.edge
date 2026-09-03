@@ -1731,397 +1731,164 @@
 
 <div
     id="createModal"
-    class="
-        fixed
-        inset-0
-        z-[100]
-        hidden
-        items-center
-        justify-center
-        bg-slate-900/50
-        p-4
-        opacity-0
-        modal-transition
-    "
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 p-4 opacity-0 modal-transition"
 >
-
     <div
-        class="
-            max-h-[92vh]
-            w-full
-            max-w-2xl
-            overflow-y-auto
-            rounded-2xl
-            bg-white
-            shadow-2xl
-        "
+        id="createModalContent"
+        class="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
     >
-
-        <div
-            class="
-                sticky
-                top-0
-                z-10
-                flex
-                items-center
-                justify-between
-                border-b
-                border-slate-100
-                bg-white
-                px-6
-                py-5
-            "
-        >
-
+        <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-6 py-5">
             <div>
-
-                <h3 class="text-lg font-bold">
-                    Nouvel administrateur
-                </h3>
-
-                <p
-                    class="
-                        mt-1
-                        text-sm
-                        text-slate-400
-                    "
-                >
-                    Créer un compte administrateur pour une école.
+                <h3 class="text-lg font-bold text-slate-800">Nouvel administrateur</h3>
+                <p class="mt-1 text-sm text-slate-400">
+                    Créer un nouvel administrateur ou associer un utilisateur existant à une école.
                 </p>
-
             </div>
-
 
             <button
                 id="closeCreateModal"
                 type="button"
-                class="
-                    flex
-                    h-9
-                    w-9
-                    items-center
-                    justify-center
-                    rounded-lg
-                    text-slate-400
-                    hover:bg-slate-100
-                "
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                aria-label="Fermer"
             >
-
                 <i class="fa-solid fa-xmark"></i>
-
             </button>
-
         </div>
 
+        <form id="createAdminForm" class="p-6">
+            <div id="createFormError" class="mb-5 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
 
-        <form
-            id="createAdminForm"
-            class="p-6"
-        >
+            <div class="mb-6">
+                <label for="create_ecoleSearch" class="form-label">École *</label>
 
-            <div
-                id="createFormError"
-                class="
-                    mb-5
-                    hidden
-                    rounded-xl
-                    border
-                    border-red-200
-                    bg-red-50
-                    px-4
-                    py-3
-                    text-sm
-                    text-red-700
-                "
-            ></div>
-
-
-            <div
-                class="
-                    grid
-                    grid-cols-1
-                    gap-5
-                    md:grid-cols-2
-                "
-            >
-
-                <div class="md:col-span-2">
-
-                    <label
-                        for="create_ecoleId"
-                        class="form-label"
-                    >
-                        École *
-                    </label>
-
-
-                    <select
-                        id="create_ecoleId"
-                        name="ecoleId"
-                        required
-                        class="form-input"
-                    >
-
-                        <option value="">
-                            Chargement des écoles...
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_prenom"
-                        class="form-label"
-                    >
-                        Prénom *
-                    </label>
-
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input
-                        id="create_prenom"
-                        name="prenom"
-                        required
-                        class="form-input"
+                        id="create_ecoleSearch"
+                        type="text"
+                        autocomplete="off"
+                        class="form-input pl-11"
+                        placeholder="Rechercher une école par nom, code ou ville..."
                     >
-
+                    <input id="create_ecoleId" name="ecoleId" type="hidden" value="">
                 </div>
 
-
-                <div>
-
-                    <label
-                        for="create_nom"
-                        class="form-label"
-                    >
-                        Nom *
-                    </label>
-
-                    <input
-                        id="create_nom"
-                        name="nom"
-                        required
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_postnom"
-                        class="form-label"
-                    >
-                        Postnom
-                    </label>
-
-                    <input
-                        id="create_postnom"
-                        name="postnom"
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_pseudo"
-                        class="form-label"
-                    >
-                        Pseudo
-                    </label>
-
-                    <input
-                        id="create_pseudo"
-                        name="pseudo"
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_email"
-                        class="form-label"
-                    >
-                        Email *
-                    </label>
-
-                    <input
-                        id="create_email"
-                        name="email"
-                        type="email"
-                        required
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_telephone"
-                        class="form-label"
-                    >
-                        Téléphone
-                    </label>
-
-                    <input
-                        id="create_telephone"
-                        name="telephone"
-                        type="tel"
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_sexe"
-                        class="form-label"
-                    >
-                        Sexe
-                    </label>
-
-                    <select
-                        id="create_sexe"
-                        name="sexe"
-                        class="form-input"
-                    >
-
-                        <option value="">
-                            Sélectionner
-                        </option>
-
-                        <option value="HOMME">
-                            Homme
-                        </option>
-
-                        <option value="FEMME">
-                            Femme
-                        </option>
-
-                        <option value="AUTRE">
-                            Autre
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_password"
-                        class="form-label"
-                    >
-                        Mot de passe *
-                    </label>
-
-                    <input
-                        id="create_password"
-                        name="password"
-                        type="password"
-                        minlength="8"
-                        required
-                        class="form-input"
-                    >
-
-                </div>
-
-
-                <div>
-
-                    <label
-                        for="create_password_confirmation"
-                        class="form-label"
-                    >
-                        Confirmation *
-                    </label>
-
-                    <input
-                        id="create_password_confirmation"
-                        name="password_confirmation"
-                        type="password"
-                        minlength="8"
-                        required
-                        class="form-input"
-                    >
-
-                </div>
-
+                <div id="create_ecoleResults" class="relative z-20 mt-2 hidden max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"></div>
+                <div id="create_ecoleSelected" class="mt-2 hidden rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-700"></div>
             </div>
 
+            <div class="mb-6">
+                <p class="form-label">Mode d’attribution</p>
 
-            <div
-                class="
-                    mt-7
-                    flex
-                    flex-col-reverse
-                    gap-3
-                    border-t
-                    border-slate-100
-                    pt-5
-                    sm:flex-row
-                    sm:justify-end
-                "
-            >
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 hover:bg-slate-50">
+                        <input type="radio" name="mode" value="new" checked class="mt-1 h-4 w-4 accent-sky-600">
+                        <span>
+                            <span class="block text-sm font-semibold text-slate-700">Créer un nouvel utilisateur</span>
+                            <span class="mt-1 block text-xs text-slate-400">Créer le compte puis lui attribuer le rôle administrateur.</span>
+                        </span>
+                    </label>
 
+                    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 hover:bg-slate-50">
+                        <input type="radio" name="mode" value="existing" class="mt-1 h-4 w-4 accent-sky-600">
+                        <span>
+                            <span class="block text-sm font-semibold text-slate-700">Associer un utilisateur existant</span>
+                            <span class="mt-1 block text-xs text-slate-400">Utiliser un compte déjà présent dans Smart School.</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="existingUserSection" class="mb-6 hidden">
+                <label for="create_userSearch" class="form-label">Utilisateur existant *</label>
+
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input
+                        id="create_userSearch"
+                        type="text"
+                        autocomplete="off"
+                        class="form-input pl-11"
+                        placeholder="Nom, email, téléphone ou pseudo..."
+                    >
+                    <input id="create_userId" name="userId" type="hidden" value="">
+                </div>
+
+                <div id="create_userResults" class="relative z-20 mt-2 hidden max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"></div>
+                <div id="create_userSelected" class="mt-2 hidden rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"></div>
+            </div>
+
+            <div id="newUserSection">
+                <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <p class="text-sm font-semibold text-slate-700">Informations du nouvel administrateur</p>
+                    <p class="mt-1 text-xs text-slate-400">Un email de vérification pourra être envoyé après la création du compte.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                        <label for="create_prenom" class="form-label">Prénom *</label>
+                        <input id="create_prenom" name="prenom" required class="form-input" placeholder="Prénom">
+                    </div>
+                    <div>
+                        <label for="create_nom" class="form-label">Nom *</label>
+                        <input id="create_nom" name="nom" required class="form-input" placeholder="Nom">
+                    </div>
+                    <div>
+                        <label for="create_postnom" class="form-label">Postnom</label>
+                        <input id="create_postnom" name="postnom" class="form-input" placeholder="Postnom">
+                    </div>
+                    <div>
+                        <label for="create_pseudo" class="form-label">Pseudo</label>
+                        <input id="create_pseudo" name="pseudo" class="form-input" placeholder="Pseudo">
+                    </div>
+                    <div>
+                        <label for="create_email" class="form-label">Email *</label>
+                        <input id="create_email" name="email" type="email" required class="form-input" placeholder="admin@ecole.cd">
+                    </div>
+                    <div>
+                        <label for="create_telephone" class="form-label">Téléphone</label>
+                        <input id="create_telephone" name="telephone" type="tel" class="form-input" placeholder="+243 ...">
+                    </div>
+                    <div>
+                        <label for="create_sexe" class="form-label">Sexe</label>
+                        <select id="create_sexe" name="sexe" class="form-input">
+                            <option value="">Sélectionner</option>
+                            <option value="HOMME">Homme</option>
+                            <option value="FEMME">Femme</option>
+                            <option value="AUTRE">Autre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="create_password" class="form-label">Mot de passe *</label>
+                        <input id="create_password" name="password" type="password" minlength="8" required class="form-input" placeholder="Minimum 8 caractères">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="create_password_confirmation" class="form-label">Confirmation du mot de passe *</label>
+                        <input id="create_password_confirmation" name="password_confirmation" type="password" minlength="8" required class="form-input" placeholder="Confirmer le mot de passe">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-7 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
                 <button
                     id="cancelCreateButton"
                     type="button"
-                    class="
-                        rounded-xl
-                        border
-                        border-slate-200
-                        px-5
-                        py-2.5
-                        text-sm
-                        font-semibold
-                        text-slate-600
-                        hover:bg-slate-50
-                    "
+                    class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
                 >
                     Annuler
                 </button>
 
-
                 <button
                     id="submitCreateButton"
                     type="submit"
-                    class="
-                        rounded-xl
-                        bg-primary-600
-                        px-5
-                        py-2.5
-                        text-sm
-                        font-semibold
-                        text-white
-                        hover:bg-primary-700
-                    "
+                    class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700"
                 >
                     Créer
                 </button>
-
             </div>
-
         </form>
-
     </div>
-
 </div>
-
 
 <!-- =========================================================
      DETAILS MODAL

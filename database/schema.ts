@@ -302,7 +302,7 @@ export class ParentEleveSchema extends BaseModel {
 }
 
 export class UserContextSchema extends BaseModel {
-  static $columns = ['active', 'createdAt', 'ecoleId', 'id', 'updatedAt', 'userId'] as const
+  static $columns = ['active', 'createdAt', 'ecoleId', 'id', 'role', 'updatedAt', 'userId'] as const
   $columns = UserContextSchema.$columns
   @column()
   declare active: boolean | null
@@ -312,6 +312,8 @@ export class UserContextSchema extends BaseModel {
   declare ecoleId: bigint | number
   @column({ isPrimary: true })
   declare id: bigint | number
+  @column()
+  declare role: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
   @column()

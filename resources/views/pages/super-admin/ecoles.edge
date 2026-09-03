@@ -1797,761 +1797,117 @@
 <!-- =========================================================
      CREATE MODAL
 ========================================================== -->
-
-<div
-    id="createModal"
-    class="
-        fixed
-        inset-0
-        z-[100]
-        hidden
-        items-center
-        justify-center
-        bg-slate-900/50
-        p-4
-        opacity-0
-        modal-transition
-    "
->
-
-    <div
-        id="createModalContent"
-        class="
-            max-h-[92vh]
-            w-full
-            max-w-4xl
-            overflow-y-auto
-            rounded-2xl
-            bg-white
-            shadow-2xl
-        "
-    >
-
-        <div
-            class="
-                sticky
-                top-0
-                z-10
-                flex
-                items-center
-                justify-between
-                border-b
-                border-slate-100
-                bg-white
-                px-6
-                py-5
-            "
-        >
-
+<div id="createModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 p-4 opacity-0 modal-transition">
+    <div id="createModalContent" class="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+        <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-6 py-5">
             <div>
-
-                <h3 class="text-lg font-bold text-slate-800">
-                    Nouvelle école
-                </h3>
-
+                <h3 class="text-lg font-bold text-slate-800">Nouvelle école</h3>
                 <p class="mt-1 text-sm text-slate-400">
-                    Enregistrer un nouvel établissement et son administrateur.
+                    Enregistrer un nouvel établissement et, facultativement, son administrateur.
                 </p>
-
             </div>
-
-
-            <button
-                id="closeCreateModal"
-                type="button"
-                class="
-                    flex
-                    h-9
-                    w-9
-                    items-center
-                    justify-center
-                    rounded-lg
-                    text-slate-400
-                    hover:bg-slate-100
-                "
-            >
-
+            <button id="closeCreateModal" type="button" class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100">
                 <i class="fa-solid fa-xmark"></i>
-
             </button>
-
         </div>
 
-
-        <form
-            id="createSchoolForm"
-            class="p-6"
-        >
-
-            <!-- ECOLE -->
-
-            <div>
-
+        <form id="createSchoolForm" class="p-6">
+            <div class="mb-8">
                 <div class="mb-5 flex items-center gap-3">
-
-                    <div
-                        class="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-sky-50
-                            text-sky-500
-                        "
-                    >
-
-                        <i class="fa-solid fa-school"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h4 class="font-semibold text-slate-700">
-                            Informations générales
-                        </h4>
-
-                        <p class="text-xs text-slate-400">
-                            Informations principales de l'établissement.
-                        </p>
-
-                    </div>
-
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-500"><i class="fa-solid fa-school"></i></div>
+                    <div><h4 class="font-semibold text-slate-700">Informations générales</h4><p class="text-xs text-slate-400">Informations principales de l'établissement.</p></div>
                 </div>
-
-
-                <div
-                    class="
-                        grid
-                        grid-cols-1
-                        gap-5
-                        md:grid-cols-2
-                    "
-                >
-
-                    <div class="md:col-span-2">
-
-                        <label
-                            for="create_nom"
-                            class="form-label"
-                        >
-                            Nom de l'école *
-                        </label>
-
-                        <input
-                            id="create_nom"
-                            name="nom"
-                            type="text"
-                            required
-                            class="form-input"
-                            placeholder="Ex : Complexe Scolaire La Réussite"
-                        >
-
-                    </div>
-
-
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div class="md:col-span-2"><label for="create_nom" class="form-label">Nom de l'école *</label><input id="create_nom" name="nom" type="text" required class="form-input" placeholder="Ex : Complexe Scolaire La Réussite"></div>
+                    <div><label for="create_code" class="form-label">Code école</label><input id="create_code" name="code" type="text" class="form-input" placeholder="Laisser vide pour génération automatique"></div>
                     <div>
-
-                        <label
-                            for="create_code"
-                            class="form-label"
-                        >
-                            Code école
-                        </label>
-
-                        <input
-                            id="create_code"
-                            name="code"
-                            type="text"
-                            class="form-input"
-                            placeholder="Laisser vide pour génération automatique"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_type"
-                            class="form-label"
-                        >
-                            Type d'établissement
-                        </label>
-
-                        <select
-                            id="create_type"
-                            name="type"
-                            class="form-input"
-                        >
-
-                            <option value="">
-                                Sélectionner
-                            </option>
-
-                            <option value="École primaire">
-                                École primaire
-                            </option>
-
-                            <option value="École secondaire">
-                                École secondaire
-                            </option>
-
-                            <option value="École primaire et secondaire">
-                                École primaire et secondaire
-                            </option>
-
-                            <option value="Institut technique">
-                                Institut technique
-                            </option>
-
-                            <option value="Établissement supérieur">
-                                Établissement supérieur
-                            </option>
-
+                        <label for="create_type" class="form-label">Type d'établissement</label>
+                        <select id="create_type" name="type" class="form-input">
+                            <option value="">Sélectionner</option>
+                            <option value="École primaire">École primaire</option>
+                            <option value="École secondaire">École secondaire</option>
+                            <option value="École primaire et secondaire">École primaire et secondaire</option>
+                            <option value="Institut technique">Institut technique</option>
+                            <option value="Établissement supérieur">Établissement supérieur</option>
                         </select>
-
                     </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_email"
-                            class="form-label"
-                        >
-                            Email
-                        </label>
-
-                        <input
-                            id="create_email"
-                            name="email"
-                            type="email"
-                            class="form-input"
-                            placeholder="contact@ecole.cd"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_telephone"
-                            class="form-label"
-                        >
-                            Téléphone
-                        </label>
-
-                        <input
-                            id="create_telephone"
-                            name="telephone"
-                            type="tel"
-                            class="form-input"
-                            placeholder="+243 ..."
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_siteWeb"
-                            class="form-label"
-                        >
-                            Site web
-                        </label>
-
-                        <input
-                            id="create_siteWeb"
-                            name="siteWeb"
-                            type="url"
-                            class="form-input"
-                            placeholder="https://..."
-                        >
-
-                    </div>
-
-
-                    <div class="md:col-span-2">
-
-                        <label
-                            for="create_description"
-                            class="form-label"
-                        >
-                            Description
-                        </label>
-
-                        <textarea
-                            id="create_description"
-                            name="description"
-                            rows="3"
-                            class="form-input resize-none"
-                            placeholder="Présentation de l'établissement..."
-                        ></textarea>
-
-                    </div>
-
+                    <div><label for="create_email" class="form-label">Email</label><input id="create_email" name="email" type="email" class="form-input" placeholder="contact@ecole.cd"></div>
+                    <div><label for="create_telephone" class="form-label">Téléphone</label><input id="create_telephone" name="telephone" type="tel" class="form-input" placeholder="+243 ..."></div>
+                    <div><label for="create_siteWeb" class="form-label">Site web</label><input id="create_siteWeb" name="siteWeb" type="url" class="form-input" placeholder="https://..."></div>
+                    <div class="md:col-span-2"><label for="create_description" class="form-label">Description</label><textarea id="create_description" name="description" rows="3" class="form-input resize-none"></textarea></div>
                 </div>
-
             </div>
 
-
-            <!-- LOCALISATION -->
+            <div class="border-t border-slate-100 pt-6">
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500"><i class="fa-solid fa-location-dot"></i></div>
+                    <div><h4 class="font-semibold text-slate-700">Localisation</h4><p class="text-xs text-slate-400">Adresse géographique de l'établissement.</p></div>
+                </div>
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div><label for="create_province" class="form-label">Province</label><input id="create_province" name="province" type="text" class="form-input"></div>
+                    <div><label for="create_ville" class="form-label">Ville</label><input id="create_ville" name="ville" type="text" class="form-input"></div>
+                    <div><label for="create_commune" class="form-label">Commune / Territoire</label><input id="create_commune" name="commune" type="text" class="form-input"></div>
+                    <div><label for="create_quartier" class="form-label">Quartier</label><input id="create_quartier" name="quartier" type="text" class="form-input"></div>
+                    <div class="md:col-span-2"><label for="create_adresse" class="form-label">Adresse complète</label><textarea id="create_adresse" name="adresse" rows="3" class="form-input resize-none"></textarea></div>
+                </div>
+            </div>
 
             <div class="mt-7 border-t border-slate-100 pt-6">
-
                 <div class="mb-5 flex items-center gap-3">
-
-                    <div
-                        class="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-indigo-50
-                            text-indigo-500
-                        "
-                    >
-
-                        <i class="fa-solid fa-location-dot"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h4 class="font-semibold text-slate-700">
-                            Localisation
-                        </h4>
-
-                        <p class="text-xs text-slate-400">
-                            Adresse géographique de l'établissement.
-                        </p>
-
-                    </div>
-
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500"><i class="fa-solid fa-user-shield"></i></div>
+                    <div><h4 class="font-semibold text-slate-700">Administrateur de l'école</h4><p class="text-xs text-slate-400">Créer un compte ou rattacher un utilisateur existant.</p></div>
                 </div>
 
-
-                <div
-                    class="
-                        grid
-                        grid-cols-1
-                        gap-5
-                        md:grid-cols-2
-                    "
-                >
-
-                    <div>
-
-                        <label
-                            for="create_province"
-                            class="form-label"
-                        >
-                            Province
+                <div class="space-y-5">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <label class="cursor-pointer rounded-xl border border-slate-200 p-4">
+                            <input type="radio" name="admin_mode" value="new" checked class="mr-2">
+                            <span class="text-sm font-semibold">Créer un nouveau compte</span>
+                            <span class="mt-1 block pl-5 text-xs text-slate-400">Créer l'utilisateur pendant la création de l'école.</span>
                         </label>
-
-                        <input
-                            id="create_province"
-                            name="province"
-                            type="text"
-                            class="form-input"
-                            placeholder="Ex : Kinshasa"
-                        >
-
+                        <label class="cursor-pointer rounded-xl border border-slate-200 p-4">
+                            <input type="radio" name="admin_mode" value="existing" class="mr-2">
+                            <span class="text-sm font-semibold">Utilisateur existant</span>
+                            <span class="mt-1 block pl-5 text-xs text-slate-400">Aucun compte utilisateur ne sera recréé.</span>
+                        </label>
                     </div>
 
-
-                    <div>
-
-                        <label
-                            for="create_ville"
-                            class="form-label"
-                        >
-                            Ville
-                        </label>
-
-                        <input
-                            id="create_ville"
-                            name="ville"
-                            type="text"
-                            class="form-input"
-                            placeholder="Ex : Kinshasa"
-                        >
-
+                    <div id="existingAdminSection" class="hidden">
+                        <label class="form-label">Utilisateur existant *</label>
+                        <div class="relative">
+                            <input id="create_admin_userSearch" type="text" autocomplete="off"
+                                class="form-input"
+                                placeholder="Nom, prénom, postnom, email ou téléphone…">
+                            <input id="create_admin_userId" name="admin_userId" type="hidden">
+                            <div id="create_admin_userResults"
+                                class="absolute left-0 right-0 top-full z-30 mt-2 hidden max-h-72 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl"></div>
+                        </div>
+                        <p id="create_admin_userSelected" class="mt-2 hidden text-xs text-slate-500"></p>
                     </div>
 
-
-                    <div>
-
-                        <label
-                            for="create_commune"
-                            class="form-label"
-                        >
-                            Commune / Territoire
-                        </label>
-
-                        <input
-                            id="create_commune"
-                            name="commune"
-                            type="text"
-                            class="form-input"
-                            placeholder="Ex : Limete"
-                        >
-
+                    <div id="newAdminSection" class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div><label for="create_admin_prenom" class="form-label">Prénom *</label><input id="create_admin_prenom" name="admin_prenom" type="text" class="form-input"></div>
+                        <div><label for="create_admin_nom" class="form-label">Nom *</label><input id="create_admin_nom" name="admin_nom" type="text" class="form-input"></div>
+                        <div><label for="create_admin_postnom" class="form-label">Postnom</label><input id="create_admin_postnom" name="admin_postnom" type="text" class="form-input"></div>
+                        <div><label for="create_admin_pseudo" class="form-label">Pseudo</label><input id="create_admin_pseudo" name="admin_pseudo" type="text" class="form-input"></div>
+                        <div><label for="create_admin_email" class="form-label">Email administrateur *</label><input id="create_admin_email" name="admin_email" type="email" class="form-input"></div>
+                        <div><label for="create_admin_telephone" class="form-label">Téléphone administrateur</label><input id="create_admin_telephone" name="admin_telephone" type="tel" class="form-input"></div>
+                        <div><label for="create_admin_password" class="form-label">Mot de passe *</label><input id="create_admin_password" name="admin_password" type="password" minlength="8" class="form-input"></div>
+                        <div><label for="create_admin_password_confirmation" class="form-label">Confirmation *</label><input id="create_admin_password_confirmation" name="admin_password_confirmation" type="password" minlength="8" class="form-input"></div>
                     </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_quartier"
-                            class="form-label"
-                        >
-                            Quartier
-                        </label>
-
-                        <input
-                            id="create_quartier"
-                            name="quartier"
-                            type="text"
-                            class="form-input"
-                            placeholder="Ex : Kingabwa"
-                        >
-
-                    </div>
-
-
-                    <div class="md:col-span-2">
-
-                        <label
-                            for="create_adresse"
-                            class="form-label"
-                        >
-                            Adresse complète
-                        </label>
-
-                        <textarea
-                            id="create_adresse"
-                            name="adresse"
-                            rows="3"
-                            class="form-input resize-none"
-                            placeholder="Adresse complète de l'établissement..."
-                        ></textarea>
-
-                    </div>
-
                 </div>
-
             </div>
 
-
-            <!-- ADMIN -->
-
-            <div class="mt-7 border-t border-slate-100 pt-6">
-
-                <div class="mb-5 flex items-center gap-3">
-
-                    <div
-                        class="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-emerald-50
-                            text-emerald-500
-                        "
-                    >
-
-                        <i class="fa-solid fa-user-shield"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h4 class="font-semibold text-slate-700">
-                            Administrateur de l'école
-                        </h4>
-
-                        <p class="text-xs text-slate-400">
-                            Compte principal de gestion de l'établissement.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="
-                        grid
-                        grid-cols-1
-                        gap-5
-                        md:grid-cols-2
-                    "
-                >
-
-                    <div>
-
-                        <label
-                            for="create_admin_prenom"
-                            class="form-label"
-                        >
-                            Prénom *
-                        </label>
-
-                        <input
-                            id="create_admin_prenom"
-                            name="admin_prenom"
-                            type="text"
-                            required
-                            class="form-input"
-                            placeholder="Prénom"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_nom"
-                            class="form-label"
-                        >
-                            Nom *
-                        </label>
-
-                        <input
-                            id="create_admin_nom"
-                            name="admin_nom"
-                            type="text"
-                            required
-                            class="form-input"
-                            placeholder="Nom"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_postnom"
-                            class="form-label"
-                        >
-                            Postnom
-                        </label>
-
-                        <input
-                            id="create_admin_postnom"
-                            name="admin_postnom"
-                            type="text"
-                            class="form-input"
-                            placeholder="Postnom"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_pseudo"
-                            class="form-label"
-                        >
-                            Pseudo
-                        </label>
-
-                        <input
-                            id="create_admin_pseudo"
-                            name="admin_pseudo"
-                            type="text"
-                            class="form-input"
-                            placeholder="Pseudo"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_email"
-                            class="form-label"
-                        >
-                            Email administrateur *
-                        </label>
-
-                        <input
-                            id="create_admin_email"
-                            name="admin_email"
-                            type="email"
-                            required
-                            class="form-input"
-                            placeholder="admin@ecole.cd"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_telephone"
-                            class="form-label"
-                        >
-                            Téléphone administrateur
-                        </label>
-
-                        <input
-                            id="create_admin_telephone"
-                            name="admin_telephone"
-                            type="tel"
-                            class="form-input"
-                            placeholder="+243 ..."
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_password"
-                            class="form-label"
-                        >
-                            Mot de passe *
-                        </label>
-
-                        <input
-                            id="create_admin_password"
-                            name="admin_password"
-                            type="password"
-                            required
-                            minlength="8"
-                            class="form-input"
-                            placeholder="Minimum 8 caractères"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            for="create_admin_password_confirmation"
-                            class="form-label"
-                        >
-                            Confirmation *
-                        </label>
-
-                        <input
-                            id="create_admin_password_confirmation"
-                            name="admin_password_confirmation"
-                            type="password"
-                            required
-                            minlength="8"
-                            class="form-input"
-                            placeholder="Confirmer le mot de passe"
-                        >
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="createFormError"
-                class="
-                    mt-6
-                    hidden
-                    rounded-xl
-                    border
-                    border-red-200
-                    bg-red-50
-                    px-4
-                    py-3
-                    text-sm
-                    text-red-700
-                "
-            ></div>
-
-
-            <div
-                class="
-                    mt-7
-                    flex
-                    flex-col-reverse
-                    gap-3
-                    border-t
-                    border-slate-100
-                    pt-5
-                    sm:flex-row
-                    sm:justify-end
-                "
-            >
-
-                <button
-                    id="cancelCreateButton"
-                    type="button"
-                    class="
-                        rounded-xl
-                        border
-                        border-slate-200
-                        px-5
-                        py-2.5
-                        text-sm
-                        font-semibold
-                        text-slate-600
-                        hover:bg-slate-50
-                    "
-                >
-                    Annuler
+            <div id="createFormError" class="mt-6 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+            <div class="mt-7 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+                <button id="cancelCreateButton" type="button" class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Annuler</button>
+                <button id="submitCreateButton" type="submit" class="rounded-xl bg-sky-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-sky-600">
+                    <i class="fa-solid fa-school mr-2"></i>Créer l'école
                 </button>
-
-
-                <button
-                    id="submitCreateButton"
-                    type="submit"
-                    class="
-                        rounded-xl
-                        bg-sky-500
-                        px-5
-                        py-2.5
-                        text-sm
-                        font-semibold
-                        text-white
-                        hover:bg-sky-600
-                    "
-                >
-
-                    <i
-                        class="fa-solid fa-school mr-2"
-                    ></i>
-
-                    Créer l'école
-
-                </button>
-
             </div>
-
         </form>
-
     </div>
-
 </div>
-
 
 <!-- =========================================================
      CONFIRMATION MODAL

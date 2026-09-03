@@ -1371,48 +1371,206 @@
     |--------------------------------------------------------------------------
     */
 
-    function openCreateModal() {
+    let adminUserSearchTimer = null
 
+    function updateSchoolAdminMode() {
+        const mode =
+            document.querySelector('input[name="admin_mode"]:checked')?.value ||
+            'new'
+
+        document
+            .getElementById('newAdminSection')
+            ?.classList.toggle('hidden', mode !== 'new')
+
+        document
+            .getElementById('existingAdminSection')
+            ?.classList.toggle('hidden', mode !== 'existing')
+
+        ;[
+            'create_admin_prenom',
+            'create_admin_nom',
+            'create_admin_email',
+            'create_admin_password',
+            'create_admin_password_confirmation',
+        ].forEach(
+            id => {
+                const field = document.getElementById(id)
+                if (field) field.required = mode === 'new'
+            }
+        )
+    }
+
+    function renderSchoolAdminUsers(items) {
+        const container =
+            document.getElementById(
+                'create_admin_userResults'
+            )
+
+        if (!container) return
+
+        container.innerHTML =
+            items.length
+                ? items.map(
+                    user => `
+                        <button
+                            type="button"
+                            data-admin-user-id="${user.id}"
+                            class="block w-full border-b border-slate-100 px-4 py-3 text-left last:border-0 hover:bg-slate-50"
+                        >
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-800">
+                                        ${escapeHtml(`${user.prenom || ''} ${user.nom || ''}`.trim() || 'Utilisateur')}
+                                    </div>
+                                    <div class="mt-1 text-xs text-slate-400">
+                                        ${escapeHtml(user.email || user.telephone || '')}
+                                    </div>
+                                </div>
+                                <span class="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-500">
+                                    ${escapeHtml(user.systemRole || 'USER')}
+                                </span>
+                            </div>
+                        </button>
+                    `
+                ).join('')
+                : `<div class="px-4 py-3 text-sm text-slate-400">Aucun utilisateur trouvé.</div>`
+
+        container.classList.remove('hidden')
+
+        container
+            .querySelectorAll('[data-admin-user-id]')
+            .forEach(
+                button => {
+                    button.addEventListener(
+                        'click',
+                        () => {
+                            const user =
+                                items.find(
+                                    item =>
+                                        String(item.id) ===
+                                        String(button.dataset.adminUserId)
+                                )
+
+                            if (!user) return
+
+                            document
+                                .getElementById(
+                                    'create_admin_userId'
+                                )
+                                .value = user.id
+
+                            document
+                                .getElementById(
+                                    'create_admin_userSearch'
+                                )
+                                .value =
+                                    `${user.prenom || ''} ${user.nom || ''}`.trim()
+
+                            const selected =
+                                document.getElementById(
+                                    'create_admin_userSelected'
+                                )
+
+                            selected.textContent =
+                                `Utilisateur sélectionné : ${`${user.prenom || ''} ${user.nom || ''}`.trim()} • ${user.email || 'sans email'}`
+
+                            selected.classList.remove('hidden')
+                            container.classList.add('hidden')
+                        }
+                    )
+                }
+            )
+    }
+
+    async function searchSchoolAdminUsers(keyword) {
+    const value =
+        String(keyword || '').trim()
+
+    if (value.length < 2) {
+        document
+            .getElementById(
+                'create_admin_userResults'
+            )
+            ?.classList.add('hidden')
+
+        return
+    }
+
+    const response =
+        await apiRequest(
+            `/api/super-admin/utilisateurs/search?keyword=${encodeURIComponent(value)}&limit=10`
+        )
+
+    const result =
+        await parseResponse(response)
+
+    if (!response.ok || !result?.success) {
+        throw new Error(
+            result?.message ||
+            'Impossible de rechercher les utilisateurs.'
+        )
+    }
+
+    renderSchoolAdminUsers(
+        result.data || []
+    )
+}
+
+    function openCreateModal() {
         const modal =
             document.getElementById(
                 'createModal'
             )
-
 
         const content =
             document.getElementById(
                 'createModalContent'
             )
 
-
         document
             .getElementById(
                 'createSchoolForm'
             )
-            .reset()
-
+            ?.reset()
 
         document
             .getElementById(
                 'createFormError'
             )
-            .classList.add(
-                'hidden'
+            ?.classList.add('hidden')
+
+        document
+            .getElementById(
+                'create_admin_userId'
+            )
+            .value = ''
+
+        document
+            .getElementById(
+                'create_admin_userSelected'
+            )
+            ?.classList.add('hidden')
+
+        document
+            .getElementById(
+                'create_admin_userResults'
+            )
+            ?.classList.add('hidden')
+
+        const mode =
+            document.querySelector(
+                'input[name="admin_mode"][value="new"]'
             )
 
+        if (mode) mode.checked = true
 
-        modal.classList.remove(
-            'hidden'
-        )
+        updateSchoolAdminMode()
 
-        modal.classList.add(
-            'flex'
-        )
-
+        modal.classList.remove('hidden')
+        modal.classList.add('flex')
 
         setTimeout(
             () => {
-
                 modal.classList.remove(
                     'opacity-0'
                 )
@@ -1420,27 +1578,21 @@
                 content.classList.add(
                     'scale-100'
                 )
-
             },
             10
         )
-
     }
 
-
     function closeCreateModal() {
-
         const modal =
             document.getElementById(
                 'createModal'
             )
 
-
         const content =
             document.getElementById(
                 'createModalContent'
             )
-
 
         modal.classList.add(
             'opacity-0'
@@ -1450,10 +1602,8 @@
             'scale-100'
         )
 
-
         setTimeout(
             () => {
-
                 modal.classList.remove(
                     'flex'
                 )
@@ -1461,287 +1611,356 @@
                 modal.classList.add(
                     'hidden'
                 )
-
             },
             200
         )
-
     }
 
-
-    async function createSchool(
-        event
-    ) {
-
+    async function createSchool(event) {
         event.preventDefault()
 
-
-        const form =
-            event.target
-
-
-        const submitButton =
-            document.getElementById(
-                'submitCreateButton'
+        const formData =
+            new FormData(
+                event.target
             )
-
 
         const errorElement =
             document.getElementById(
                 'createFormError'
             )
 
+        const submitButton =
+            document.getElementById(
+                'submitCreateButton'
+            )
+
+        const adminMode =
+            String(
+                formData.get(
+                    'admin_mode'
+                ) ||
+                'new'
+            )
 
         errorElement.classList.add(
             'hidden'
         )
 
+        errorElement.textContent =
+            ''
 
-        const formData =
-            new FormData(
-                form
-            )
+        const payload = {
+            nom:
+                String(
+                    formData.get('nom') ||
+                    ''
+                ).trim(),
 
+            code:
+                String(
+                    formData.get('code') ||
+                    ''
+                ).trim(),
 
-        const adminPassword =
-            String(
-                formData.get(
-                    'admin_password'
-                ) || ''
-            )
+            type:
+                String(
+                    formData.get('type') ||
+                    ''
+                ).trim(),
 
+            email:
+                String(
+                    formData.get('email') ||
+                    ''
+                ).trim(),
 
-        const confirmation =
-            String(
-                formData.get(
-                    'admin_password_confirmation'
-                ) || ''
-            )
+            telephone:
+                String(
+                    formData.get('telephone') ||
+                    ''
+                ).trim(),
 
+            siteWeb:
+                String(
+                    formData.get('siteWeb') ||
+                    ''
+                ).trim(),
 
-        if (
-            adminPassword !==
-            confirmation
-        ) {
+            description:
+                String(
+                    formData.get(
+                        'description'
+                    ) ||
+                    ''
+                ).trim(),
 
+            province:
+                String(
+                    formData.get('province') ||
+                    ''
+                ).trim(),
+
+            ville:
+                String(
+                    formData.get('ville') ||
+                    ''
+                ).trim(),
+
+            commune:
+                String(
+                    formData.get('commune') ||
+                    ''
+                ).trim(),
+
+            quartier:
+                String(
+                    formData.get('quartier') ||
+                    ''
+                ).trim(),
+
+            adresse:
+                String(
+                    formData.get('adresse') ||
+                    ''
+                ).trim(),
+        }
+
+        if (!payload.nom) {
             errorElement.textContent =
-                'Les deux mots de passe administrateur ne correspondent pas.'
-
+                'Le nom de l’école est obligatoire.'
 
             errorElement.classList.remove(
                 'hidden'
             )
 
             return
-
         }
 
+        if (
+            adminMode ===
+            'existing'
+        ) {
+            const userId =
+                Number(
+                    formData.get(
+                        'admin_userId'
+                    ) ||
+                    0
+                )
 
-        const payload = {
+            if (!userId) {
+                errorElement.textContent =
+                    'Veuillez sélectionner un utilisateur existant.'
 
-            nom:
-                formData.get(
-                    'nom'
-                ),
+                errorElement.classList.remove(
+                    'hidden'
+                )
 
-            code:
-                formData.get(
-                    'code'
-                ),
+                return
+            }
 
-            type:
-                formData.get(
-                    'type'
-                ),
+            payload.admin = {
+                mode:
+                    'existing',
 
-            email:
-                formData.get(
-                    'email'
-                ),
+                userId,
+            }
+        } else {
+            const password =
+                String(
+                    formData.get(
+                        'admin_password'
+                    ) ||
+                    ''
+                )
 
-            telephone:
-                formData.get(
-                    'telephone'
-                ),
+            const confirmation =
+                String(
+                    formData.get(
+                        'admin_password_confirmation'
+                    ) ||
+                    ''
+                )
 
-            siteWeb:
-                formData.get(
-                    'siteWeb'
-                ),
+            if (
+                password.length <
+                8
+            ) {
+                errorElement.textContent =
+                    'Le mot de passe administrateur doit contenir au moins 8 caractères.'
 
-            description:
-                formData.get(
-                    'description'
-                ),
+                errorElement.classList.remove(
+                    'hidden'
+                )
 
-            province:
-                formData.get(
-                    'province'
-                ),
+                return
+            }
 
-            ville:
-                formData.get(
-                    'ville'
-                ),
+            if (
+                password !==
+                confirmation
+            ) {
+                errorElement.textContent =
+                    'Les mots de passe administrateur ne correspondent pas.'
 
-            commune:
-                formData.get(
-                    'commune'
-                ),
+                errorElement.classList.remove(
+                    'hidden'
+                )
 
-            quartier:
-                formData.get(
-                    'quartier'
-                ),
+                return
+            }
 
-            adresse:
-                formData.get(
-                    'adresse'
-                ),
-
-            admin: {
+            payload.admin = {
+                mode:
+                    'new',
 
                 prenom:
-                    formData.get(
-                        'admin_prenom'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_prenom'
+                        ) ||
+                        ''
+                    ).trim(),
 
                 nom:
-                    formData.get(
-                        'admin_nom'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_nom'
+                        ) ||
+                        ''
+                    ).trim(),
 
                 postnom:
-                    formData.get(
-                        'admin_postnom'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_postnom'
+                        ) ||
+                        ''
+                    ).trim(),
 
                 pseudo:
-                    formData.get(
-                        'admin_pseudo'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_pseudo'
+                        ) ||
+                        ''
+                    ).trim(),
 
                 email:
-                    formData.get(
-                        'admin_email'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_email'
+                        ) ||
+                        ''
+                    ).trim(),
 
                 telephone:
-                    formData.get(
-                        'admin_telephone'
-                    ),
+                    String(
+                        formData.get(
+                            'admin_telephone'
+                        ) ||
+                        ''
+                    ).trim(),
 
-                password:
-                    adminPassword,
+                password,
 
-            },
-
+                password_confirmation:
+                    confirmation,
+            }
         }
-
 
         submitButton.disabled =
             true
 
-
         submitButton.innerHTML =
-            `
-                <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-                Création...
-            `
-
+            `<i class="fa-solid fa-spinner fa-spin mr-2"></i>${adminMode === 'existing' ? 'Création et rattachement...' : 'Création...'}`
 
         try {
-
             const response =
                 await apiRequest(
                     '/api/super-admin/ecoles',
                     {
-
-                        method: 'POST',
+                        method:
+                            'POST',
 
                         headers: {
-
                             'Content-Type':
                                 'application/json',
-
                         },
 
                         body:
                             JSON.stringify(
                                 payload
                             ),
-
                     }
                 )
-
 
             const result =
                 await parseResponse(
                     response
                 )
 
-
             if (
                 !response.ok ||
                 !result?.success
             ) {
-
-                throw new Error(
+                let message =
                     result?.message ||
                     'Impossible de créer l’école.'
-                )
 
+                if (
+                    Array.isArray(
+                        result?.errors
+                    ) &&
+                    result.errors.length
+                ) {
+                    message =
+                        result.errors
+                            .map(
+                                error =>
+                                    error.message
+                            )
+                            .join(' ')
+                }
+
+                throw new Error(
+                    message
+                )
             }
 
-
             closeCreateModal()
-
 
             showSuccess(
                 result.message ||
                 'École créée avec succès.'
             )
 
-
             await refreshAll()
-
         } catch (
             error
         ) {
-
             console.error(
                 'Création école:',
                 error
             )
 
-
             errorElement.textContent =
                 error.message ||
-                'Une erreur est survenue.'
-
+                'Une erreur est survenue lors de la création.'
 
             errorElement.classList.remove(
                 'hidden'
             )
-
         } finally {
-
             submitButton.disabled =
                 false
 
-
             submitButton.innerHTML =
-                `
-                    <i class="fa-solid fa-school mr-2"></i>
-                    Créer l'école
-                `
-
+                '<i class="fa-solid fa-school mr-2"></i>Créer l’école'
         }
-
     }
 
-
-    /*
+/*
     |--------------------------------------------------------------------------
     | DETAILS
     |--------------------------------------------------------------------------
@@ -3590,3 +3809,60 @@
 
         }
     )
+
+    document
+        .querySelectorAll(
+            'input[name="admin_mode"]'
+        )
+        .forEach(
+            input =>
+                input.addEventListener(
+                    'change',
+                    updateSchoolAdminMode
+                )
+        )
+
+    document
+        .getElementById(
+            'create_admin_userSearch'
+        )
+        ?.addEventListener(
+            'input',
+            event => {
+                clearTimeout(
+                    adminUserSearchTimer
+                )
+
+                adminUserSearchTimer =
+                    setTimeout(
+                        () =>
+                            searchSchoolAdminUsers(
+                                event.target.value
+                            ).catch(
+                                error =>
+                                    showPageError(
+                                        error.message
+                                    )
+                            ),
+                        250
+                    )
+            }
+        )
+
+    document.addEventListener(
+        'click',
+        event => {
+            if (
+                !event.target.closest(
+                    '#create_admin_userSearch, #create_admin_userResults'
+                )
+            ) {
+                document
+                    .getElementById(
+                        'create_admin_userResults'
+                    )
+                    ?.classList.add('hidden')
+            }
+        }
+    )
+

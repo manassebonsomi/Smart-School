@@ -12,6 +12,10 @@ export default class extends BaseSchema {
       table.bigIncrements('id')
       table.bigInteger('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE')
       table.bigInteger('ecole_id').unsigned().notNullable().references('id').inTable('ecoles').onDelete('CASCADE')
+      table
+          .string('role')
+          .notNullable()
+          .defaultTo('USER')
       table.boolean('active').defaultTo(true)
       table.timestamp('created_at', { useTz:true }).notNullable()
       table.timestamp('updated_at', { useTz:true }).notNullable()

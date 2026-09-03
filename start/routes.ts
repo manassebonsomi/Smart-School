@@ -8,7 +8,9 @@ import AuthController from '#controllers/auth_controller'
 
 import ReportsController from '#controllers/super_admin/reports_controller'
 import StatisticsController from '#controllers/super_admin/statistics_controller'
-const SchoolAdminDashboardController = () => import('#controllers/school_admin/dashboard_controller')
+
+const SchoolAdminDashboardController = () =>
+  import('#controllers/school_admin/dashboard_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -244,10 +246,6 @@ router
 |--------------------------------------------------------------------------
 | PAGE DE CONNEXION
 |--------------------------------------------------------------------------
-|
-| /login redirige vers la page d'accueil.
-|
-|--------------------------------------------------------------------------
 */
 
 router
@@ -263,17 +261,6 @@ router
 /*
 |--------------------------------------------------------------------------
 | VÉRIFICATION E-MAIL
-|--------------------------------------------------------------------------
-|
-| Le mail envoyé contient :
-|
-| /verify-email/:token
-|
-| Cette route affiche la page de vérification.
-| La page appellera ensuite :
-|
-| GET /api/auth/verify-email/:token
-|
 |--------------------------------------------------------------------------
 */
 
@@ -299,25 +286,17 @@ router
 | PAGES SUPER ADMIN
 |--------------------------------------------------------------------------
 |
-| IMPORTANT :
+| Ces routes rendent uniquement les vues Edge.
 |
-| Ces routes servent uniquement les vues Edge.
+| La sécurité des données est assurée par :
 |
-| Elles ne doivent PAS utiliser ici :
+|   /api/super-admin/*
 |
-| middleware.auth({ guards: ['web'] })
+| avec :
 |
-| car la connexion actuelle du Super Admin utilise un access token
-| API stocké côté navigateur.
-|
-| La sécurité des données est assurée par les routes :
-|
-| /api/super-admin/*
-|
-| protégées par :
-|
-| 1. auth(api)
-| 2. superAdmin
+|   auth(api)
+|   +
+|   superAdmin
 |
 |--------------------------------------------------------------------------
 */
@@ -407,15 +386,22 @@ router
       .as('super-admin.ecoles.show')
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL
+    |--------------------------------------------------------------------------
+    */
+
     router
-  .get(
-    '/profil',
-    ({ view }) =>
-      view.render(
-        'pages/super-admin/profil'
+      .get(
+        '/profil',
+        ({ view }) => {
+          return view.render(
+            'pages/super-admin/profil'
+          )
+        }
       )
-  )
-  .as('super-admin.profil')
+      .as('super-admin.profil')
 
 
     /*
@@ -540,11 +526,6 @@ router
 |   +
 |   superAdmin
 |
-| Exemple :
-|
-| GET /api/super-admin/statistiques
-| Authorization: Bearer <token>
-|
 |--------------------------------------------------------------------------
 */
 
@@ -653,6 +634,35 @@ router
       .as('dashboard.systemHealth')
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL SUPER ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    router
+      .get(
+        '/profile',
+        [SuperAdminController, 'profile']
+      )
+      .as('superAdmin.profile')
+
+
+    router
+      .put(
+        '/profile',
+        [SuperAdminController, 'updateProfile']
+      )
+      .as('superAdmin.profile.update')
+
+
+    router
+      .get(
+        '/check-access',
+        [SuperAdminController, 'checkAccess']
+      )
+      .as('superAdmin.checkAccess')
+
 
     /*
     |--------------------------------------------------------------------------
@@ -676,12 +686,44 @@ router
       .as('ecoles.store')
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | RECHERCHE RAPIDE DES ÉCOLES
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT :
+    | Cette route doit être placée avant :
+    |
+    |   /ecoles/:id
+    |
+    | afin que "search" ne soit jamais interprété
+    | comme un identifiant d'école.
+    |
+    */
+
+    router
+      .get(
+        '/ecoles/search',
+        [EcoleController, 'search']
+      )
+      .as('ecoles.search')
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ANCIEN ENDPOINT DE RECHERCHE
+    |--------------------------------------------------------------------------
+    |
+    | Conservé pour compatibilité avec les anciens scripts.
+    |
+    */
+
     router
       .get(
         '/ecoles-search',
         [EcoleController, 'search']
       )
-      .as('ecoles.search')
+      .as('ecoles.legacySearch')
 
 
     router
@@ -758,7 +800,7 @@ router
 
     /*
     |--------------------------------------------------------------------------
-    | ADMINISTRATEURS
+    | UTILISATEURS / ADMINISTRATEURS
     |--------------------------------------------------------------------------
     */
 
@@ -785,6 +827,55 @@ router
       )
       .as('administrateurs.store')
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RECHERCHE DES UTILISATEURS EXISTANTS
+    |--------------------------------------------------------------------------
+    |
+    | Cette route est indépendante du rôle système et de
+    | l'appartenance actuelle aux écoles.
+    |
+    | Elle permet de rechercher :
+    |
+    | - parents
+    | - enseignants
+    | - administrateurs
+    | - Super Admin
+    | - autres utilisateurs
+    |
+    | pour ensuite les rattacher à une école avec
+    | le rôle ADMIN_ECOLE.
+    |
+    */
+
+    router
+      .get(
+        '/utilisateurs/search',
+        [AdministrateurController, 'searchUsers']
+      )
+      .as('utilisateurs.search')
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMINISTRATEURS D'UNE ÉCOLE
+    |--------------------------------------------------------------------------
+    */
+
+    router
+      .get(
+        '/ecoles/:id/administrateurs',
+        [AdministrateurController, 'getBySchool']
+      )
+      .as('ecoles.administrateurs')
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMINISTRATEUR PAR ID
+    |--------------------------------------------------------------------------
+    */
 
     router
       .get(
@@ -856,14 +947,6 @@ router
         [AdministrateurController, 'destroy']
       )
       .as('administrateurs.destroy')
-
-
-    router
-      .get(
-        '/ecoles/:id/administrateurs',
-        [AdministrateurController, 'getBySchool']
-      )
-      .as('ecoles.administrateurs')
 
 
     /*
@@ -949,23 +1032,6 @@ router
       )
       .as('reports.download')
 
-    
-    router
-  .get(
-    '/profile',
-    [SuperAdminController, 'profile']
-  )
-  .as('superAdmin.profile')
-
-router
-  .put(
-    '/profile',
-    [SuperAdminController, 'updateProfile']
-  )
-  .as('superAdmin.profile.update')
-
-  
-
   })
   .prefix('/api/super-admin')
   .use(
@@ -980,12 +1046,28 @@ router
 
 /*
 |--------------------------------------------------------------------------
-| Pages School Admin
+| PAGES SCHOOL ADMIN
+|--------------------------------------------------------------------------
+|
+| IMPORTANT :
+|
+| Ces pages sont protégées par :
+|
+|   auth(web)
+|   +
+|   schoolAdmin
+|
 |--------------------------------------------------------------------------
 */
 
 router
   .group(() => {
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
 
     router
       .get(
@@ -994,108 +1076,155 @@ router
       )
       .as('schoolAdmin.dashboard')
 
+
     /*
-     * Ces routes sont provisoires.
-     * Elles seront remplacées progressivement
-     * par les vrais controllers/pages des modules.
-     */
+    |--------------------------------------------------------------------------
+    | MODULES
+    |--------------------------------------------------------------------------
+    |
+    | Ces routes sont provisoires.
+    | Elles seront progressivement remplacées par
+    | les vrais controllers/modules.
+    |
+    */
 
     router
-      .get('/ecole', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/ecole',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/eleves', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/enseignants', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/eleves',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/classes', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/matieres', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/enseignants',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/evaluations', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/notes', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/classes',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/presences', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/devoirs', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/matieres',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/bulletins', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/emploi-du-temps', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/evaluations',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
-    router
-      .get('/communiques', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
-      )
 
     router
-      .get('/paiements', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/notes',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
+
     router
-      .get('/parametres', async ({ response }) =>
-        response.redirect(
-          '/school-admin/dashboard'
-        )
+      .get(
+        '/presences',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/devoirs',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/bulletins',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/emploi-du-temps',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/communiques',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/paiements',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
+      )
+
+
+    router
+      .get(
+        '/parametres',
+        async ({ response }) =>
+          response.redirect(
+            '/school-admin/dashboard'
+          )
       )
 
   })
@@ -1112,12 +1241,18 @@ router
 
 /*
 |--------------------------------------------------------------------------
-| API School Admin
+| API SCHOOL ADMIN
 |--------------------------------------------------------------------------
 */
 
 router
   .group(() => {
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
 
     router
       .get(
@@ -1126,12 +1261,26 @@ router
       )
       .as('schoolAdmin.api.dashboard')
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | ÉCOLES ASSOCIÉES
+    |--------------------------------------------------------------------------
+    */
+
     router
       .get(
         '/schools',
         [SchoolAdminDashboardController, 'schools']
       )
       .as('schoolAdmin.api.schools')
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ÉCOLE ACTIVE
+    |--------------------------------------------------------------------------
+    */
 
     router
       .get(
@@ -1151,13 +1300,29 @@ router
     middleware.schoolAdmin()
   )
 
-  router
-  .get('/choisir-ecole', async ({ view, auth, response }) => {
-    const user = await auth.authenticateUsing(['web'])
 
-    return view.render(
-      'pages/auth/choisir_ecole',
-      { user }
-    )
-  })
+/*
+|--------------------------------------------------------------------------
+| CHOIX D'ÉCOLE
+|--------------------------------------------------------------------------
+|
+| Cette page sert lorsque l'utilisateur possède plusieurs
+| écoles actives.
+|
+| Le choix réel est ensuite effectué via :
+|
+| PATCH /api/auth/switch-school
+|
+|--------------------------------------------------------------------------
+*/
+
+router
+  .get(
+    '/choisir-ecole',
+    ({ view }) => {
+      return view.render(
+        'pages/auth/choisir_ecole'
+      )
+    }
+  )
   .as('choisirEcole')

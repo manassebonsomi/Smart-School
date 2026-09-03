@@ -51,9 +51,13 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
+    'superAdmin.checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.store': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
+    'ecoles.legacySearch': { paramsTuple?: []; params?: {} }
     'ecoles.statistics': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.canDelete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -66,6 +70,8 @@ export type ScannedRoutes = {
     'administrateurs.statistics': { paramsTuple?: []; params?: {} }
     'administrateurs.index': { paramsTuple?: []; params?: {} }
     'administrateurs.store': { paramsTuple?: []; params?: {} }
+    'utilisateurs.search': { paramsTuple?: []; params?: {} }
+    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.belongsToSchool': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'ecoleId': ParamValue} }
     'administrateurs.switchSchool': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -75,7 +81,6 @@ export type ScannedRoutes = {
     'administrateurs.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'statistics.index': { paramsTuple?: []; params?: {} }
     'statistics.overview': { paramsTuple?: []; params?: {} }
     'statistics.schools': { paramsTuple?: []; params?: {} }
@@ -85,8 +90,6 @@ export type ScannedRoutes = {
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.store': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
-    'superAdmin.profile': { paramsTuple?: []; params?: {} }
-    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
@@ -129,18 +132,22 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'superAdmin.checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
+    'ecoles.legacySearch': { paramsTuple?: []; params?: {} }
     'ecoles.statistics': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.canDelete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.statistics': { paramsTuple?: []; params?: {} }
     'administrateurs.index': { paramsTuple?: []; params?: {} }
+    'utilisateurs.search': { paramsTuple?: []; params?: {} }
+    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.belongsToSchool': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'ecoleId': ParamValue} }
     'administrateurs.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'statistics.index': { paramsTuple?: []; params?: {} }
     'statistics.overview': { paramsTuple?: []; params?: {} }
     'statistics.schools': { paramsTuple?: []; params?: {} }
@@ -149,7 +156,6 @@ export type ScannedRoutes = {
     'statistics.activities': { paramsTuple?: []; params?: {} }
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
-    'superAdmin.profile': { paramsTuple?: []; params?: {} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
@@ -192,18 +198,22 @@ export type ScannedRoutes = {
     'dashboard.monthlySchools': { paramsTuple?: []; params?: {} }
     'dashboard.monthlyUsers': { paramsTuple?: []; params?: {} }
     'dashboard.systemHealth': { paramsTuple?: []; params?: {} }
+    'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'superAdmin.checkAccess': { paramsTuple?: []; params?: {} }
     'ecoles.index': { paramsTuple?: []; params?: {} }
     'ecoles.search': { paramsTuple?: []; params?: {} }
+    'ecoles.legacySearch': { paramsTuple?: []; params?: {} }
     'ecoles.statistics': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.canDelete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'ecoles.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.statistics': { paramsTuple?: []; params?: {} }
     'administrateurs.index': { paramsTuple?: []; params?: {} }
+    'utilisateurs.search': { paramsTuple?: []; params?: {} }
+    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.exists': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.belongsToSchool': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'ecoleId': ParamValue} }
     'administrateurs.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'ecoles.administrateurs': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'statistics.index': { paramsTuple?: []; params?: {} }
     'statistics.overview': { paramsTuple?: []; params?: {} }
     'statistics.schools': { paramsTuple?: []; params?: {} }
@@ -212,7 +222,6 @@ export type ScannedRoutes = {
     'statistics.activities': { paramsTuple?: []; params?: {} }
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
-    'superAdmin.profile': { paramsTuple?: []; params?: {} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
@@ -245,9 +254,9 @@ export type ScannedRoutes = {
     'administrateurs.activate': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PUT: {
+    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
     'ecoles.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
-    'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
   }
   DELETE: {
     'ecoles.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
