@@ -8,6 +8,7 @@ import AuthController from '#controllers/auth_controller'
 
 import ReportsController from '#controllers/super_admin/reports_controller'
 import StatisticsController from '#controllers/super_admin/statistics_controller'
+const SchoolAdminDashboardController = () => import('#controllers/school_admin/dashboard_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -975,3 +976,188 @@ router
   .use(
     middleware.superAdmin()
   )
+
+
+/*
+|--------------------------------------------------------------------------
+| Pages School Admin
+|--------------------------------------------------------------------------
+*/
+
+router
+  .group(() => {
+
+    router
+      .get(
+        '/dashboard',
+        [SchoolAdminDashboardController, 'dashboardPage']
+      )
+      .as('schoolAdmin.dashboard')
+
+    /*
+     * Ces routes sont provisoires.
+     * Elles seront remplacées progressivement
+     * par les vrais controllers/pages des modules.
+     */
+
+    router
+      .get('/ecole', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/eleves', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/enseignants', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/classes', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/matieres', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/evaluations', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/notes', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/presences', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/devoirs', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/bulletins', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/emploi-du-temps', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/communiques', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/paiements', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+    router
+      .get('/parametres', async ({ response }) =>
+        response.redirect(
+          '/school-admin/dashboard'
+        )
+      )
+
+  })
+  .prefix('/school-admin')
+  .use(
+    middleware.auth({
+      guards: ['web'],
+    })
+  )
+  .use(
+    middleware.schoolAdmin()
+  )
+
+
+/*
+|--------------------------------------------------------------------------
+| API School Admin
+|--------------------------------------------------------------------------
+*/
+
+router
+  .group(() => {
+
+    router
+      .get(
+        '/dashboard',
+        [SchoolAdminDashboardController, 'dashboard']
+      )
+      .as('schoolAdmin.api.dashboard')
+
+    router
+      .get(
+        '/schools',
+        [SchoolAdminDashboardController, 'schools']
+      )
+      .as('schoolAdmin.api.schools')
+
+    router
+      .get(
+        '/active-school',
+        [SchoolAdminDashboardController, 'activeSchool']
+      )
+      .as('schoolAdmin.api.activeSchool')
+
+  })
+  .prefix('/api/school-admin')
+  .use(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
+  .use(
+    middleware.schoolAdmin()
+  )
+
+  router
+  .get('/choisir-ecole', async ({ view, auth, response }) => {
+    const user = await auth.authenticateUsing(['web'])
+
+    return view.render(
+      'pages/auth/choisir_ecole',
+      { user }
+    )
+  })
+  .as('choisirEcole')

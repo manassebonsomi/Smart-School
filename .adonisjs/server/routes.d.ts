@@ -87,6 +87,11 @@ export type ScannedRoutes = {
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'superAdmin.profile': { paramsTuple?: []; params?: {} }
     'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'home': { paramsTuple?: []; params?: {} }
@@ -145,6 +150,11 @@ export type ScannedRoutes = {
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'home': { paramsTuple?: []; params?: {} }
@@ -203,6 +213,11 @@ export type ScannedRoutes = {
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'superAdmin.profile': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'password.reset.step1.submit': { paramsTuple?: []; params?: {} }

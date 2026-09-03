@@ -11,6 +11,9 @@
 import router from '@adonisjs/core/services/router'
 import server from '@adonisjs/core/services/server'
 
+const SchoolAdminMiddleware = () =>
+  import('#middleware/school_admin_middleware')
+
 /**
  * The error handler is used to convert an exception
  * to an HTTP response.
@@ -49,4 +52,5 @@ export const middleware = router.named({
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
   superAdmin: () => import('#middleware/super_admin_middleware'),
+  schoolAdmin: SchoolAdminMiddleware,
 })

@@ -8,6 +8,9 @@ export const controllers = {
   ForgotPasswords: () => import('#controllers/forgot_passwords_controller'),
   GoogleAuths: () => import('#controllers/google_auths_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
+  schoolAdmin: {
+    Dashboard: () => import('#controllers/school_admin/dashboard_controller'),
+  },
   Session: () => import('#controllers/session_controller'),
   superAdmin: {
     Administrateurs: () => import('#controllers/super_admin/administrateurs_controller'),

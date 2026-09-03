@@ -173,250 +173,346 @@ export default class AuthService {
    * CONNEXION
    * ==========================================================================
    */
-  async login(payload: any) {
+async login(payload: any) {
+  const email = String(payload.email)
+    .trim()
+    .toLowerCase()
 
-    const email = String(payload.email)
-      .trim()
-      .toLowerCase()
+  /**
+   * ==========================================================================
+   * VÉRIFICATION DES IDENTIFIANTS
+   * ==========================================================================
+   */
+  let user: User
 
+  try {
+    user = await User.verifyCredentials(
+      email,
+      payload.password
+    )
+  } catch {
+    throw new Error(
+      'Adresse e-mail ou mot de passe incorrect.'
+    )
+  }
 
-    /**
-     * AuthFinder protège la vérification des identifiants
-     * contre les attaques de type timing.
-     */
-    let user: User
-
-    try {
-
-      user = await User.verifyCredentials(
-        email,
-        payload.password
-      )
-
-    } catch {
-
+  /**
+   * ==========================================================================
+   * VÉRIFICATION DU STATUT DU COMPTE
+   * ==========================================================================
+   */
+  if (user.statut !== 'ACTIF') {
+    if (user.statut === 'EN ATTENTE') {
       throw new Error(
-        'Adresse e-mail ou mot de passe incorrect.'
+        'Votre compte est en attente de validation. Veuillez vérifier votre adresse email.'
       )
-
     }
 
-
-    /**
-     * Compte actif uniquement
-     */
-    if (user.statut !== 'ACTIF') {
-
-      if (user.statut === 'EN ATTENTE') {
-
-        throw new Error(
-          'Votre compte est en attente de validation. Veuillez vérifier votre adresse email.'
-        )
-
-      }
-
-      if (user.statut === 'BLOQUE') {
-
-        throw new Error(
-          'Votre compte est bloqué.'
-        )
-
-      }
-
-      if (user.statut === 'SUPPRIME') {
-
-        throw new Error(
-          'Votre compte a été supprimé.'
-        )
-
-      }
-
+    if (user.statut === 'BLOQUE') {
       throw new Error(
-        "Votre compte n'est pas actif."
+        'Votre compte est bloqué.'
       )
-
     }
 
+    if (user.statut === 'SUPPRIME') {
+      throw new Error(
+        'Votre compte a été supprimé.'
+      )
+    }
 
-    /**
-     * --------------------------------------------------------------------------
-     * SUPER ADMIN
-     * --------------------------------------------------------------------------
-     *
-     * Le Super Admin n'a aucune obligation d'avoir une école.
-     */
-    if (user.systemRole === SystemRole.SUPER_ADMIN) {
+    throw new Error(
+      "Votre compte n'est pas actif."
+    )
+  }
 
-      const token = await User.accessTokens.create(
+  /**
+   * ==========================================================================
+   * SUPER ADMIN
+   * ==========================================================================
+   *
+   * Le Super Admin ne dépend d'aucune école.
+   */
+  if (
+    user.systemRole ===
+    SystemRole.SUPER_ADMIN
+  ) {
+    const token =
+      await User.accessTokens.create(
         user,
         ['*'],
         {
-          name: 'Connexion Super Administrateur',
-          expiresIn: '30 days',
+          name:
+            'Connexion Super Administrateur',
+
+          expiresIn:
+            '30 days',
         }
       )
 
-
-      user.lastLoginAt = DateTime.now()
-
-      await user.save()
-
-
-      return {
-
-        success: true,
-
-        message:
-          'Connexion réussie.',
-
-        data: {
-
-          token: {
-
-            type: 'bearer',
-
-            value: token.value!.release(),
-
-            expiresAt: token.expiresAt,
-
-          },
-
-          user:
-            this.serializeUser(user),
-
-          ecoles: [],
-
-          contexte: null,
-
-          mustChooseSchool: false,
-
-          isSuperAdmin: true,
-
-          redirectTo:
-            '/super-admin/dashboard',
-
-        },
-
-      }
-
-    }
-
-
-    /**
-     * --------------------------------------------------------------------------
-     * UTILISATEUR STANDARD
-     * --------------------------------------------------------------------------
-     */
-    const ecoles = await EcoleUser
-      .query()
-      .where('user_id', user.id)
-      .where('statut', 'ACTIF')
-      .preload('ecole')
-
-
-    if (ecoles.length === 0) {
-
-      throw new Error(
-        "Votre compte n'est associé à aucune école active."
-      )
-
-    }
-
-
-    /**
-     * Génération token
-     */
-    const token = await User.accessTokens.create(
-      user,
-      ['*'],
-      {
-        name: 'Connexion Smart School',
-        expiresIn: '30 days',
-      }
-    )
-
-
-    /**
-     * Mise à jour dernière connexion
-     */
-    user.lastLoginAt = DateTime.now()
+    user.lastLoginAt =
+      DateTime.now()
 
     await user.save()
 
-
-    let contexte = null
-
-
-    /**
-     * Une seule école
-     */
-    if (ecoles.length === 1) {
-
-      await UserContext
-        .query()
-        .where('user_id', user.id)
-        .update({
-          active: false,
-        })
-
-
-      contexte = await UserContext.updateOrCreate(
-
-        {
-          userId: user.id,
-          ecoleId: ecoles[0].ecoleId,
-        },
-
-        {
-          active: true,
-        }
-
-      )
-
-    }
-
-
     return {
-
       success: true,
 
       message:
         'Connexion réussie.',
 
       data: {
-
         token: {
-
           type: 'bearer',
 
-          value: token.value!.release(),
+          value:
+            token.value!.release(),
 
-          expiresAt: token.expiresAt,
-
+          expiresAt:
+            token.expiresAt,
         },
 
         user:
           this.serializeUser(user),
 
-        ecoles,
+        ecoles: [],
 
-        contexte,
+        contexte: null,
 
         mustChooseSchool:
-          ecoles.length > 1,
+          false,
 
-        isSuperAdmin: false,
+        isSuperAdmin:
+          true,
 
         redirectTo:
-          ecoles.length > 1
-            ? '/choisir-ecole'
-            : '/home',
+          '/super-admin/dashboard',
+      },
+    }
+  }
 
+  /**
+   * ==========================================================================
+   * UTILISATEUR STANDARD
+   * ==========================================================================
+   *
+   * Toutes les écoles auxquelles l'utilisateur
+   * est actuellement rattaché.
+   */
+  const ecoles =
+    await EcoleUser
+      .query()
+      .where(
+        'user_id',
+        user.id
+      )
+      .where(
+        'statut',
+        'ACTIF'
+      )
+      .preload('ecole')
+
+  /**
+   * Un utilisateur standard doit avoir
+   * au moins une école active.
+   */
+  if (
+    ecoles.length === 0
+  ) {
+    throw new Error(
+      "Votre compte n'est associé à aucune école active."
+    )
+  }
+
+  /**
+   * ==========================================================================
+   * GÉNÉRATION DU TOKEN
+   * ==========================================================================
+   */
+  const token =
+    await User.accessTokens.create(
+      user,
+      ['*'],
+      {
+        name:
+          'Connexion Smart School',
+
+        expiresIn:
+          '30 days',
+      }
+    )
+
+  /**
+   * ==========================================================================
+   * DERNIÈRE CONNEXION
+   * ==========================================================================
+   */
+  user.lastLoginAt =
+    DateTime.now()
+
+  await user.save()
+
+  /**
+   * ==========================================================================
+   * VARIABLES DU CONTEXTE
+   * ==========================================================================
+   */
+  let contexte:
+    UserContext | null = null
+
+  let redirectTo =
+    '/home'
+
+  let mustChooseSchool =
+    false
+
+  /**
+   * ==========================================================================
+   * UNE SEULE ÉCOLE
+   * ==========================================================================
+   */
+  if (
+    ecoles.length === 1
+  ) {
+    const membership =
+      ecoles[0]
+
+    /**
+     * Désactiver tous les contextes
+     * précédemment actifs.
+     */
+    await UserContext
+      .query()
+      .where(
+        'user_id',
+        user.id
+      )
+      .update({
+        active:
+          false,
+      })
+
+    /**
+     * Créer ou mettre à jour
+     * le contexte de l'école.
+     *
+     * IMPORTANT :
+     * le rôle de EcoleUser est copié
+     * dans UserContext.
+     */
+    contexte =
+      await UserContext.updateOrCreate(
+        {
+          userId:
+            user.id,
+
+          ecoleId:
+            membership.ecoleId,
+        },
+
+        {
+          role:
+            membership.role,
+
+          active:
+            true,
+        }
+      )
+
+    /**
+     * Déterminer l'espace selon le rôle.
+     */
+    if (
+      membership.role ===
+      'ADMIN_ECOLE'
+    ) {
+      redirectTo =
+        '/school-admin/dashboard'
+    } else {
+      redirectTo =
+        '/home'
+    }
+  }
+
+  /**
+   * ==========================================================================
+   * PLUSIEURS ÉCOLES
+   * ==========================================================================
+   *
+   * Aucune école n'est automatiquement forcée ici.
+   * L'utilisateur passe d'abord par le sélecteur
+   * d'école.
+   */
+  if (
+    ecoles.length > 1
+  ) {
+    mustChooseSchool =
+      true
+
+    redirectTo =
+      '/choisir-ecole'
+
+    /**
+     * On peut récupérer le contexte actif existant
+     * sans le modifier.
+     *
+     * Cela permet au sélecteur de savoir quelle école
+     * était précédemment active.
+     */
+    contexte =
+      await UserContext
+        .query()
+        .where(
+          'user_id',
+          user.id
+        )
+        .where(
+          'active',
+          true
+        )
+        .preload('ecole')
+        .first()
+  }
+
+  /**
+   * ==========================================================================
+   * RÉPONSE
+   * ==========================================================================
+   */
+  return {
+    success:
+      true,
+
+    message:
+      'Connexion réussie.',
+
+    data: {
+      token: {
+        type:
+          'bearer',
+
+        value:
+          token.value!.release(),
+
+        expiresAt:
+          token.expiresAt,
       },
 
-    }
+      user:
+        this.serializeUser(user),
 
+      ecoles,
+
+      contexte,
+
+      mustChooseSchool,
+
+      isSuperAdmin:
+        false,
+
+      redirectTo,
+    },
   }
+}
 
 
   /**
@@ -492,101 +588,102 @@ export default class AuthService {
    * ==========================================================================
    */
   async switchSchool(
-    user: User,
-    ecoleId: number
-  ) {
-
-    /**
-     * Un Super Admin ne fonctionne pas avec un contexte scolaire.
-     */
-    if (user.systemRole === SystemRole.SUPER_ADMIN) {
-
-      throw new Error(
-        "Le Super Administrateur n'a pas besoin de changer d'école."
-      )
-
-    }
-
-
-    const membership = await EcoleUser
-      .query()
-      .where('user_id', user.id)
-      .where('ecole_id', ecoleId)
-      .where('statut', 'ACTIF')
-      .preload('ecole')
-      .first()
-
-
-    if (!membership) {
-
-      throw new Error(
-        "Vous n'avez pas accès à cette école."
-      )
-
-    }
-
-
-    /**
-     * Une seule école peut être active à la fois.
-     */
-    await UserContext
-      .query()
-      .where('user_id', user.id)
-      .update({
-        active: false,
-      })
-
-
-    let context = await UserContext
-      .query()
-      .where('user_id', user.id)
-      .where('ecole_id', ecoleId)
-      .first()
-
-
-    if (context) {
-
-      context.active = true
-
-      await context.save()
-
-    } else {
-
-      context = await UserContext.create({
-
-        userId: user.id,
-
-        ecoleId,
-
-        active: true,
-
-      })
-
-    }
-
-
-    return {
-
-      success: true,
-
-      message:
-        'École active modifiée avec succès.',
-
-      context: {
-
-        id: context.id,
-
-        ecoleId: context.ecoleId,
-
-        active: context.active,
-
-        ecole: membership.ecole,
-
-      },
-
-    }
-
+  user: User,
+  ecoleId: number
+) {
+  /**
+   * Un Super Admin ne fonctionne pas avec
+   * le système de contexte scolaire.
+   */
+  if (user.systemRole === SystemRole.SUPER_ADMIN) {
+    throw new Error(
+      "Le Super Administrateur n'a pas besoin de changer d'école."
+    )
   }
+
+  /**
+   * Vérification de l'appartenance de l'utilisateur
+   * à l'école demandée.
+   */
+  const membership = await EcoleUser
+    .query()
+    .where('user_id', user.id)
+    .where('ecole_id', ecoleId)
+    .where('statut', 'ACTIF')
+    .preload('ecole')
+    .first()
+
+  if (!membership) {
+    throw new Error(
+      "Vous n'avez pas accès à cette école."
+    )
+  }
+
+  if (!membership.ecole) {
+    throw new Error(
+      "L'école sélectionnée est introuvable."
+    )
+  }
+
+  if (membership.ecole.statut !== 'ACTIF') {
+    throw new Error(
+      "Cette école n'est pas active actuellement."
+    )
+  }
+
+  /**
+   * --------------------------------------------------------------------------
+   * DÉSACTIVER LES AUTRES CONTEXTES
+   * --------------------------------------------------------------------------
+   */
+  await UserContext
+    .query()
+    .where('user_id', user.id)
+    .update({
+      active: false,
+    })
+
+  /**
+   * --------------------------------------------------------------------------
+   * ACTIVER / CRÉER LE NOUVEAU CONTEXTE
+   * --------------------------------------------------------------------------
+   */
+  let context = await UserContext
+    .query()
+    .where('user_id', user.id)
+    .where('ecole_id', ecoleId)
+    .first()
+
+  if (context) {
+    context.role = membership.role
+    context.active = true
+
+    await context.save()
+  } else {
+    context = await UserContext.create({
+      userId: user.id,
+      ecoleId,
+      role: membership.role,
+      active: true,
+    })
+  }
+
+  return {
+    success: true,
+
+    message:
+      'École active modifiée avec succès.',
+
+    context: {
+      id: context.id,
+      userId: context.userId,
+      ecoleId: context.ecoleId,
+      role: context.role,
+      active: context.active,
+      ecole: membership.ecole,
+    },
+  }
+}
 
 
   /**
