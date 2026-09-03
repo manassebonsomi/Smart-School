@@ -204,7 +204,6 @@ router
 
 router
   .group(() => {
-
     router
       .get(
         '/me',
@@ -232,7 +231,6 @@ router
         [AuthController, 'changePassword']
       )
       .as('api.auth.changePassword')
-
   })
   .prefix('/api/auth')
   .use(
@@ -1049,13 +1047,20 @@ router
 | PAGES SCHOOL ADMIN
 |--------------------------------------------------------------------------
 |
+| Ces routes servent uniquement les interfaces HTML/Edge.
+|
 | IMPORTANT :
 |
-| Ces pages sont protégées par :
+| L'authentification et l'autorisation réelles sont effectuées par les
+| API /api/school-admin/* qui utilisent :
 |
-|   auth(web)
+|   auth(api)
 |   +
 |   schoolAdmin
+|
+| Le token API est stocké côté navigateur et envoyé dans l'en-tête :
+|
+|   Authorization: Bearer <token>
 |
 |--------------------------------------------------------------------------
 */
@@ -1083,8 +1088,7 @@ router
     |--------------------------------------------------------------------------
     |
     | Ces routes sont provisoires.
-    | Elles seront progressivement remplacées par
-    | les vrais controllers/modules.
+    | Elles seront progressivement remplacées par les vrais controllers/modules.
     |
     */
 
@@ -1229,14 +1233,6 @@ router
 
   })
   .prefix('/school-admin')
-  .use(
-    middleware.auth({
-      guards: ['web'],
-    })
-  )
-  .use(
-    middleware.schoolAdmin()
-  )
 
 
 /*

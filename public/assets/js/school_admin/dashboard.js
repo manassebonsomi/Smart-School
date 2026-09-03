@@ -265,7 +265,7 @@ async function switchSchool(ecoleId) {
       await fetch(
         '/api/auth/switch-school',
         {
-          method: 'POST',
+          method: 'PATCH',
 
           headers: {
             ...apiHeaders(),

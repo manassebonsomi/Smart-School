@@ -325,6 +325,12 @@ export default class AuthService {
           .preload('ecole')
           .first()
 
+      const ecolesFormatees =
+        this.serializeSchools(
+          ecoles,
+          contexte
+        )
+
       return {
         success: true,
 
@@ -346,7 +352,8 @@ export default class AuthService {
           user:
             this.serializeUser(user),
 
-          ecoles,
+          ecoles:
+            ecolesFormatees,
 
           contexte,
 
@@ -459,6 +466,23 @@ export default class AuthService {
       ) {
         redirectTo =
           '/school-admin/dashboard'
+      } else if (
+        membership.role === 'ENSEIGNANT' ||
+        membership.role === 'TEACHER'
+      ) {
+        redirectTo =
+          '/teacher/dashboard'
+      } else if (
+        membership.role === 'PARENT'
+      ) {
+        redirectTo =
+          '/parent/dashboard'
+      } else if (
+        membership.role === 'ELEVE' ||
+        membership.role === 'STUDENT'
+      ) {
+        redirectTo =
+          '/student/dashboard'
       } else {
         redirectTo =
           '/home'
@@ -514,6 +538,27 @@ export default class AuthService {
 
     /**
      * =========================================================================
+     * FORMATAGE DES ÉCOLES
+     * =========================================================================
+     *
+     * Le frontend de /choisir-ecole travaille avec des objets école directs :
+     *
+     * school.id
+     * school.nom
+     * school.code
+     * school.ville
+     * school.role
+     *
+     * On ne retourne donc pas directement EcoleUser.
+     */
+    const ecolesFormatees =
+      this.serializeSchools(
+        ecoles,
+        contexte
+      )
+
+    /**
+     * =========================================================================
      * RÉPONSE
      * =========================================================================
      */
@@ -539,7 +584,8 @@ export default class AuthService {
         user:
           this.serializeUser(user),
 
-        ecoles,
+        ecoles:
+          ecolesFormatees,
 
         contexte,
 
@@ -614,11 +660,18 @@ export default class AuthService {
       .preload('ecole')
       .first()
 
+    const ecolesFormatees =
+      this.serializeSchools(
+        ecoles,
+        context
+      )
+
     return {
       user:
         this.serializeUser(user),
 
-      ecoles,
+      ecoles:
+        ecolesFormatees,
 
       context,
 
@@ -1180,6 +1233,112 @@ export default class AuthService {
       message:
         'Mot de passe modifié avec succès.',
     }
+  }
+
+  /**
+   * ==========================================================================
+   * SÉRIALISATION DES ÉCOLES UTILISATEUR
+   * ==========================================================================
+   *
+   * EcoleUser représente une appartenance.
+   *
+   * Le frontend, lui, doit recevoir directement les informations de l'école
+   * ainsi que le rôle de l'utilisateur dans cette école.
+   *
+   * Exemple :
+   *
+   * {
+   *   id: 12,
+   *   nom: "Institut X",
+   *   code: "INS-X",
+   *   ville: "Kinshasa",
+   *   province: "Kinshasa",
+   *   statut: "ACTIF",
+   *   role: "ADMIN_ECOLE",
+   *   membershipId: 35,
+   *   membershipStatus: "ACTIF",
+   *   active: false
+   * }
+   */
+  private serializeSchools(
+    memberships: EcoleUser[],
+    activeContext: UserContext | null = null
+  ) {
+    return memberships
+      .filter(
+        (membership) =>
+          membership.ecole &&
+          membership.ecole.statut === 'ACTIF'
+      )
+      .map(
+        (membership) => ({
+          id:
+            membership.ecoleId,
+
+          nom:
+            membership.ecole?.nom ?? null,
+
+          code:
+            membership.ecole?.code ?? null,
+
+          description:
+            membership.ecole?.description ?? null,
+
+          email:
+            membership.ecole?.email ?? null,
+
+          telephone:
+            membership.ecole?.telephone ?? null,
+
+          adresse:
+            membership.ecole?.adresse ?? null,
+
+          ville:
+            membership.ecole?.ville ?? null,
+
+          pays:
+            membership.ecole?.pays ?? null,
+
+          province:
+            membership.ecole?.province ?? null,
+
+          commune:
+            membership.ecole?.commune ?? null,
+
+          quartier:
+            membership.ecole?.quartier ?? null,
+
+          siteWeb:
+            membership.ecole?.siteWeb ?? null,
+
+          type:
+            membership.ecole?.type ?? null,
+
+          anneeCreation:
+            membership.ecole?.anneeCreation ?? null,
+
+          logo:
+            membership.ecole?.logo ?? null,
+
+          statut:
+            membership.ecole?.statut ?? null,
+
+          role:
+            membership.role,
+
+          membershipId:
+            membership.id,
+
+          membershipStatus:
+            membership.statut,
+
+          active:
+            activeContext
+              ? Number(activeContext.ecoleId) ===
+                Number(membership.ecoleId)
+              : false,
+        })
+      )
   }
 
   /**

@@ -13,7 +13,7 @@ export default class ForgotPasswordController {
   async processStep1({ request, session, response }: HttpContext) {
   const schema = vine.compile(
     vine.object({
-      email: vine.string().trim().email().normalizeEmail(),
+      email: vine.string().trim().email(),
     })
   )
 

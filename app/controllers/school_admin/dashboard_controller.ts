@@ -4,51 +4,80 @@ import DashboardService from '#services/school_admin/dashboard_service'
 export default class SchoolAdminDashboardController {
   private service = new DashboardService()
 
-  async dashboardPage({
-    auth,
-    view,
-    response,
-  }: HttpContext) {
-    const user = auth.user
+  /**
+   * --------------------------------------------------------------------------
+   * PAGE HTML
+   * --------------------------------------------------------------------------
+   *
+   * Cette méthode ne fait pas d'authentification.
+   *
+   * La page est un shell HTML rendu par Edge.
+   * Les données réelles sont ensuite chargées côté navigateur par
+   * dashboard.js via les endpoints API protégés.
+   *
+   * On fournit néanmoins les variables attendues par le template afin
+   * qu'Edge puisse générer correctement la page.
+   *
+   * --------------------------------------------------------------------------
+   */
+  async dashboardPage({ view }: HttpContext) {
+    return view.render(
+      'pages/school-admin/dashboard',
+      {
+        user: {
+          id: null,
+          nom: '',
+          postnom: '',
+          prenom: '',
+          pseudo: '',
+          email: '',
+          avatarUrl: null,
+        },
 
-    if (!user) {
-      return response.redirect('/')
-    }
+        ecole: {
+          id: null,
+          nom: '',
+          code: '',
+          description: '',
+          email: '',
+          telephone: '',
+          adresse: '',
+          ville: '',
+          pays: '',
+          province: '',
+          commune: '',
+          quartier: '',
+          siteWeb: '',
+          type: '',
+          anneeCreation: null,
+          logo: null,
+          statut: '',
+        },
 
-    try {
-      const context = await this.service.getContext(user.id)
-
-      return view.render(
-        'pages/school-admin/dashboard',
-        {
-          user: {
-            id: user.id,
-            nom: user.nom,
-            postnom: user.postnom,
-            prenom: user.prenom,
-            pseudo: user.pseudo,
-            email: user.email,
-            avatarUrl: user.avatarUrl,
-          },
-
-          ecole: context.ecole,
-
-          role: context.role,
-        }
-      )
-    } catch {
-      return response.redirect('/')
-    }
+        role: '',
+      }
+    )
   }
 
-  async dashboard({ auth, response }: HttpContext) {
+  /**
+   * --------------------------------------------------------------------------
+   * API : DASHBOARD
+   * --------------------------------------------------------------------------
+   */
+  async dashboard({
+    auth,
+    response,
+  }: HttpContext) {
     try {
       return response.ok(
-        await this.service.getDashboard(auth.user!.id)
+        await this.service.getDashboard(
+          auth.user!.id
+        )
       )
     } catch (error: any) {
       return response.badRequest({
         success: false,
+
         message:
           error?.message ||
           'Impossible de charger le tableau de bord.',
@@ -56,10 +85,19 @@ export default class SchoolAdminDashboardController {
     }
   }
 
-  async schools({ auth, response }: HttpContext) {
+  /**
+   * --------------------------------------------------------------------------
+   * API : ÉCOLES
+   * --------------------------------------------------------------------------
+   */
+  async schools({
+    auth,
+    response,
+  }: HttpContext) {
     try {
       return response.ok({
         success: true,
+
         data: await this.service.getSchools(
           auth.user!.id
         ),
@@ -67,6 +105,7 @@ export default class SchoolAdminDashboardController {
     } catch (error: any) {
       return response.badRequest({
         success: false,
+
         message:
           error?.message ||
           'Impossible de charger vos écoles.',
@@ -74,7 +113,15 @@ export default class SchoolAdminDashboardController {
     }
   }
 
-  async activeSchool({ auth, response }: HttpContext) {
+  /**
+   * --------------------------------------------------------------------------
+   * API : ÉCOLE ACTIVE
+   * --------------------------------------------------------------------------
+   */
+  async activeSchool({
+    auth,
+    response,
+  }: HttpContext) {
     try {
       return response.ok({
         success: true,
@@ -86,6 +133,7 @@ export default class SchoolAdminDashboardController {
     } catch (error: any) {
       return response.badRequest({
         success: false,
+
         message:
           error?.message ||
           'Impossible de charger l’école active.',
