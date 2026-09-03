@@ -134,6 +134,21 @@ async function loadCurrentUser() {
     user.email ||
     'Administrateur'
 
+    setText(
+  'sidebarUserName',
+  displayName
+)
+
+setText(
+  'sidebarUserEmail',
+  user.email || '—'
+)
+
+setText(
+  'adminGreeting',
+  `Bonjour, ${user.prenom || user.nom || displayName} 👋`
+)
+
   /*
    * Identité
    */
@@ -190,6 +205,16 @@ async function loadCurrentUser() {
     'adminInitials',
     initials
   )
+
+  setText(
+  'sidebarUserInitials',
+  initials
+)
+
+setText(
+  'userInitials',
+  initials
+)
 
   /*
    * --------------------------------------------------------------------------
