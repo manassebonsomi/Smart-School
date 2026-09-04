@@ -91,9 +91,18 @@ export type ScannedRoutes = {
     'reports.store': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.enseignants': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.users.search': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.index': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.statistics': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.store': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.status': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   GET: {
@@ -157,9 +166,14 @@ export type ScannedRoutes = {
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.enseignants': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.users.search': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.index': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.statistics': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -223,9 +237,14 @@ export type ScannedRoutes = {
     'reports.index': { paramsTuple?: []; params?: {} }
     'reports.download': { paramsTuple: [ParamValue]; params: {'type': ParamValue} }
     'schoolAdmin.dashboard': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.enseignants': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.dashboard': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.schools': { paramsTuple?: []; params?: {} }
     'schoolAdmin.api.activeSchool': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.users.search': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.index': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.statistics': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'choisirEcole': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -242,6 +261,7 @@ export type ScannedRoutes = {
     'ecoles.store': { paramsTuple?: []; params?: {} }
     'administrateurs.store': { paramsTuple?: []; params?: {} }
     'reports.store': { paramsTuple?: []; params?: {} }
+    'schoolAdmin.api.enseignants.store': { paramsTuple?: []; params?: {} }
   }
   PATCH: {
     'api.auth.switchSchool': { paramsTuple?: []; params?: {} }
@@ -252,16 +272,19 @@ export type ScannedRoutes = {
     'administrateurs.switchSchool': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.suspend': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.activate': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.status': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   PUT: {
     'superAdmin.profile.update': { paramsTuple?: []; params?: {} }
     'ecoles.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
     'ecoles.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.forceDelete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'administrateurs.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'schoolAdmin.api.enseignants.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

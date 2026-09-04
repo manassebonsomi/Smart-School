@@ -12,6 +12,8 @@ import StatisticsController from '#controllers/super_admin/statistics_controller
 const SchoolAdminDashboardController = () =>
   import('#controllers/school_admin/dashboard_controller')
 
+import TeacherController from '#controllers/school_admin/teacher_controller'
+
 /*
 |--------------------------------------------------------------------------
 | CONTROLLERS SUPER ADMIN
@@ -1113,13 +1115,13 @@ router
 
 
     router
-      .get(
-        '/enseignants',
-        async ({ response }) =>
-          response.redirect(
-            '/school-admin/dashboard'
-          )
-      )
+  .get(
+    '/enseignants',
+    [TeacherController, 'indexPage']
+  )
+  .as(
+    'schoolAdmin.enseignants'
+  )
 
 
     router
@@ -1284,6 +1286,91 @@ router
         [SchoolAdminDashboardController, 'activeSchool']
       )
       .as('schoolAdmin.api.activeSchool')
+
+      /*
+|--------------------------------------------------------------------------
+| ENSEIGNANTS
+|--------------------------------------------------------------------------
+*/
+
+router
+  .get(
+    '/enseignants/users/search',
+    [TeacherController, 'searchUsers']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.users.search'
+  )
+  
+
+router
+  .get(
+    '/enseignants',
+    [TeacherController, 'index']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.index'
+  )
+
+
+router
+  .get(
+    '/enseignants/statistics',
+    [TeacherController, 'statistics']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.statistics'
+  )
+
+
+router
+  .get(
+    '/enseignants/:id',
+    [TeacherController, 'show']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.show'
+  )
+
+
+router
+  .post(
+    '/enseignants',
+    [TeacherController, 'store']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.store'
+  )
+
+
+router
+  .put(
+    '/enseignants/:id',
+    [TeacherController, 'update']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.update'
+  )
+
+
+router
+  .patch(
+    '/enseignants/:id/statut',
+    [TeacherController, 'updateStatus']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.status'
+  )
+
+
+router
+  .delete(
+    '/enseignants/:id',
+    [TeacherController, 'destroy']
+  )
+  .as(
+    'schoolAdmin.api.enseignants.destroy'
+  )
 
   })
   .prefix('/api/school-admin')
