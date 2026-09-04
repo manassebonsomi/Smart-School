@@ -34,22 +34,30 @@ const escapeHtml = (value) =>
   )
 
 function setText(id, value) {
-  const element = document.getElementById(id)
+  const element =
+    document.getElementById(id)
 
   if (element) {
-    element.textContent = value ?? '—'
+    element.textContent =
+      value ?? '—'
   }
 }
 
 function showError(message) {
-  const element = document.getElementById('pageError')
+  const element =
+    document.getElementById('pageError')
 
   if (!element) {
     return
   }
 
-  element.textContent = message || 'Une erreur est survenue.'
-  element.classList.remove('hidden')
+  element.textContent =
+    message ||
+    'Une erreur est survenue.'
+
+  element.classList.remove(
+    'hidden'
+  )
 }
 
 function hideError() {
@@ -59,14 +67,20 @@ function hideError() {
 }
 
 function showFormError(message) {
-  const element = document.getElementById('formError')
+  const element =
+    document.getElementById('formError')
 
   if (!element) {
     return
   }
 
-  element.textContent = message || 'Une erreur est survenue.'
-  element.classList.remove('hidden')
+  element.textContent =
+    message ||
+    'Une erreur est survenue.'
+
+  element.classList.remove(
+    'hidden'
+  )
 }
 
 function hideFormError() {
@@ -75,29 +89,49 @@ function hideFormError() {
     ?.classList.add('hidden')
 }
 
-async function apiRequest(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
+/*
+|--------------------------------------------------------------------------
+| API
+|--------------------------------------------------------------------------
+*/
 
-    headers: {
-      ...apiHeaders(),
-      ...(options.headers || {}),
-    },
-  })
+async function apiRequest(
+  url,
+  options = {}
+) {
+  const response =
+    await fetch(url, {
+      ...options,
 
-  if (response.status === 401) {
-    sessionStorage.removeItem(TOKEN_KEY)
+      headers: {
+        ...apiHeaders(),
+        ...(options.headers || {}),
+      },
+    })
+
+  if (
+    response.status === 401
+  ) {
+    sessionStorage.removeItem(
+      TOKEN_KEY
+    )
 
     window.location.href = '/'
 
-    throw new Error('Session expirée.')
+    throw new Error(
+      'Session expirée.'
+    )
   }
 
-  const payload = await response
-    .json()
-    .catch(() => null)
+  const payload =
+    await response
+      .json()
+      .catch(() => null)
 
-  if (!response.ok || !payload?.success) {
+  if (
+    !response.ok ||
+    !payload?.success
+  ) {
     throw new Error(
       payload?.message ||
         `Erreur ${response.status}`
@@ -114,10 +148,16 @@ async function apiRequest(url, options = {}) {
 */
 
 async function loadCurrentUser() {
-  const payload = await apiRequest('/api/auth/me')
+  const payload =
+    await apiRequest(
+      '/api/auth/me'
+    )
 
-  const data = payload.data || {}
-  const user = data.user || data
+  const data =
+    payload.data || {}
+
+  const user =
+    data.user || data
 
   const fullName = [
     user.prenom,
@@ -167,13 +207,18 @@ async function loadCurrentUser() {
     initials
   )
 
-  const schools = Array.isArray(data.ecoles)
-    ? data.ecoles
-    : []
+  const schools =
+    Array.isArray(
+      data.ecoles
+    )
+      ? data.ecoles
+      : []
 
-  const activeSchool = schools.find(
-    (school) => school.active === true
-  )
+  const activeSchool =
+    schools.find(
+      (school) =>
+        school.active === true
+    )
 
   if (activeSchool) {
     setText(
@@ -205,11 +250,13 @@ async function loadCurrentUser() {
 */
 
 async function loadStatistics() {
-  const payload = await apiRequest(
-    '/api/school-admin/enseignants/statistics'
-  )
+  const payload =
+    await apiRequest(
+      '/api/school-admin/enseignants/statistics'
+    )
 
-  const data = payload.data || {}
+  const data =
+    payload.data || {}
 
   setText(
     'statTotal',
@@ -229,25 +276,32 @@ async function loadStatistics() {
 
 /*
 |--------------------------------------------------------------------------
-| LISTE DES ENSEIGNANTS
+| LISTE
 |--------------------------------------------------------------------------
 */
 
-async function loadTeachers(page = 1) {
+async function loadTeachers(
+  page = 1
+) {
   hideError()
 
   const search =
     document
-      .getElementById('searchInput')
+      .getElementById(
+        'searchInput'
+      )
       ?.value
       .trim() || ''
 
   const statut =
     document
-      .getElementById('statusFilter')
+      .getElementById(
+        'statusFilter'
+      )
       ?.value || ''
 
-  const params = new URLSearchParams()
+  const params =
+    new URLSearchParams()
 
   params.set(
     'page',
@@ -274,24 +328,34 @@ async function loadTeachers(page = 1) {
   }
 
   try {
-    const payload = await apiRequest(
-      `/api/school-admin/enseignants?${params.toString()}`
-    )
+    const payload =
+      await apiRequest(
+        `/api/school-admin/enseignants?${params.toString()}`
+      )
 
-    currentPage = page
+    currentPage =
+      page
 
     currentMeta =
-      payload.data?.meta || null
+      payload.data?.meta ||
+      null
 
     currentTeachers =
-      payload.data?.data || []
+      payload.data?.data ||
+      []
 
-    renderTeachers(currentTeachers)
-    renderPagination(currentMeta)
-
-    const total = Number(
-      currentMeta?.total || 0
+    renderTeachers(
+      currentTeachers
     )
+
+    renderPagination(
+      currentMeta
+    )
+
+    const total =
+      Number(
+        currentMeta?.total || 0
+      )
 
     setText(
       'resultCount',
@@ -302,19 +366,24 @@ async function loadTeachers(page = 1) {
       }`
     )
 
-    const metaCurrentPage = Number(
-      currentMeta?.currentPage ||
-        page
-    )
+    const metaCurrentPage =
+      Number(
+        currentMeta?.currentPage ||
+          page
+      )
 
-    const metaPerPage = Number(
-      currentMeta?.perPage ||
-        10
-    )
+    const metaPerPage =
+      Number(
+        currentMeta?.perPage ||
+          10
+      )
 
     const first =
       total > 0
-        ? (metaCurrentPage - 1) *
+        ? (
+            metaCurrentPage -
+            1
+          ) *
             metaPerPage +
           1
         : 0
@@ -343,11 +412,13 @@ async function loadTeachers(page = 1) {
 
 /*
 |--------------------------------------------------------------------------
-| RENDU DES ENSEIGNANTS
+| LISTE DES ENSEIGNANTS
 |--------------------------------------------------------------------------
 */
 
-function renderTeachers(teachers) {
+function renderTeachers(
+  teachers
+) {
   const table =
     document.getElementById(
       'teacherTable'
@@ -362,7 +433,12 @@ function renderTeachers(teachers) {
     return
   }
 
-  if (!Array.isArray(teachers) || !teachers.length) {
+  if (
+    !Array.isArray(
+      teachers
+    ) ||
+    !teachers.length
+  ) {
     table.innerHTML = ''
 
     empty.classList.remove(
@@ -376,236 +452,355 @@ function renderTeachers(teachers) {
     'hidden'
   )
 
-  table.innerHTML = teachers
-    .map((teacher) => {
-      const initials = [
-        teacher.prenom?.charAt(0),
-        teacher.nom?.charAt(0),
-      ]
-        .filter(Boolean)
-        .join('')
-        .toUpperCase() || 'EN'
+  table.innerHTML =
+    teachers
+      .map(
+        (teacher) => {
+          const initials = [
+            teacher.prenom?.charAt(0),
+            teacher.nom?.charAt(0),
+          ]
+            .filter(Boolean)
+            .join('')
+            .toUpperCase() ||
+            'EN'
 
-      const statusActive =
-        teacher.statut === 'ACTIF'
+          const statusActive =
+            teacher.statut ===
+            'ACTIF'
 
-      const membershipId =
-        Number(
-          teacher.membershipId
-        )
+          const membershipId =
+            Number(
+              teacher.membershipId
+            )
 
-      const fullName =
-        teacher.fullName ||
-        [
-          teacher.prenom,
-          teacher.postnom,
-          teacher.nom,
-        ]
-          .filter(Boolean)
-          .join(' ')
-          .trim() ||
-        'Enseignant'
+          const fullName =
+            teacher.fullName ||
+            [
+              teacher.prenom,
+              teacher.postnom,
+              teacher.nom,
+            ]
+              .filter(Boolean)
+              .join(' ')
+              .trim() ||
+            'Enseignant'
 
-      return `
-        <tr class="border-t border-slate-100 hover:bg-slate-50">
+          return `
+            <tr
+              class="
+                border-t
+                border-slate-100
+                transition
+                hover:bg-slate-50
+              "
+            >
 
-          <td class="px-5 py-4">
+              <td class="px-5 py-4">
 
-            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3">
 
-              <div
-                class="
-                  flex
-                  h-11
-                  w-11
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-primary-50
-                  text-sm
-                  font-bold
-                  text-primary-700
-                "
-              >
-                ${escapeHtml(initials)}
-              </div>
+                  <div
+                    class="
+                      flex
+                      h-11
+                      w-11
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-xl
+                      bg-primary-50
+                      text-sm
+                      font-bold
+                      text-primary-700
+                    "
+                  >
+                    ${escapeHtml(
+                      initials
+                    )}
+                  </div>
 
-              <div class="min-w-0">
+                  <div class="min-w-0">
 
-                <p class="truncate text-sm font-bold text-slate-800">
-                  ${escapeHtml(fullName)}
-                </p>
+                    <p
+                      class="
+                        truncate
+                        text-sm
+                        font-bold
+                        text-slate-800
+                      "
+                    >
+                      ${escapeHtml(
+                        fullName
+                      )}
+                    </p>
 
-                <p class="mt-1 text-xs text-slate-400">
+                    <p
+                      class="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                      "
+                    >
+                      ${escapeHtml(
+                        teacher.role ||
+                          'ENSEIGNANT'
+                      )}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+              <td class="px-5 py-4">
+
+                <p
+                  class="
+                    text-sm
+                    text-slate-600
+                  "
+                >
                   ${escapeHtml(
-                    teacher.role ||
-                      'ENSEIGNANT'
+                    teacher.email ||
+                      '—'
                   )}
                 </p>
 
-              </div>
+                <p
+                  class="
+                    mt-1
+                    text-xs
+                    text-slate-400
+                  "
+                >
+                  ${escapeHtml(
+                    teacher.telephone ||
+                      '—'
+                  )}
+                </p>
 
-            </div>
+              </td>
 
-          </td>
+              <td class="px-5 py-4">
 
-          <td class="px-5 py-4">
+                ${
+                  statusActive
+                    ? `
+                      <span
+                        class="
+                          inline-flex
+                          items-center
+                          gap-2
+                          rounded-full
+                          bg-emerald-50
+                          px-3
+                          py-1.5
+                          text-xs
+                          font-semibold
+                          text-emerald-700
+                        "
+                      >
+                        <span
+                          class="
+                            h-1.5
+                            w-1.5
+                            rounded-full
+                            bg-emerald-500
+                          "
+                        ></span>
 
-            <p class="text-sm text-slate-600">
-              ${escapeHtml(
-                teacher.email || '—'
-              )}
-            </p>
+                        Actif
+                      </span>
+                    `
+                    : `
+                      <span
+                        class="
+                          inline-flex
+                          items-center
+                          gap-2
+                          rounded-full
+                          bg-amber-50
+                          px-3
+                          py-1.5
+                          text-xs
+                          font-semibold
+                          text-amber-700
+                        "
+                      >
+                        <span
+                          class="
+                            h-1.5
+                            w-1.5
+                            rounded-full
+                            bg-amber-500
+                          "
+                        ></span>
 
-            <p class="mt-1 text-xs text-slate-400">
-              ${escapeHtml(
-                teacher.telephone || '—'
-              )}
-            </p>
+                        Inactif
+                      </span>
+                    `
+                }
 
-          </td>
+              </td>
 
-          <td class="px-5 py-4">
+              <td class="px-5 py-4">
 
-            ${
-              statusActive
-                ? `
-                  <span
+                <div
+                  class="
+                    flex
+                    justify-end
+                    gap-1.5
+                  "
+                >
+
+                  <!-- DETAILS -->
+
+                  <button
+                    type="button"
+                    title="Détails"
                     class="
-                      inline-flex
+                      flex
+                      h-9
+                      w-9
                       items-center
-                      gap-2
-                      rounded-full
-                      bg-emerald-50
-                      px-3
-                      py-1.5
-                      text-xs
-                      font-semibold
-                      text-emerald-700
+                      justify-center
+                      rounded-lg
+                      text-primary-600
+                      transition
+                      hover:bg-primary-50
                     "
+                    onclick="viewTeacher(${membershipId})"
                   >
-                    <span
+                    <i
                       class="
-                        h-1.5
-                        w-1.5
-                        rounded-full
-                        bg-emerald-500
+                        fa-regular
+                        fa-eye
                       "
-                    ></span>
+                    ></i>
+                  </button>
 
-                    Actif
-                  </span>
-                `
-                : `
-                  <span
+
+                  <!-- MODIFIER -->
+
+                  <button
+                    type="button"
+                    title="Modifier"
                     class="
-                      inline-flex
+                      flex
+                      h-9
+                      w-9
                       items-center
-                      gap-2
-                      rounded-full
-                      bg-amber-50
-                      px-3
-                      py-1.5
-                      text-xs
-                      font-semibold
-                      text-amber-700
+                      justify-center
+                      rounded-lg
+                      text-indigo-600
+                      transition
+                      hover:bg-indigo-50
                     "
+                    onclick="editTeacher(${membershipId})"
                   >
-                    <span
+                    <i
                       class="
-                        h-1.5
-                        w-1.5
-                        rounded-full
-                        bg-amber-500
+                        fa-solid
+                        fa-pen
                       "
-                    ></span>
+                    ></i>
+                  </button>
 
-                    Inactif
-                  </span>
-                `
-            }
 
-          </td>
+                  <!-- STATUT -->
 
-          <td class="px-5 py-4">
+                  ${
+                    statusActive
+                      ? `
+                        <button
+                          type="button"
+                          title="Désactiver"
+                          class="
+                            flex
+                            h-9
+                            w-9
+                            items-center
+                            justify-center
+                            rounded-lg
+                            text-amber-600
+                            transition
+                            hover:bg-amber-50
+                          "
+                          onclick="changeTeacherStatus(${membershipId}, 'INACTIF')"
+                        >
+                          <i
+                            class="
+                              fa-solid
+                              fa-ban
+                            "
+                          ></i>
+                        </button>
+                      `
+                      : `
+                        <button
+                          type="button"
+                          title="Activer"
+                          class="
+                            flex
+                            h-9
+                            w-9
+                            items-center
+                            justify-center
+                            rounded-lg
+                            text-emerald-600
+                            transition
+                            hover:bg-emerald-50
+                          "
+                          onclick="changeTeacherStatus(${membershipId}, 'ACTIF')"
+                        >
+                          <i
+                            class="
+                              fa-solid
+                              fa-check
+                            "
+                          ></i>
+                        </button>
+                      `
+                  }
 
-            <div class="flex justify-end gap-2">
 
-              <button
-                type="button"
-                title="Détails"
-                class="
-                  h-9
-                  w-9
-                  rounded-lg
-                  text-primary-600
-                  hover:bg-primary-50
-                "
-                onclick="viewTeacher(${membershipId})"
-              >
-                <i class="fa-regular fa-eye"></i>
-              </button>
+                  <!-- SUPPRIMER -->
 
-              <button
-                type="button"
-                title="Modifier"
-                class="
-                  h-9
-                  w-9
-                  rounded-lg
-                  text-indigo-600
-                  hover:bg-indigo-50
-                "
-                onclick="editTeacher(${membershipId})"
-              >
-                <i class="fa-solid fa-pen"></i>
-              </button>
-
-              ${
-                statusActive
-                  ? `
-                    <button
-                      type="button"
-                      title="Désactiver"
+                  <button
+                    type="button"
+                    title="Retirer de l'école"
+                    class="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      text-red-600
+                      transition
+                      hover:bg-red-50
+                    "
+                    onclick="deleteTeacher(${membershipId})"
+                  >
+                    <i
                       class="
-                        h-9
-                        w-9
-                        rounded-lg
-                        text-amber-600
-                        hover:bg-amber-50
+                        fa-solid
+                        fa-trash-can
                       "
-                      onclick="changeTeacherStatus(${membershipId}, 'INACTIF')"
-                    >
-                      <i class="fa-solid fa-ban"></i>
-                    </button>
-                  `
-                  : `
-                    <button
-                      type="button"
-                      title="Activer"
-                      class="
-                        h-9
-                        w-9
-                        rounded-lg
-                        text-emerald-600
-                        hover:bg-emerald-50
-                      "
-                      onclick="changeTeacherStatus(${membershipId}, 'ACTIF')"
-                    >
-                      <i class="fa-solid fa-check"></i>
-                    </button>
-                  `
-              }
+                    ></i>
+                  </button>
 
-            </div>
+                </div>
 
-          </td>
+              </td>
 
-        </tr>
-      `
-    })
-    .join('')
+            </tr>
+          `
+        }
+      )
+      .join('')
 }
 
 /*
@@ -614,7 +809,9 @@ function renderTeachers(teachers) {
 |--------------------------------------------------------------------------
 */
 
-function renderPagination(meta) {
+function renderPagination(
+  meta
+) {
   const container =
     document.getElementById(
       'pagination'
@@ -634,13 +831,15 @@ function renderPagination(meta) {
     return
   }
 
-  const current = Number(
-    meta.currentPage
-  )
+  const current =
+    Number(
+      meta.currentPage
+    )
 
-  const last = Number(
-    meta.lastPage
-  )
+  const last =
+    Number(
+      meta.lastPage
+    )
 
   const buttons = []
 
@@ -654,8 +853,11 @@ function renderPagination(meta) {
       }
       onclick="goToPage(${current - 1})"
       class="
+        flex
         h-9
         w-9
+        items-center
+        justify-center
         rounded-lg
         border
         border-slate-200
@@ -678,7 +880,9 @@ function renderPagination(meta) {
 
   pages.forEach(
     (page) => {
-      if (page === '...') {
+      if (
+        page === '...'
+      ) {
         buttons.push(`
           <span class="px-1 text-slate-400">
             …
@@ -693,8 +897,11 @@ function renderPagination(meta) {
           type="button"
           onclick="goToPage(${page})"
           class="
+            flex
             h-9
             min-w-9
+            items-center
+            justify-center
             rounded-lg
             border
             border-slate-200
@@ -702,7 +909,9 @@ function renderPagination(meta) {
             text-xs
             font-semibold
             ${
-              Number(page) === current
+              Number(
+                page
+              ) === current
                 ? 'border-primary-600 bg-primary-600 text-white'
                 : 'text-slate-600 hover:bg-slate-50'
             }
@@ -724,8 +933,11 @@ function renderPagination(meta) {
       }
       onclick="goToPage(${current + 1})"
       class="
+        flex
         h-9
         w-9
+        items-center
+        justify-center
         rounded-lg
         border
         border-slate-200
@@ -753,32 +965,39 @@ function buildPaginationPages(
       {
         length: last,
       },
-      (_, index) => index + 1
+      (_, index) =>
+        index + 1
     )
   }
 
   const pages = [1]
 
-  if (current > 4) {
+  if (
+    current > 4
+  ) {
     pages.push('...')
   }
 
   for (
-    let page = Math.max(
-      2,
-      current - 1
-    );
+    let page =
+      Math.max(
+        2,
+        current - 1
+      );
     page <=
-    Math.min(
-      last - 1,
-      current + 1
-    );
+      Math.min(
+        last - 1,
+        current + 1
+      );
     page++
   ) {
     pages.push(page)
   }
 
-  if (current < last - 3) {
+  if (
+    current <
+    last - 3
+  ) {
     pages.push('...')
   }
 
@@ -787,7 +1006,9 @@ function buildPaginationPages(
   return pages
 }
 
-async function goToPage(page) {
+async function goToPage(
+  page
+) {
   if (
     page < 1 ||
     (
@@ -801,16 +1022,18 @@ async function goToPage(page) {
     return
   }
 
-  await loadTeachers(page)
+  await loadTeachers(
+    page
+  )
 }
 
 /*
 |--------------------------------------------------------------------------
-| MODAL
+| MODAL ENSEIGNANT EXISTANT
 |--------------------------------------------------------------------------
 */
 
-const modal =
+const teacherModal =
   document.getElementById(
     'teacherModal'
   )
@@ -818,21 +1041,21 @@ const modal =
 function openModal() {
   resetTeacherForm()
 
-  modal?.classList.remove(
+  teacherModal?.classList.remove(
     'hidden'
   )
 
-  modal?.classList.add(
+  teacherModal?.classList.add(
     'flex'
   )
 }
 
 function closeModal() {
-  modal?.classList.add(
+  teacherModal?.classList.add(
     'hidden'
   )
 
-  modal?.classList.remove(
+  teacherModal?.classList.remove(
     'flex'
   )
 }
@@ -849,50 +1072,9 @@ function resetTeacherForm() {
     newMode.checked = true
   }
 
-  const existingUserSearch =
-    document.getElementById(
-      'existingUserSearch'
-    )
-
-  const existingUserId =
-    document.getElementById(
-      'existingUserId'
-    )
-
-  const existingUserResults =
-    document.getElementById(
-      'existingUserResults'
-    )
-
-  const existingUserSelected =
-    document.getElementById(
-      'existingUserSelected'
-    )
-
-  if (existingUserSearch) {
-    existingUserSearch.value = ''
-  }
-
-  if (existingUserId) {
-    existingUserId.value = ''
-  }
-
-  existingUserResults?.classList.add(
-    'hidden'
-  )
-
-  existingUserResults &&
-    (existingUserResults.innerHTML = '')
-
-  existingUserSelected?.classList.add(
-    'hidden'
-  )
-
-  if (existingUserSelected) {
-    existingUserSelected.innerHTML = ''
-  }
-
   const fields = {
+    existingUserSearch: '',
+    existingUserId: '',
     teacherPrenom: '',
     teacherNom: '',
     teacherPostnom: '',
@@ -903,31 +1085,59 @@ function resetTeacherForm() {
     teacherPassword: '',
   }
 
-  Object.entries(fields).forEach(
+  Object.entries(
+    fields
+  ).forEach(
     ([id, value]) => {
       const element =
-        document.getElementById(id)
+        document.getElementById(
+          id
+        )
 
       if (element) {
-        element.value = value
+        element.value =
+          value
       }
     }
   )
 
+  const results =
+    document.getElementById(
+      'existingUserResults'
+    )
+
+  if (results) {
+    results.innerHTML =
+      ''
+
+    results.classList.add(
+      'hidden'
+    )
+  }
+
+  const selected =
+    document.getElementById(
+      'existingUserSelected'
+    )
+
+  if (selected) {
+    selected.innerHTML =
+      ''
+
+    selected.classList.add(
+      'hidden'
+    )
+  }
+
   updateMode()
 }
-
-/*
-|--------------------------------------------------------------------------
-| MODE NOUVEAU / EXISTANT
-|--------------------------------------------------------------------------
-*/
 
 function updateMode() {
   const mode =
     document.querySelector(
       'input[name="teacherMode"]:checked'
-    )?.value || 'new'
+    )?.value ||
+    'new'
 
   const newSection =
     document.getElementById(
@@ -939,7 +1149,10 @@ function updateMode() {
       'existingUserSection'
     )
 
-  if (mode === 'existing') {
+  if (
+    mode ===
+    'existing'
+  ) {
     newSection?.classList.add(
       'hidden'
     )
@@ -969,34 +1182,40 @@ function updateMode() {
 async function searchExistingUsers(
   keyword
 ) {
-  const resultsContainer =
+  const container =
     document.getElementById(
       'existingUserResults'
     )
 
-  if (!resultsContainer) {
+  if (!container) {
     return
   }
 
   const value =
-    String(keyword || '')
-      .trim()
+    String(
+      keyword || ''
+    ).trim()
 
-  if (value.length < 2) {
-    resultsContainer.innerHTML = ''
-    resultsContainer.classList.add(
+  if (
+    value.length < 2
+  ) {
+    container.innerHTML =
+      ''
+
+    container.classList.add(
       'hidden'
     )
 
     return
   }
 
-  resultsContainer.classList.remove(
+  container.classList.remove(
     'hidden'
   )
 
-  resultsContainer.innerHTML = `
+  container.innerHTML = `
     <div class="px-4 py-3 text-sm text-slate-400">
+      <i class="fa-solid fa-spinner fa-spin mr-2"></i>
       Recherche en cours…
     </div>
   `
@@ -1021,7 +1240,9 @@ async function searchExistingUsers(
       )
 
     const users =
-      Array.isArray(payload.data)
+      Array.isArray(
+        payload.data
+      )
         ? payload.data
         : Array.isArray(
             payload.data?.data
@@ -1033,17 +1254,13 @@ async function searchExistingUsers(
       users
     )
   } catch (error) {
-    resultsContainer.innerHTML = `
+    container.innerHTML = `
       <div class="px-4 py-3 text-sm text-red-500">
         ${escapeHtml(
           error.message
         )}
       </div>
     `
-
-    resultsContainer.classList.remove(
-      'hidden'
-    )
   }
 }
 
@@ -1059,7 +1276,10 @@ function renderExistingUserResults(
     return
   }
 
-  if (!Array.isArray(users) || !users.length) {
+  if (
+    !Array.isArray(users) ||
+    !users.length
+  ) {
     container.innerHTML = `
       <div class="px-4 py-3 text-sm text-slate-400">
         Aucun utilisateur trouvé.
@@ -1075,173 +1295,154 @@ function renderExistingUserResults(
 
   container.innerHTML =
     users
-      .map((user) => {
-        const fullName =
-          [
-            user.prenom,
-            user.postnom,
-            user.nom,
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .trim() ||
-          user.pseudo ||
-          'Utilisateur'
+      .map(
+        (user) => {
+          const fullName =
+            [
+              user.prenom,
+              user.postnom,
+              user.nom,
+            ]
+              .filter(Boolean)
+              .join(' ')
+              .trim() ||
+            user.pseudo ||
+            user.email ||
+            'Utilisateur'
 
-        const initials =
-          [
+          const secondary =
+            user.email ||
+            user.telephone ||
+            user.pseudo ||
+            'Compte utilisateur'
+
+          const initials = [
             user.prenom?.charAt(0),
             user.nom?.charAt(0),
           ]
             .filter(Boolean)
             .join('')
             .toUpperCase() ||
-          'U'
+            'U'
 
-        const secondary =
-          user.email ||
-          user.telephone ||
-          user.pseudo ||
-          'Utilisateur'
-
-        const userJson =
-          JSON.stringify(
-            user
-          )
-            .replace(
-              /\\/g,
-              '\\\\'
-            )
-            .replace(
-              /'/g,
-              '&#039;'
-            )
-
-        return `
-          <button
-            type="button"
-            class="
-              flex
-              w-full
-              items-center
-              gap-3
-              border-b
-              border-slate-100
-              px-4
-              py-3
-              text-left
-              last:border-b-0
-              hover:bg-slate-50
-            "
-            data-user="${escapeHtml(
-              userJson
-            )}"
-          >
-
-            <span
+          return `
+            <button
+              type="button"
               class="
                 flex
-                h-9
-                w-9
-                shrink-0
+                w-full
                 items-center
-                justify-center
-                rounded-lg
-                bg-primary-50
-                text-xs
-                font-bold
-                text-primary-700
+                gap-3
+                border-b
+                border-slate-100
+                px-4
+                py-3
+                text-left
+                last:border-b-0
+                hover:bg-slate-50
               "
+              data-user-id="${Number(
+                user.id
+              )}"
             >
-              ${escapeHtml(
-                initials
-              )}
-            </span>
-
-            <span class="min-w-0">
 
               <span
                 class="
-                  block
-                  truncate
-                  text-sm
-                  font-semibold
-                  text-slate-700
-                "
-              >
-                ${escapeHtml(
-                  fullName
-                )}
-              </span>
-
-              <span
-                class="
-                  mt-0.5
-                  block
-                  truncate
+                  flex
+                  h-9
+                  w-9
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-lg
+                  bg-primary-50
                   text-xs
-                  text-slate-400
+                  font-bold
+                  text-primary-700
                 "
               >
                 ${escapeHtml(
-                  secondary
+                  initials
                 )}
               </span>
 
-            </span>
+              <span class="min-w-0">
 
-          </button>
-        `
-      })
+                <span
+                  class="
+                    block
+                    truncate
+                    text-sm
+                    font-semibold
+                    text-slate-700
+                  "
+                >
+                  ${escapeHtml(
+                    fullName
+                  )}
+                </span>
+
+                <span
+                  class="
+                    mt-0.5
+                    block
+                    truncate
+                    text-xs
+                    text-slate-400
+                  "
+                >
+                  ${escapeHtml(
+                    secondary
+                  )}
+                </span>
+
+              </span>
+
+            </button>
+          `
+        }
+      )
       .join('')
 
   container
     .querySelectorAll(
-      'button[data-user]'
+      'button[data-user-id]'
     )
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => {
-          let user = null
-
-          try {
-            user = JSON.parse(
-              decodeHtmlEntities(
-                button.dataset.user ||
-                  ''
+    .forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          async () => {
+            const id =
+              Number(
+                button.dataset.userId
               )
-            )
-          } catch {
-            user = null
-          }
 
-          if (user) {
-            selectExistingUser(
-              user
-            )
+            if (!id) {
+              return
+            }
+
+            const user =
+              users.find(
+                (item) =>
+                  Number(
+                    item.id
+                  ) === id
+              )
+
+            if (user) {
+              selectExistingUser(
+                user
+              )
+            }
           }
-        }
-      )
-    })
+        )
+      }
+    )
 
   container.classList.remove(
     'hidden'
   )
-}
-
-function decodeHtmlEntities(
-  value
-) {
-  const textarea =
-    document.createElement(
-      'textarea'
-    )
-
-  textarea.innerHTML =
-    value
-
-  return textarea.value
 }
 
 function selectExistingUser(
@@ -1270,7 +1471,10 @@ function selectExistingUser(
   const userId =
     Number(user.id || 0)
 
-  if (!hiddenId || !userId) {
+  if (
+    !hiddenId ||
+    !userId
+  ) {
     return
   }
 
@@ -1293,14 +1497,13 @@ function selectExistingUser(
     user.pseudo ||
     'Compte utilisateur'
 
-  const initials =
-    [
-      user.prenom?.charAt(0),
-      user.nom?.charAt(0),
-    ]
-      .filter(Boolean)
-      .join('')
-      .toUpperCase() ||
+  const initials = [
+    user.prenom?.charAt(0),
+    user.nom?.charAt(0),
+  ]
+    .filter(Boolean)
+    .join('')
+    .toUpperCase() ||
     'U'
 
   hiddenId.value =
@@ -1327,7 +1530,14 @@ function selectExistingUser(
         "
       >
 
-        <div class="flex min-w-0 items-center gap-3">
+        <div
+          class="
+            flex
+            min-w-0
+            items-center
+            gap-3
+          "
+        >
 
           <div
             class="
@@ -1421,7 +1631,8 @@ function selectExistingUser(
   )
 
   if (resultsContainer) {
-    resultsContainer.innerHTML = ''
+    resultsContainer.innerHTML =
+      ''
   }
 }
 
@@ -1460,7 +1671,8 @@ function clearExistingUserSelection() {
   )
 
   if (selectedContainer) {
-    selectedContainer.innerHTML = ''
+    selectedContainer.innerHTML =
+      ''
   }
 
   resultsContainer?.classList.add(
@@ -1468,13 +1680,14 @@ function clearExistingUserSelection() {
   )
 
   if (resultsContainer) {
-    resultsContainer.innerHTML = ''
+    resultsContainer.innerHTML =
+      ''
   }
 }
 
 /*
 |--------------------------------------------------------------------------
-| ENREGISTREMENT
+| ENREGISTREMENT ENSEIGNANT
 |--------------------------------------------------------------------------
 */
 
@@ -1482,7 +1695,8 @@ async function saveTeacher() {
   const mode =
     document.querySelector(
       'input[name="teacherMode"]:checked'
-    )?.value || 'new'
+    )?.value ||
+    'new'
 
   hideFormError()
 
@@ -1490,14 +1704,18 @@ async function saveTeacher() {
     mode,
   }
 
-  if (mode === 'existing') {
+  if (
+    mode ===
+    'existing'
+  ) {
     const existingUserId =
       Number(
         document
           .getElementById(
             'existingUserId'
           )
-          ?.value || 0
+          ?.value ||
+          0
       )
 
     if (!existingUserId) {
@@ -1575,7 +1793,6 @@ async function saveTeacher() {
       showFormError(
         'Le prénom est obligatoire.'
       )
-
       return
     }
 
@@ -1583,7 +1800,6 @@ async function saveTeacher() {
       showFormError(
         'Le nom est obligatoire.'
       )
-
       return
     }
 
@@ -1591,7 +1807,6 @@ async function saveTeacher() {
       showFormError(
         'L’adresse e-mail est obligatoire.'
       )
-
       return
     }
 
@@ -1599,7 +1814,6 @@ async function saveTeacher() {
       showFormError(
         'Le mot de passe est obligatoire pour un nouveau compte.'
       )
-
       return
     }
 
@@ -1609,12 +1823,13 @@ async function saveTeacher() {
         'HOMME',
         'FEMME',
         'AUTRE',
-      ].includes(sexe)
+      ].includes(
+        sexe
+      )
     ) {
       showFormError(
         'La valeur du sexe sélectionnée est invalide.'
       )
-
       return
     }
 
@@ -1641,7 +1856,8 @@ async function saveTeacher() {
     return
   }
 
-  button.disabled = true
+  button.disabled =
+    true
 
   const originalText =
     button.textContent ||
@@ -1674,6 +1890,11 @@ async function saveTeacher() {
       loadStatistics(),
       loadTeachers(1),
     ])
+
+    showToast(
+      'Enseignant enregistré avec succès.',
+      'success'
+    )
   } catch (error) {
     showFormError(
       error.message
@@ -1689,13 +1910,763 @@ async function saveTeacher() {
 
 /*
 |--------------------------------------------------------------------------
-| DÉTAILS
+| MODAL DYNAMIQUE
+|--------------------------------------------------------------------------
+*/
+
+function ensureUiModals() {
+  if (
+    document.getElementById(
+      'dynamicUiRoot'
+    )
+  ) {
+    return
+  }
+
+  const root =
+    document.createElement(
+      'div'
+    )
+
+  root.id =
+    'dynamicUiRoot'
+
+  root.innerHTML = `
+
+    <!-- DETAILS -->
+
+    <div
+      id="teacherDetailsModal"
+      class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-950/50
+        p-4
+        backdrop-blur-sm
+      "
+    >
+
+      <div
+        class="
+          w-full
+          max-w-2xl
+          overflow-hidden
+          rounded-2xl
+          bg-white
+          shadow-2xl
+        "
+      >
+
+        <div
+          class="
+            flex
+            items-center
+            justify-between
+            border-b
+            border-slate-100
+            px-6
+            py-5
+          "
+        >
+
+          <div
+            class="
+              flex
+              items-center
+              gap-3
+            "
+          >
+
+            <div
+              class="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+                bg-primary-50
+                text-primary-600
+              "
+            >
+              <i
+                class="
+                  fa-solid
+                  fa-user-tie
+                "
+              ></i>
+            </div>
+
+            <div>
+
+              <h3
+                class="
+                  text-base
+                  font-bold
+                  text-slate-800
+                "
+              >
+                Détails de l’enseignant
+              </h3>
+
+              <p
+                class="
+                  mt-0.5
+                  text-xs
+                  text-slate-400
+                "
+              >
+                Informations du compte et de l’association scolaire
+              </p>
+
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            data-close-details
+            class="
+              flex
+              h-9
+              w-9
+              items-center
+              justify-center
+              rounded-lg
+              text-slate-400
+              transition
+              hover:bg-slate-100
+              hover:text-slate-700
+            "
+          >
+            <i
+              class="
+                fa-solid
+                fa-xmark
+              "
+            ></i>
+          </button>
+
+        </div>
+
+        <div
+          id="teacherDetailsContent"
+          class="
+            max-h-[70vh]
+            overflow-y-auto
+            p-6
+          "
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- EDITION -->
+
+    <div
+      id="teacherEditModal"
+      class="
+        fixed
+        inset-0
+        z-[100]
+        hidden
+        items-center
+        justify-center
+        bg-slate-950/50
+        p-4
+        backdrop-blur-sm
+      "
+    >
+
+      <div
+        class="
+          w-full
+          max-w-2xl
+          overflow-hidden
+          rounded-2xl
+          bg-white
+          shadow-2xl
+        "
+      >
+
+        <div
+          class="
+            flex
+            items-center
+            justify-between
+            border-b
+            border-slate-100
+            px-6
+            py-5
+          "
+        >
+
+          <div>
+
+            <h3
+              class="
+                text-base
+                font-bold
+                text-slate-800
+              "
+            >
+              Modifier l’enseignant
+            </h3>
+
+            <p
+              class="
+                mt-0.5
+                text-xs
+                text-slate-400
+              "
+            >
+              Mettez à jour les informations du compte.
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            data-close-edit
+            class="
+              flex
+              h-9
+              w-9
+              items-center
+              justify-center
+              rounded-lg
+              text-slate-400
+              transition
+              hover:bg-slate-100
+              hover:text-slate-700
+            "
+          >
+            <i
+              class="
+                fa-solid
+                fa-xmark
+              "
+            ></i>
+          </button>
+
+        </div>
+
+        <form
+          id="teacherEditForm"
+          class="p-6"
+        >
+
+          <input
+            id="editTeacherMembershipId"
+            type="hidden"
+          >
+
+          <div
+            id="editTeacherError"
+            class="
+              mb-5
+              hidden
+              rounded-xl
+              border
+              border-red-100
+              bg-red-50
+              px-4
+              py-3
+              text-sm
+              text-red-600
+            "
+          ></div>
+
+          <div
+            class="
+              grid
+              grid-cols-1
+              gap-5
+              md:grid-cols-2
+            "
+          >
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                Prénom
+              </label>
+
+              <input
+                id="editTeacherPrenom"
+                type="text"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+            </div>
+
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                Nom
+              </label>
+
+              <input
+                id="editTeacherNom"
+                type="text"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+            </div>
+
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                Postnom
+              </label>
+
+              <input
+                id="editTeacherPostnom"
+                type="text"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+            </div>
+
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                E-mail
+              </label>
+
+              <input
+                id="editTeacherEmail"
+                type="email"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+            </div>
+
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                Téléphone
+              </label>
+
+              <input
+                id="editTeacherTelephone"
+                type="text"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+            </div>
+
+
+            <div>
+              <label
+                class="
+                  mb-2
+                  block
+                  text-sm
+                  font-semibold
+                  text-slate-700
+                "
+              >
+                Sexe
+              </label>
+
+              <select
+                id="editTeacherSexe"
+                class="
+                  w-full
+                  rounded-xl
+                  border
+                  border-slate-200
+                  px-4
+                  py-3
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-primary-500
+                  focus:ring-4
+                  focus:ring-primary-50
+                "
+              >
+                <option value="">
+                  Non renseigné
+                </option>
+
+                <option value="HOMME">
+                  Homme
+                </option>
+
+                <option value="FEMME">
+                  Femme
+                </option>
+
+                <option value="AUTRE">
+                  Autre
+                </option>
+
+              </select>
+            </div>
+
+          </div>
+
+
+          <div
+            class="
+              mt-6
+              flex
+              justify-end
+              gap-3
+            "
+          >
+
+            <button
+              type="button"
+              data-close-edit
+              class="
+                rounded-xl
+                border
+                border-slate-200
+                px-5
+                py-2.5
+                text-sm
+                font-semibold
+                text-slate-600
+                hover:bg-slate-50
+              "
+            >
+              Annuler
+            </button>
+
+            <button
+              id="saveTeacherEditButton"
+              type="submit"
+              class="
+                rounded-xl
+                bg-primary-600
+                px-5
+                py-2.5
+                text-sm
+                font-semibold
+                text-white
+                shadow-sm
+                hover:bg-primary-700
+              "
+            >
+              Enregistrer
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+
+    <!-- CONFIRMATION SUPPRESSION -->
+
+    <div
+      id="teacherDeleteModal"
+      class="
+        fixed
+        inset-0
+        z-[110]
+        hidden
+        items-center
+        justify-center
+        bg-slate-950/50
+        p-4
+        backdrop-blur-sm
+      "
+    >
+
+      <div
+        class="
+          w-full
+          max-w-md
+          rounded-2xl
+          bg-white
+          p-6
+          shadow-2xl
+        "
+      >
+
+        <div
+          class="
+            flex
+            h-12
+            w-12
+            items-center
+            justify-center
+            rounded-xl
+            bg-red-50
+            text-red-600
+          "
+        >
+          <i
+            class="
+              fa-solid
+              fa-trash-can
+            "
+          ></i>
+        </div>
+
+        <h3
+          class="
+            mt-5
+            text-lg
+            font-bold
+            text-slate-800
+          "
+        >
+          Retirer cet enseignant ?
+        </h3>
+
+        <p
+          id="teacherDeleteMessage"
+          class="
+            mt-2
+            text-sm
+            leading-6
+            text-slate-500
+          "
+        ></p>
+
+        <div
+          class="
+            mt-6
+            flex
+            justify-end
+            gap-3
+          "
+        >
+
+          <button
+            type="button"
+            data-close-delete
+            class="
+              rounded-xl
+              border
+              border-slate-200
+              px-5
+              py-2.5
+              text-sm
+              font-semibold
+              text-slate-600
+              hover:bg-slate-50
+            "
+          >
+            Annuler
+          </button>
+
+          <button
+            id="confirmTeacherDelete"
+            type="button"
+            class="
+              rounded-xl
+              bg-red-600
+              px-5
+              py-2.5
+              text-sm
+              font-semibold
+              text-white
+              shadow-sm
+              hover:bg-red-700
+            "
+          >
+            Retirer l’enseignant
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div
+      id="schoolAdminToast"
+      class="
+        fixed
+        right-5
+        top-5
+        z-[200]
+        hidden
+        max-w-sm
+      "
+    ></div>
+
+  `
+
+  document.body.appendChild(
+    root
+  )
+}
+
+/*
+|--------------------------------------------------------------------------
+| DETAILS
 |--------------------------------------------------------------------------
 */
 
 async function viewTeacher(
   membershipId
 ) {
+  ensureUiModals()
+
+  const modal =
+    document.getElementById(
+      'teacherDetailsModal'
+    )
+
+  const content =
+    document.getElementById(
+      'teacherDetailsContent'
+    )
+
+  if (!modal || !content) {
+    return
+  }
+
+  content.innerHTML = `
+    <div
+      class="
+        flex
+        items-center
+        justify-center
+        py-12
+        text-sm
+        text-slate-400
+      "
+    >
+      <i
+        class="
+          fa-solid
+          fa-spinner
+          fa-spin
+          mr-2
+        "
+      ></i>
+
+      Chargement des informations…
+    </div>
+  `
+
+  modal.classList.remove(
+    'hidden'
+  )
+
+  modal.classList.add(
+    'flex'
+  )
+
   try {
     const payload =
       await apiRequest(
@@ -1705,44 +2676,333 @@ async function viewTeacher(
     const teacher =
       payload.data || {}
 
-    const details = [
-      `Nom : ${
-        teacher.fullName ||
-        [
-          teacher.prenom,
-          teacher.postnom,
-          teacher.nom,
-        ]
-          .filter(Boolean)
-          .join(' ') ||
-        '—'
-      }`,
-      `E-mail : ${
-        teacher.email || '—'
-      }`,
-      `Téléphone : ${
-        teacher.telephone || '—'
-      }`,
-      `Sexe : ${
-        teacher.sexe || '—'
-      }`,
-      `Rôle : ${
-        teacher.role ||
-        'ENSEIGNANT'
-      }`,
-      `Statut : ${
-        teacher.statut || '—'
-      }`,
+    const initials = [
+      teacher.prenom?.charAt(0),
+      teacher.nom?.charAt(0),
     ]
+      .filter(Boolean)
+      .join('')
+      .toUpperCase() ||
+      'EN'
 
-    window.alert(
-      details.join('\n')
-    )
+    const fullName =
+      teacher.fullName ||
+      [
+        teacher.prenom,
+        teacher.postnom,
+        teacher.nom,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .trim() ||
+      'Enseignant'
+
+    const statusActive =
+      teacher.statut ===
+      'ACTIF'
+
+    content.innerHTML = `
+      <div class="space-y-6">
+
+        <div
+          class="
+            flex
+            items-center
+            gap-4
+            rounded-2xl
+            bg-slate-50
+            p-5
+          "
+        >
+
+          <div
+            class="
+              flex
+              h-16
+              w-16
+              shrink-0
+              items-center
+              justify-center
+              rounded-2xl
+              bg-primary-100
+              text-lg
+              font-bold
+              text-primary-700
+            "
+          >
+            ${escapeHtml(
+              initials
+            )}
+          </div>
+
+          <div class="min-w-0">
+
+            <h4
+              class="
+                truncate
+                text-lg
+                font-bold
+                text-slate-800
+              "
+            >
+              ${escapeHtml(
+                fullName
+              )}
+            </h4>
+
+            <p
+              class="
+                mt-1
+                text-sm
+                text-slate-400
+              "
+            >
+              ${escapeHtml(
+                teacher.email ||
+                  'Aucune adresse e-mail'
+              )}
+            </p>
+
+          </div>
+
+          <div class="ml-auto">
+
+            ${
+              statusActive
+                ? `
+                  <span
+                    class="
+                      inline-flex
+                      rounded-full
+                      bg-emerald-50
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-semibold
+                      text-emerald-700
+                    "
+                  >
+                    Actif
+                  </span>
+                `
+                : `
+                  <span
+                    class="
+                      inline-flex
+                      rounded-full
+                      bg-amber-50
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-semibold
+                      text-amber-700
+                    "
+                  >
+                    Inactif
+                  </span>
+                `
+            }
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <h5
+            class="
+              mb-3
+              text-xs
+              font-bold
+              uppercase
+              tracking-wider
+              text-slate-400
+            "
+          >
+            Informations personnelles
+          </h5>
+
+          <div
+            class="
+              grid
+              grid-cols-1
+              gap-3
+              md:grid-cols-2
+            "
+          >
+
+            ${detailItem(
+              'Prénom',
+              teacher.prenom
+            )}
+
+            ${detailItem(
+              'Postnom',
+              teacher.postnom
+            )}
+
+            ${detailItem(
+              'Nom',
+              teacher.nom
+            )}
+
+            ${detailItem(
+              'Pseudo',
+              teacher.pseudo
+            )}
+
+            ${detailItem(
+              'E-mail',
+              teacher.email
+            )}
+
+            ${detailItem(
+              'Téléphone',
+              teacher.telephone
+            )}
+
+            ${detailItem(
+              'Sexe',
+              teacher.sexe
+            )}
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <h5
+            class="
+              mb-3
+              text-xs
+              font-bold
+              uppercase
+              tracking-wider
+              text-slate-400
+            "
+          >
+            Association scolaire
+          </h5>
+
+          <div
+            class="
+              grid
+              grid-cols-1
+              gap-3
+              md:grid-cols-2
+            "
+          >
+
+            ${detailItem(
+              'Rôle',
+              teacher.role
+            )}
+
+            ${detailItem(
+              'Statut',
+              teacher.statut
+            )}
+
+            ${detailItem(
+              'ID utilisateur',
+              teacher.userId
+            )}
+
+            ${detailItem(
+              'ID association',
+              teacher.membershipId
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+    `
   } catch (error) {
-    showError(
-      error.message
-    )
+    content.innerHTML = `
+      <div
+        class="
+          rounded-xl
+          border
+          border-red-100
+          bg-red-50
+          px-4
+          py-4
+          text-sm
+          text-red-600
+        "
+      >
+        ${escapeHtml(
+          error.message
+        )}
+      </div>
+    `
   }
+}
+
+function detailItem(
+  label,
+  value
+) {
+  return `
+    <div
+      class="
+        rounded-xl
+        border
+        border-slate-100
+        bg-white
+        p-4
+      "
+    >
+
+      <p
+        class="
+          text-xs
+          font-medium
+          text-slate-400
+        "
+      >
+        ${escapeHtml(
+          label
+        )}
+      </p>
+
+      <p
+        class="
+          mt-1
+          break-words
+          text-sm
+          font-semibold
+          text-slate-700
+        "
+      >
+        ${escapeHtml(
+          value ||
+            'Non renseigné'
+        )}
+      </p>
+
+    </div>
+  `
+}
+
+function closeDetailsModal() {
+  const modal =
+    document.getElementById(
+      'teacherDetailsModal'
+    )
+
+  modal?.classList.add(
+    'hidden'
+  )
+
+  modal?.classList.remove(
+    'flex'
+  )
 }
 
 /*
@@ -1754,6 +3014,8 @@ async function viewTeacher(
 async function editTeacher(
   membershipId
 ) {
+  ensureUiModals()
+
   const teacher =
     currentTeachers.find(
       (item) =>
@@ -1773,45 +3035,199 @@ async function editTeacher(
     return
   }
 
-  const prenom =
-    window.prompt(
-      'Prénom',
-      teacher.prenom || ''
+  const modal =
+    document.getElementById(
+      'teacherEditModal'
     )
 
-  if (prenom === null) {
+  const membershipInput =
+    document.getElementById(
+      'editTeacherMembershipId'
+    )
+
+  const errorElement =
+    document.getElementById(
+      'editTeacherError'
+    )
+
+  membershipInput.value =
+    membershipId
+
+  errorElement.textContent =
+    ''
+
+  errorElement.classList.add(
+    'hidden'
+  )
+
+  document.getElementById(
+    'editTeacherPrenom'
+  ).value =
+    teacher.prenom || ''
+
+  document.getElementById(
+    'editTeacherNom'
+  ).value =
+    teacher.nom || ''
+
+  document.getElementById(
+    'editTeacherPostnom'
+  ).value =
+    teacher.postnom || ''
+
+  document.getElementById(
+    'editTeacherEmail'
+  ).value =
+    teacher.email || ''
+
+  document.getElementById(
+    'editTeacherTelephone'
+  ).value =
+    teacher.telephone || ''
+
+  document.getElementById(
+    'editTeacherSexe'
+  ).value =
+    teacher.sexe || ''
+
+  modal.classList.remove(
+    'hidden'
+  )
+
+  modal.classList.add(
+    'flex'
+  )
+}
+
+function closeEditModal() {
+  const modal =
+    document.getElementById(
+      'teacherEditModal'
+    )
+
+  modal?.classList.add(
+    'hidden'
+  )
+
+  modal?.classList.remove(
+    'flex'
+  )
+}
+
+async function submitTeacherEdit(
+  event
+) {
+  event.preventDefault()
+
+  const membershipId =
+    Number(
+      document.getElementById(
+        'editTeacherMembershipId'
+      )?.value || 0
+    )
+
+  if (!membershipId) {
     return
   }
 
-  const nom =
-    window.prompt(
-      'Nom',
-      teacher.nom || ''
+  const errorElement =
+    document.getElementById(
+      'editTeacherError'
     )
 
-  if (nom === null) {
+  const button =
+    document.getElementById(
+      'saveTeacherEditButton'
+    )
+
+  errorElement.classList.add(
+    'hidden'
+  )
+
+  const payload = {
+    prenom:
+      document
+        .getElementById(
+          'editTeacherPrenom'
+        )
+        .value.trim(),
+
+    nom:
+      document
+        .getElementById(
+          'editTeacherNom'
+        )
+        .value.trim(),
+
+    postnom:
+      document
+        .getElementById(
+          'editTeacherPostnom'
+        )
+        .value.trim(),
+
+    email:
+      document
+        .getElementById(
+          'editTeacherEmail'
+        )
+        .value.trim(),
+
+    telephone:
+      document
+        .getElementById(
+          'editTeacherTelephone'
+        )
+        .value.trim(),
+
+    sexe:
+      document.getElementById(
+        'editTeacherSexe'
+      ).value,
+  }
+
+  if (!payload.prenom) {
+    errorElement.textContent =
+      'Le prénom est obligatoire.'
+
+    errorElement.classList.remove(
+      'hidden'
+    )
+
     return
   }
 
-  const postnom =
-    window.prompt(
-      'Postnom',
-      teacher.postnom || ''
+  if (!payload.nom) {
+    errorElement.textContent =
+      'Le nom est obligatoire.'
+
+    errorElement.classList.remove(
+      'hidden'
     )
 
-  if (postnom === null) {
     return
   }
 
-  const email =
-    window.prompt(
-      'E-mail',
-      teacher.email || ''
+  if (!payload.email) {
+    errorElement.textContent =
+      'L’adresse e-mail est obligatoire.'
+
+    errorElement.classList.remove(
+      'hidden'
     )
 
-  if (email === null) {
     return
   }
+
+  button.disabled = true
+
+  const originalText =
+    button.textContent
+
+  button.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+    Enregistrement…
+  `
 
   try {
     await apiRequest(
@@ -1825,14 +3241,13 @@ async function editTeacher(
         },
 
         body:
-          JSON.stringify({
-            prenom: prenom.trim(),
-            nom: nom.trim(),
-            postnom: postnom.trim(),
-            email: email.trim(),
-          }),
+          JSON.stringify(
+            payload
+          ),
       }
     )
+
+    closeEditModal()
 
     await Promise.all([
       loadStatistics(),
@@ -1840,16 +3255,30 @@ async function editTeacher(
         currentPage
       ),
     ])
-  } catch (error) {
-    showError(
-      error.message
+
+    showToast(
+      'Les informations de l’enseignant ont été mises à jour.',
+      'success'
     )
+  } catch (error) {
+    errorElement.textContent =
+      error.message
+
+    errorElement.classList.remove(
+      'hidden'
+    )
+  } finally {
+    button.disabled =
+      false
+
+    button.textContent =
+      originalText
   }
 }
 
 /*
 |--------------------------------------------------------------------------
-| CHANGEMENT DE STATUT
+| STATUT
 |--------------------------------------------------------------------------
 */
 
@@ -1881,9 +3310,13 @@ async function changeTeacherStatus(
       ? 'activer'
       : 'désactiver'
 
+  const fullName =
+    teacher.fullName ||
+    'cet enseignant'
+
   const confirmed =
     window.confirm(
-      `Voulez-vous ${action} ${teacher.fullName || 'cet enseignant'} ?`
+      `Voulez-vous ${action} ${fullName} ?`
     )
 
   if (!confirmed) {
@@ -1914,11 +3347,335 @@ async function changeTeacherStatus(
         currentPage
       ),
     ])
+
+    showToast(
+      statut === 'ACTIF'
+        ? 'Enseignant activé avec succès.'
+        : 'Enseignant désactivé avec succès.',
+      'success'
+    )
   } catch (error) {
     showError(
       error.message
     )
   }
+}
+
+/*
+|--------------------------------------------------------------------------
+| SUPPRESSION / RETRAIT
+|--------------------------------------------------------------------------
+*/
+
+let teacherToDelete = null
+
+async function deleteTeacher(
+  membershipId
+) {
+  ensureUiModals()
+
+  const teacher =
+    currentTeachers.find(
+      (item) =>
+        Number(
+          item.membershipId
+        ) ===
+        Number(
+          membershipId
+        )
+    )
+
+  if (!teacher) {
+    showError(
+      'Enseignant introuvable.'
+    )
+
+    return
+  }
+
+  teacherToDelete =
+    Number(
+      membershipId
+    )
+
+  const modal =
+    document.getElementById(
+      'teacherDeleteModal'
+    )
+
+  const message =
+    document.getElementById(
+      'teacherDeleteMessage'
+    )
+
+  const fullName =
+    teacher.fullName ||
+    [
+      teacher.prenom,
+      teacher.postnom,
+      teacher.nom,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .trim() ||
+    'cet enseignant'
+
+  message.innerHTML = `
+    Vous êtes sur le point de retirer
+    <strong class="font-semibold text-slate-700">
+      ${escapeHtml(
+        fullName
+      )}
+    </strong>
+    de cet établissement.
+    <br>
+    <span class="mt-2 block text-xs text-slate-400">
+      Le compte utilisateur ne sera pas supprimé du système.
+    </span>
+  `
+
+  modal.classList.remove(
+    'hidden'
+  )
+
+  modal.classList.add(
+    'flex'
+  )
+}
+
+function closeDeleteModal() {
+  const modal =
+    document.getElementById(
+      'teacherDeleteModal'
+    )
+
+  modal?.classList.add(
+    'hidden'
+  )
+
+  modal?.classList.remove(
+    'flex'
+  )
+
+  teacherToDelete =
+    null
+}
+
+async function confirmTeacherDelete() {
+  if (!teacherToDelete) {
+    return
+  }
+
+  const button =
+    document.getElementById(
+      'confirmTeacherDelete'
+    )
+
+  const membershipId =
+    teacherToDelete
+
+  button.disabled =
+    true
+
+  const originalText =
+    button.textContent
+
+  button.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+    Retrait…
+  `
+
+  try {
+    await apiRequest(
+      `/api/school-admin/enseignants/${membershipId}`,
+      {
+        method: 'DELETE',
+      }
+    )
+
+    closeDeleteModal()
+
+    await Promise.all([
+      loadStatistics(),
+      loadTeachers(
+        currentPage
+      ),
+    ])
+
+    if (
+      currentMeta &&
+      currentPage >
+        Number(
+          currentMeta.lastPage || 1
+        )
+    ) {
+      await loadTeachers(
+        Math.max(
+          1,
+          currentPage - 1
+        )
+      )
+    }
+
+    showToast(
+      'L’enseignant a été retiré de cet établissement.',
+      'success'
+    )
+  } catch (error) {
+    showToast(
+      error.message,
+      'error'
+    )
+  } finally {
+    button.disabled =
+      false
+
+    button.textContent =
+      originalText
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| TOAST
+|--------------------------------------------------------------------------
+*/
+
+function showToast(
+  message,
+  type = 'success'
+) {
+  ensureUiModals()
+
+  const container =
+    document.getElementById(
+      'schoolAdminToast'
+    )
+
+  if (!container) {
+    return
+  }
+
+  const isError =
+    type === 'error'
+
+  container.innerHTML = `
+    <div
+      class="
+        flex
+        items-start
+        gap-3
+        rounded-2xl
+        border
+        ${
+          isError
+            ? 'border-red-100 bg-white'
+            : 'border-emerald-100 bg-white'
+        }
+        px-4
+        py-4
+        shadow-xl
+      "
+    >
+
+      <div
+        class="
+          flex
+          h-9
+          w-9
+          shrink-0
+          items-center
+          justify-center
+          rounded-xl
+          ${
+            isError
+              ? 'bg-red-50 text-red-600'
+              : 'bg-emerald-50 text-emerald-600'
+          }
+        "
+      >
+        <i
+          class="
+            fa-solid
+            ${
+              isError
+                ? 'fa-circle-exclamation'
+                : 'fa-circle-check'
+            }
+          "
+        ></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <p
+          class="
+            text-sm
+            font-semibold
+            text-slate-800
+          "
+        >
+          ${
+            isError
+              ? 'Erreur'
+              : 'Opération réussie'
+          }
+        </p>
+
+        <p
+          class="
+            mt-1
+            text-xs
+            leading-5
+            text-slate-500
+          "
+        >
+          ${escapeHtml(
+            message
+          )}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        onclick="this.closest('[role]')?.remove()"
+        class="
+          text-slate-300
+          hover:text-slate-500
+        "
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+  `
+
+  const wrapper =
+    container.firstElementChild
+
+  wrapper?.setAttribute(
+    'role',
+    'alert'
+  )
+
+  container.classList.remove(
+    'hidden'
+  )
+
+  clearTimeout(
+    container._toastTimer
+  )
+
+  container._toastTimer =
+    setTimeout(
+      () => {
+        container.classList.add(
+          'hidden'
+        )
+      },
+      4000
+    )
 }
 
 /*
@@ -1988,7 +3745,8 @@ async function logout() {
         '/api/auth/logout',
         {
           method: 'POST',
-          headers: apiHeaders(),
+          headers:
+            apiHeaders(),
         }
       )
     }
@@ -1999,7 +3757,8 @@ async function logout() {
       TOKEN_KEY
     )
 
-    window.location.href = '/'
+    window.location.href =
+      '/'
   }
 }
 
@@ -2076,11 +3835,13 @@ document
         )
 
       if (searchInput) {
-        searchInput.value = ''
+        searchInput.value =
+          ''
       }
 
       if (statusFilter) {
-        statusFilter.value = ''
+        statusFilter.value =
+          ''
       }
 
       loadTeachers(1)
@@ -2101,7 +3862,9 @@ document
       searchTimer =
         setTimeout(
           () =>
-            loadTeachers(1),
+            loadTeachers(
+              1
+            ),
           350
         )
     }
@@ -2114,7 +3877,9 @@ document
   ?.addEventListener(
     'change',
     () =>
-      loadTeachers(1)
+      loadTeachers(
+        1
+      )
   )
 
 document
@@ -2165,52 +3930,129 @@ document
     logout
   )
 
-document.addEventListener(
-  'click',
-  (event) => {
-    const searchInput =
-      document.getElementById(
-        'existingUserSearch'
-      )
+/*
+|--------------------------------------------------------------------------
+| ÉVÉNEMENTS MODALS DYNAMIQUES
+|--------------------------------------------------------------------------
+*/
 
-    const resultsContainer =
-      document.getElementById(
-        'existingUserResults'
-      )
+function setupDynamicModalEvents() {
+  ensureUiModals()
 
-    if (
-      !searchInput ||
-      !resultsContainer
-    ) {
-      return
-    }
-
-    if (
-      event.target ===
-        searchInput ||
-      searchInput.contains(
-        event.target
-      ) ||
-      resultsContainer.contains(
-        event.target
-      )
-    ) {
-      return
-    }
-
-    resultsContainer.classList.add(
-      'hidden'
+  document
+    .querySelectorAll(
+      '[data-close-details]'
     )
-  }
-)
+    .forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          closeDetailsModal
+        )
+      }
+    )
 
-setupMobileMenu()
+  document
+    .querySelectorAll(
+      '[data-close-edit]'
+    )
+    .forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          closeEditModal
+        )
+      }
+    )
+
+  document
+    .querySelectorAll(
+      '[data-close-delete]'
+    )
+    .forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          closeDeleteModal
+        )
+      }
+    )
+
+  document
+    .getElementById(
+      'teacherEditForm'
+    )
+    ?.addEventListener(
+      'submit',
+      submitTeacherEdit
+    )
+
+  document
+    .getElementById(
+      'confirmTeacherDelete'
+    )
+    ?.addEventListener(
+      'click',
+      confirmTeacherDelete
+    )
+
+  document
+    .getElementById(
+      'teacherDetailsModal'
+    )
+    ?.addEventListener(
+      'click',
+      (event) => {
+        if (
+          event.target ===
+          event.currentTarget
+        ) {
+          closeDetailsModal()
+        }
+      }
+    )
+
+  document
+    .getElementById(
+      'teacherEditModal'
+    )
+    ?.addEventListener(
+      'click',
+      (event) => {
+        if (
+          event.target ===
+          event.currentTarget
+        ) {
+          closeEditModal()
+        }
+      }
+    )
+
+  document
+    .getElementById(
+      'teacherDeleteModal'
+    )
+    ?.addEventListener(
+      'click',
+      (event) => {
+        if (
+          event.target ===
+          event.currentTarget
+        ) {
+          closeDeleteModal()
+        }
+      }
+    )
+}
 
 /*
 |--------------------------------------------------------------------------
 | INITIALISATION
 |--------------------------------------------------------------------------
 */
+
+setupDynamicModalEvents()
+setupMobileMenu()
 
 async function initialize() {
   try {
