@@ -11,6 +11,7 @@ export const controllers = {
   schoolAdmin: {
     Dashboard: () => import('#controllers/school_admin/dashboard_controller'),
     Teacher: () => import('#controllers/school_admin/teacher_controller'),
+    Matiere: () => import('#controllers/school_admin/matiere_controller'),
   },
   Session: () => import('#controllers/session_controller'),
   superAdmin: {

@@ -13,6 +13,7 @@ const SchoolAdminDashboardController = () =>
   import('#controllers/school_admin/dashboard_controller')
 
 import TeacherController from '#controllers/school_admin/teacher_controller'
+import MatiereController from '#controllers/school_admin/matiere_controller'
 
 /*
 |--------------------------------------------------------------------------
@@ -1137,10 +1138,10 @@ router
     router
       .get(
         '/matieres',
-        async ({ response }) =>
-          response.redirect(
-            '/school-admin/dashboard'
-          )
+        [MatiereController, 'indexPage']
+      )
+      .as(
+        'schoolAdmin.matieres'
       )
 
 
@@ -1237,6 +1238,69 @@ router
   .prefix('/school-admin')
 
 
+
+router
+  .group(() => {
+    router
+      .get(
+        '/matieres',
+        [MatiereController, 'index']
+      )
+      .as('schoolAdmin.api.matieres')
+
+    router
+      .get(
+        '/matieres/statistics',
+        [MatiereController, 'statistics']
+      )
+      .as('schoolAdmin.api.matieres.statistics')
+
+    router
+      .get(
+        '/matieres/:id',
+        [MatiereController, 'show']
+      )
+      .as('schoolAdmin.api.matieres.show')
+
+    router
+      .post(
+        '/matieres',
+        [MatiereController, 'store']
+      )
+      .as('schoolAdmin.api.matieres.store')
+
+    router
+      .put(
+        '/matieres/:id',
+        [MatiereController, 'update']
+      )
+      .as('schoolAdmin.api.matieres.update')
+
+    router
+      .patch(
+        '/matieres/:id/statut',
+        [MatiereController, 'updateStatus']
+      )
+      .as('schoolAdmin.api.matieres.status')
+
+    router
+      .delete(
+        '/matieres/:id',
+        [MatiereController, 'destroy']
+      )
+      .as('schoolAdmin.api.matieres.destroy')
+  })
+  .prefix('/api/school-admin')
+  .use(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
+  .use(
+    middleware.schoolAdmin()
+  )
+
+
 /*
 |--------------------------------------------------------------------------
 | API SCHOOL ADMIN
@@ -1301,7 +1365,7 @@ router
   .as(
     'schoolAdmin.api.enseignants.users.search'
   )
-  
+
 
 router
   .get(
