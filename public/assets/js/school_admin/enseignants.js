@@ -3282,7 +3282,167 @@ async function submitTeacherEdit(
 |--------------------------------------------------------------------------
 */
 
-async function changeTeacherStatus(
+/*
+|--------------------------------------------------------------------------
+| MODALE DE CHANGEMENT DE STATUT
+|--------------------------------------------------------------------------
+*/
+
+const statusTeacherModal =
+  document.getElementById(
+    'statusTeacherModal'
+  )
+
+let pendingStatusAction =
+  null
+
+function openStatusTeacherModal(
+  teacher,
+  statut
+) {
+  if (!teacher) {
+    return
+  }
+
+  pendingStatusAction = {
+    membershipId:
+      teacher.membershipId,
+
+    statut,
+    teacher,
+  }
+
+  const title =
+    document.getElementById(
+      'statusModalTitle'
+    )
+
+  const message =
+    document.getElementById(
+      'statusModalMessage'
+    )
+
+  const icon =
+    document.getElementById(
+      'statusModalIcon'
+    )
+
+  const confirmButton =
+    document.getElementById(
+      'confirmStatusTeacherButton'
+    )
+
+  const isActivation =
+    statut === 'ACTIF'
+
+  if (title) {
+    title.textContent =
+      isActivation
+        ? 'Activer l’enseignant'
+        : 'Suspendre l’enseignant'
+  }
+
+  if (message) {
+    message.textContent =
+      isActivation
+        ? `Voulez-vous vraiment réactiver ${teacher.fullName} ? L’enseignant pourra à nouveau accéder aux fonctionnalités de l’établissement.`
+        : `Voulez-vous vraiment suspendre ${teacher.fullName} ? L’enseignant ne pourra plus exercer ses activités dans cet établissement tant qu’il restera inactif.`
+  }
+
+  if (icon) {
+    icon.className =
+      isActivation
+        ? `
+          flex
+          h-11
+          w-11
+          items-center
+          justify-center
+          rounded-xl
+          bg-emerald-50
+          text-emerald-600
+        `
+        : `
+          flex
+          h-11
+          w-11
+          items-center
+          justify-center
+          rounded-xl
+          bg-amber-50
+          text-amber-600
+        `
+
+    icon.innerHTML =
+      isActivation
+        ? '<i class="fa-solid fa-check"></i>'
+        : '<i class="fa-solid fa-ban"></i>'
+  }
+
+  if (confirmButton) {
+    confirmButton.textContent =
+      isActivation
+        ? 'Oui, activer'
+        : 'Oui, suspendre'
+
+    confirmButton.className =
+      isActivation
+        ? `
+          rounded-xl
+          bg-emerald-600
+          px-5
+          py-2.5
+          text-sm
+          font-semibold
+          text-white
+          shadow-sm
+          transition
+          hover:bg-emerald-700
+        `
+        : `
+          rounded-xl
+          bg-amber-500
+          px-5
+          py-2.5
+          text-sm
+          font-semibold
+          text-white
+          shadow-sm
+          transition
+          hover:bg-amber-600
+        `
+  }
+
+  statusTeacherModal?.classList.remove(
+    'hidden'
+  )
+
+  statusTeacherModal?.classList.add(
+    'flex'
+  )
+}
+
+function closeStatusTeacherModal() {
+  statusTeacherModal?.classList.add(
+    'hidden'
+  )
+
+  statusTeacherModal?.classList.remove(
+    'flex'
+  )
+
+  pendingStatusAction =
+    null
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CHANGEMENT DE STATUT
+|--------------------------------------------------------------------------
+*/
+
+function changeTeacherStatus(
   membershipId,
   statut
 ) {
@@ -3299,28 +3459,54 @@ async function changeTeacherStatus(
 
   if (!teacher) {
     showError(
-      'Enseignant introuvable.'
+      'Impossible de retrouver cet enseignant.'
     )
 
     return
   }
 
-  const action =
-    statut === 'ACTIF'
-      ? 'activer'
-      : 'désactiver'
+  openStatusTeacherModal(
+    teacher,
+    statut
+  )
+}
 
-  const fullName =
-    teacher.fullName ||
-    'cet enseignant'
 
-  const confirmed =
-    window.confirm(
-      `Voulez-vous ${action} ${fullName} ?`
+/*
+|--------------------------------------------------------------------------
+| CONFIRMATION DU CHANGEMENT DE STATUT
+|--------------------------------------------------------------------------
+*/
+
+async function confirmTeacherStatusChange() {
+  if (!pendingStatusAction) {
+    return
+  }
+
+  const {
+    membershipId,
+    statut,
+  } =
+    pendingStatusAction
+
+  const button =
+    document.getElementById(
+      'confirmStatusTeacherButton'
     )
 
-  if (!confirmed) {
-    return
+  const originalText =
+    button?.textContent ||
+    'Confirmer'
+
+  if (button) {
+    button.disabled =
+      true
+
+    button.innerHTML =
+      `
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+        Traitement…
+      `
   }
 
   try {
@@ -3341,6 +3527,8 @@ async function changeTeacherStatus(
       }
     )
 
+    closeStatusTeacherModal()
+
     await Promise.all([
       loadStatistics(),
       loadTeachers(
@@ -3348,16 +3536,21 @@ async function changeTeacherStatus(
       ),
     ])
 
-    showToast(
-      statut === 'ACTIF'
-        ? 'Enseignant activé avec succès.'
-        : 'Enseignant désactivé avec succès.',
-      'success'
-    )
   } catch (error) {
+    closeStatusTeacherModal()
+
     showError(
       error.message
     )
+
+  } finally {
+    if (button) {
+      button.disabled =
+        false
+
+      button.textContent =
+        originalText
+    }
   }
 }
 
@@ -3935,6 +4128,52 @@ document
 | ÉVÉNEMENTS MODALS DYNAMIQUES
 |--------------------------------------------------------------------------
 */
+
+/*
+|--------------------------------------------------------------------------
+| EVENTS - MODALE STATUT
+|--------------------------------------------------------------------------
+*/
+
+document
+  .getElementById(
+    'closeStatusTeacherModal'
+  )
+  ?.addEventListener(
+    'click',
+    closeStatusTeacherModal
+  )
+
+document
+  .getElementById(
+    'cancelStatusTeacherButton'
+  )
+  ?.addEventListener(
+    'click',
+    closeStatusTeacherModal
+  )
+
+document
+  .getElementById(
+    'confirmStatusTeacherButton'
+  )
+  ?.addEventListener(
+    'click',
+    confirmTeacherStatusChange
+  )
+
+
+statusTeacherModal?.addEventListener(
+  'click',
+  (event) => {
+    if (
+      event.target ===
+      statusTeacherModal
+    ) {
+      closeStatusTeacherModal()
+    }
+  }
+)
 
 function setupDynamicModalEvents() {
   ensureUiModals()
